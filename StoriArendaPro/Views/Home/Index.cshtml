@@ -1,0 +1,198 @@
+﻿@{
+    ViewData["Title"] = "СтройАренда+ - аренда и продажа строительного оборудования";
+}
+
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="container">
+        <div class="hero-content">
+            <h1>Аренда строительного оборудования</h1>
+            <p class="lead">Более 200 наименований оборудования для любых задач</p>
+            <a href="@Url.Action("Rent", "Catalog", new { showCategories = true })" class="btn btn-primary btn-lg">Каталог оборудования</a>
+        </div>
+    </div>
+
+    <!-- Видео-фон с оборудованием -->
+    <video autoplay muted loop playsinline class="hero-video">
+        <source src="/videos/equipments.mp4" type="video/mp4">
+    </video>
+
+    <!-- Затемнение для контраста -->
+    <div class="video-overlay"></div>
+</section>
+
+<!-- Popular Equipment Section -->
+<section class="popular-equipment">
+    <div class="container">
+        <h2 class="section-title">Популярное оборудование</h2>
+        <div class="row">
+            @foreach (var product in ViewBag.PopularRentals)
+            {
+                <div class="col-md-3 mb-4">
+                    <div class="card product-card">
+                        <img src="@product.Product.ImagePath" class="card-img-top" alt="@product.Product.Name">
+                        <div class="card-body">
+                            <h5 class="card-title">@product.Product.Name</h5>
+                            <p class="card-text">@product.Product.ShortDescription</p>
+                            <div class="price-info">
+                                <span class="price">от @product.PricePerDay.ToString("N2") ₽/сутки</span>
+                            </div>
+                            <a href="@Url.Action("ProductDetails", "Catalog", new { id = product.ProductId })" class="btn btn-outline-primary">Подробнее</a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</section>
+
+
+<!-- Categories Section -->
+<section class="categories-section bg-light py-5">
+    <div class="container">
+        <h2 class="section-title text-center mb-5">Категории оборудования</h2>
+
+        <!-- Type Tabs Navigation -->
+        <ul class="nav nav-tabs justify-content-center mb-4" id="equipmentTypeTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="purpose-tab" data-bs-toggle="tab" data-bs-target="#purpose" type="button" role="tab">
+                    <i class="fas fa-bullseye me-2"></i>По назначению
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="type-tab" data-bs-toggle="tab" data-bs-target="#type" type="button" role="tab">
+                    <i class="fas fa-tools me-2"></i>По типу оборудования
+                </button>
+            </li>
+        </ul>
+
+        <!-- Tabs Content -->
+        <div class="tab-content" id="equipmentTypeTabsContent">
+            <!-- By Purpose Tab (existing categories) -->
+            <div class="tab-pane fade show active" id="purpose" role="tabpanel" aria-labelledby="purpose-tab">
+                <div class="row">
+                    @foreach (var category in ViewBag.RentCategories)
+                    {
+                        <div class="col-md-4 mb-4">
+                            <div class="category-card h-100 p-4 border rounded-3 shadow-sm bg-white">
+                                <div class="category-icon mb-3 text-primary">
+                                    <i class="fas @GetCategoryIcon(category.Name) fa-2x"></i>
+                                </div>
+                                <h3 class="h4">@category.Name</h3>
+                                <p class="text-muted">@category.Description</p>
+                                <a href="@Url.Action("Rent", "Catalog", new { categoryId = category.CategoryId })"
+                                   class="btn btn-outline-primary mt-auto">Смотреть оборудование</a>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <!-- By Type Tab -->
+            <div class="tab-pane fade" id="type" role="tabpanel" aria-labelledby="type-tab">
+                <div class="row">
+                    @* @foreach (var type in ViewBag.EquipmentTypes)
+                    {
+                        <div class="col-md-4 mb-4">
+                            <div class="category-card h-100 p-4 border rounded-3 shadow-sm bg-white">
+                                <div class="category-icon mb-3 text-primary">
+                                    <i class="fas @GetTypeIcon(type.Name) fa-2x"></i>
+                                </div>
+                                <h3 class="h4">@type.Name</h3>
+                                <p class="text-muted">@type.Description</p>
+                                <div class="mt-2">
+                                    @foreach (var subType in type.SubTypes)
+                                    {
+                                        <a href="@Url.Action("Rent", "Catalog", new { typeId = subType.TypeId })"
+                                           class="badge bg-light text-dark me-1 mb-1 text-decoration-none">@subType.Name</a>
+                                    }
+                                </div>
+                                <a href="@Url.Action("Rent", "Catalog", new { typeId = type.TypeId })"
+                                   class="btn btn-outline-primary mt-3">Все @type.Name</a>
+                            </div>
+                        </div>
+                    } *@
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Advantages Section -->
+<section class="advantages-section">
+    <div class="container">
+        <h2 class="section-title">Почему выбирают нас</h2>
+        <div class="row">
+            <div class="col-md-3">
+                <div class="advantage-item">
+                    <div class="advantage-icon">
+                        <i class="fas fa-tools"></i>
+                    </div>
+                    <h3>Широкий ассортимент</h3>
+                    <p>Более 200 единиц оборудования в наличии</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="advantage-item">
+                    <div class="advantage-icon">
+                        <i class="fas fa-ruble-sign"></i>
+                    </div>
+                    <h3>Гибкие цены</h3>
+                    <p>Скидки при долгосрочной аренде</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="advantage-item">
+                    <div class="advantage-icon">
+                        <i class="fas fa-truck"></i>
+                    </div>
+                    <h3>Доставка</h3>
+                    <p>Быстрая доставка по всему городу</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="advantage-item">
+                    <div class="advantage-icon">
+                        <i class="fas fa-headset"></i>
+                    </div>
+                    <h3>Поддержка 24/7</h3>
+                    <p>Консультации по подбору оборудования</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+@functions {
+    // Helper function to get icons for categories
+    public string GetCategoryIcon(string categoryName)
+    {
+        return categoryName switch
+        {
+            "Строительство, бетон" => "fa-concrete",
+            "Для дома и дачи" => "fa-paint-roller",
+            "Грузоподъемное" => "fa-crane",
+            "Земляройная техника" => "fa-shovel",
+            "Электроинструмент" => "fa-bolt",
+            "Временные сооружения" => "fa-layer-group",
+            _ => "fa-tools"
+        };
+    }
+
+    // Helper function to get icons for equipment types
+    public string GetTypeIcon(string typeName)
+    {
+        return typeName switch
+        {
+            "Электроинструмент" => "fa-plug",
+            "Бензоинструмент" => "fa-gas-pump",
+            "Гидравлическое" => "fa-oil-can",
+            "Пневматическое" => "fa-wind",
+            "Ручной инструмент" => "fa-hammer",
+            "Грузоподъемное" => "fa-crane",
+            _ => "fa-toolbox"
+        };
+    }
+}
+

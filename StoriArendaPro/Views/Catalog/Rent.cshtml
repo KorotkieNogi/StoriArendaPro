@@ -1,0 +1,147 @@
+﻿@model IEnumerable<StoriArendaPro.Models.Entities.RentalPrice>
+@{
+    ViewData["Title"] = "Каталог оборудования для аренды";
+}
+
+<div class="container mt-5">
+    <h1 class="mb-4">@ViewData["Title"]</h1>
+
+    <!-- Фильтры по категориям -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    Категории
+                </div>
+                <div class="card-body p-0">
+                    <div class="list-group">
+                        <div class="dropdown">
+                            <button class="list-group-item list-group-item-action dropdown-toggle d-flex justify-content-between align-items-center rounded-0"
+                                    type="button"
+                                    id="categoriesDropdown"
+                                    data-bs-toggle="dropdown"
+                                    aria-expanded="false"
+                                    style="border-left: none; border-right: none;">
+                                По назначению
+                                <i class="fas fa-chevron-down ms-2"></i>
+                            </button>
+                            <ul class="dropdown-menu w-100 rounded-0 m-0" aria-labelledby="categoriesDropdown" style="max-height: 300px; overflow-y: auto;">
+                                <li>
+                                    <a class="dropdown-item @(ViewBag.CurrentCategory == null && !ViewBag.ShowCategories ? "active" : "")"
+                                       href="@Url.Action("Rent", "Catalog", new { showCategories = true })">
+                                        Все назначения
+                                    </a>
+                                </li>
+                                <li><hr class="dropdown-divider m-0"></li>
+                                @foreach (var category in ViewBag.Categories)
+                                {
+                                    <li>
+                                        <a class="dropdown-item @(ViewBag.CurrentCategory == category.CategoryId ? "active" : "")"
+                                           href="@Url.Action("Rent", "Catalog", new { categoryId = category.CategoryId })">
+                                            <i class="fas @GetCategoryIcon(category.Name) me-2"></i>
+                                            @category.Name
+                                        </a>
+                                    </li>
+                                }
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Список оборудования или категорий -->
+        <div class="col-md-9">
+            @if (ViewBag.ShowCategories)
+            {
+                <!-- Отображаем список категорий -->
+                <div class="row">
+                    @foreach (var category in ViewBag.Categories)
+                    {
+                        <div class="col-md-4 mb-4">
+                            <div class="card h-100 category-card-rent">
+                                <div class="card-body d-flex flex-column">
+                                    <div class="category-icon-wrapper text-center mb-3">
+                                        <i class="fas @GetCategoryIcon(category.Name) fa-3x"></i>
+                                    </div>
+                                    <h5 class="card-title text-center">@category.Name</h5>
+                                    <p class="card-text flex-grow-1">@category.Description</p>
+                                    <div class="text-center mt-3">
+                                        <a href="@Url.Action("Rent", "Catalog", new { categoryId = category.CategoryId })"
+                                           class="btn btn-primary btn-category">
+                                            <i class="fas fa-tools me-2"></i>Показать оборудование
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+            else
+            {
+                <!-- Отображаем список оборудования -->
+                <div class="row">
+                    @foreach (var product in Model)
+                    {
+                        <div class="col-md-4 mb-4">
+                            <div class="card h-100">
+                                <img src="@product.Product.ImagePath" class="card-img-top" alt="@product.Product.Name" style="height: 200px; object-fit: cover;">
+                                <div class="card-body">
+                                    <h5 class="card-title">@product.Product.Name</h5>
+                                    <p class="card-text">@product.Product.ShortDescription</p>
+                                    <div class="mb-2">
+                                        <span class="text-primary font-weight-bold">@product.PricePerDay?.ToString("N2") ₽/сутки</span>
+                                    </div>
+                                </div>
+                                <div class="card-footer bg-transparent">
+                                    <a href="@Url.Action("ProductDetails", "Catalog", new { id = product.ProductId })"
+                                       class="btn btn-primary btn-block">Подробнее</a>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+@functions {
+    // Helper function to get icons for categories
+    public string GetCategoryIcon(string categoryName)
+    {
+        return categoryName switch
+        {
+            "Строительство, бетон" => "fa-concrete",
+            "Для дома и дачи" => "fa-paint-roller",
+            "Грузоподъемное" => "fa-crane",
+            "Земляройная техника" => "fa-shovel",
+            "Электроинструмент" => "fa-bolt",
+            "Временные сооружения" => "fa-layer-group",
+            _ => "fa-tools"
+        };
+    }
+
+    // Helper function to get icons for equipment types
+    public string GetTypeIcon(string typeName)
+    {
+        return typeName switch
+        {
+            "Электроинструмент" => "fa-plug",
+            "Бензоинструмент" => "fa-gas-pump",
+            "Гидравлическое" => "fa-oil-can",
+            "Пневматическое" => "fa-wind",
+            "Ручной инструмент" => "fa-hammer",
+            "Грузоподъемное" => "fa-crane",
+            _ => "fa-toolbox"
+        };
+    }
+}

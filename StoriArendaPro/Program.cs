@@ -13,7 +13,10 @@ namespace StoriArendaPro.Models
 
             // Настройка DbContext
             builder.Services.AddDbContext<StoriArendaProContext>(options =>
-                options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+                options.UseNpgsql(builder.Configuration.GetConnectionString("PostgreSql")));
+
+            //Порт: Render использует переменную $PORT
+            //builder.WebHost.UseUrls("http://0.0.0.0:" + Environment.GetEnvironmentVariable("PORT") ?? "5000");
 
             var app = builder.Build();
 

@@ -1,4 +1,5 @@
-﻿@{
+﻿@using System.Linq
+@{
     ViewData["Title"] = "СтройАренда+ - аренда и продажа строительного оборудования";
 }
 
@@ -21,6 +22,8 @@
     <div class="video-overlay"></div>
 </section>
 
+
+
 <!-- Popular Equipment Section -->
 <section class="popular-equipment">
     <div class="container">
@@ -29,8 +32,45 @@
             @foreach (var product in ViewBag.PopularRentals)
             {
                 <div class="col-md-3 mb-4">
-                    <div class="card product-card">
-                        <img src="@product.Product.ImagePath" class="card-img-top" alt="@product.Product.Name">
+                    <div class="card product-card h-100">
+                        <!-- Карусель изображений -->
+                        @if (product.Product.ProductImages != null && product.Product.ProductImages.Count > 0)
+                        {
+                            var isFirst = true;
+                            <div id="carousel-@product.ProductId" class="carousel slide h-100" data-bs-ride="carousel">
+                                <!-- Добавлен h-100 -->
+                                <div class="carousel-inner h-100">
+                                    <!-- Добавлен h-100 -->
+                                    @foreach (var image in product.Product.ProductImages)
+                                    {
+                                        <div class="carousel-item @(isFirst ? "active" : "") h-100">
+                                            <!-- Добавлен h-100 -->
+                                            <img src="/photoEquipment/@image.Path" class="d-block w-100 h-100 object-fit-cover" alt="@product.Product.Name">
+                                        </div>
+                                        { isFirst = false; }
+                                    }
+                                </div>
+                                @if (product.Product.ProductImages.Count > 1)
+                                {
+                                    <button class="carousel-control-prev" type="button" data-bs-target="#carousel-@product.ProductId" data-bs-slide="prev">
+                                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                        <span class="visually-hidden">Previous</span>
+                                    </button>
+                                    <button class="carousel-control-next" type="button" data-bs-target="#carousel-@product.ProductId" data-bs-slide="next">
+                                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                        <span class="visually-hidden">Next</span>
+                                    </button>
+                                }
+                            </div>
+                        }
+                        else
+                        {
+                            <!-- Заглушка, если нет изображений -->
+                            <div class="no-image-placeholder h-100">
+                                <!-- Добавлен h-100 -->
+                                <img src="https://baids.ru/storage/lot-images/27/22/2722226/a036b6e9ad987f2eb92cf50944a70f50.jpeg" class="w-100 h-100 object-fit-cover" alt="Нет изображения">
+                            </div>
+                        }
                         <div class="card-body">
                             <h5 class="card-title">@product.Product.Name</h5>
                             <p class="card-text">@product.Product.ShortDescription</p>
@@ -45,6 +85,33 @@
         </div>
     </div>
 </section>
+
+
+
+@* <!-- Popular Equipment Section -->
+<section class="popular-equipment">
+    <div class="container">
+        <h2 class="section-title">Популярное оборудование</h2>
+        <div class="row">
+            @foreach (var product in ViewBag.PopularRentals)
+            {
+                <div class="col-md-3 mb-4">
+                    <div class="card product-card">
+                        <img src="/photoEquipment/@product.Product.ImagePath" class="card-img-top" alt="@product.Product.Name">
+                        <div class="card-body">
+                            <h5 class="card-title">@product.Product.Name</h5>
+                            <p class="card-text">@product.Product.ShortDescription</p>
+                            <div class="price-info">
+                                <span class="price">от @product.PricePerDay.ToString("N2") ₽/сутки</span>
+                            </div>
+                            <a href="@Url.Action("ProductDetails", "Catalog", new { id = product.ProductId })" class="btn btn-outline-primary">Подробнее</a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</section> *@
 
 
 <!-- Categories Section -->
@@ -91,7 +158,7 @@
             <!-- By Type Tab -->
             <div class="tab-pane fade" id="type" role="tabpanel" aria-labelledby="type-tab">
                 <div class="row">
-                    @* @foreach (var type in ViewBag.EquipmentTypes)
+                    @foreach (var type in ViewBag.RentType)
                     {
                         <div class="col-md-4 mb-4">
                             <div class="category-card h-100 p-4 border rounded-3 shadow-sm bg-white">
@@ -100,18 +167,18 @@
                                 </div>
                                 <h3 class="h4">@type.Name</h3>
                                 <p class="text-muted">@type.Description</p>
-                                <div class="mt-2">
-                                    @foreach (var subType in type.SubTypes)
+                                @* <div class="mt-2">
+                                    @foreach (var subType in type.SubTypes)//
                                     {
-                                        <a href="@Url.Action("Rent", "Catalog", new { typeId = subType.TypeId })"
+                                        <a href="@Url.Action("Rent", "Catalog", new { typeId = subType.TypeProductId })"
                                            class="badge bg-light text-dark me-1 mb-1 text-decoration-none">@subType.Name</a>
                                     }
-                                </div>
-                                <a href="@Url.Action("Rent", "Catalog", new { typeId = type.TypeId })"
+                                </div> *@
+                                <a href="@Url.Action("Rent", "Catalog", new { typeId = type.TypeProductId })"
                                    class="btn btn-outline-primary mt-3">Все @type.Name</a>
                             </div>
                         </div>
-                    } *@
+                    }
                 </div>
             </div>
         </div>

@@ -9,7 +9,43 @@
         <!-- Основная информация и изображение -->
         <div class="col-lg-6">
             <div class="card mb-4">
-                <img src="@Model.Product.ImagePath" class="card-img-top product-detail-img" alt="@Model.Product.Name">
+                <!-- Карусель изображений -->
+                @if (@Model.Product.ProductImages != null && @Model.Product.ProductImages.Count > 0)
+                {
+                    var isFirst = true;
+                    <div id="carousel-@Model.ProductId" class="carousel slide h-100" data-bs-ride="carousel">
+                        <!-- Добавлен h-100 -->
+                        <div class="carousel-inner h-100">
+                            <!-- Добавлен h-100 -->
+                            @foreach (var image in @Model.Product.ProductImages)
+                            {
+                                <div class="carousel-item @(isFirst ? "active" : "") h-100">
+                                    <img src="/photoEquipment/@image.Path" class="card-img-top product-detail-img" alt="@Model.Product.Name">
+                                </div>
+                                { isFirst = false; }
+                            }
+                        </div>
+                        @if (@Model.Product.ProductImages.Count > 1)
+                        {
+                            <button class="carousel-control-prev" type="button" data-bs-target="#carousel-@Model.ProductId" data-bs-slide="prev">
+                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                <span class="visually-hidden">Previous</span>
+                            </button>
+                            <button class="carousel-control-next" type="button" data-bs-target="#carousel-@Model.ProductId" data-bs-slide="next">
+                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                <span class="visually-hidden">Next</span>
+                            </button>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <!-- Заглушка, если нет изображений -->
+                    <div class="no-image-placeholder h-100">
+                        <img src="https://baids.ru/storage/lot-images/27/22/2722226/a036b6e9ad987f2eb92cf50944a70f50.jpeg" class="w-100 h-100 object-fit-cover" alt="Нет изображения">
+                    </div>
+                }
+                @* <img src="/photoEquipment/@Model.Product.ImagePath" class="card-img-top product-detail-img" alt="@Model.Product.Name"> *@
             </div>
         </div>
 

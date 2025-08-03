@@ -20,6 +20,7 @@ namespace StoriArendaPro.Controllers
                 .Include(p => p.Product)
                 .Include(p => p.Product.Category)
                 .Include(p => p.Product.Inventories)
+                .Include(p => p.Product).ThenInclude(p => p.ProductImages)
                 .Where(p => (bool)p.Product.Category.IsForRent && (bool)p.Product.IsActive);
 
             if (categoryId.HasValue)
@@ -51,6 +52,7 @@ namespace StoriArendaPro.Controllers
             var product = await _context.RentalPrices
                 .Include(p => p.Product.Category)
                 .Include(p => p.Product.Inventories)
+                .Include(p => p.Product).ThenInclude(p => p.ProductImages)
                 .FirstOrDefaultAsync(m => m.ProductId == id);
 
             if (product == null)

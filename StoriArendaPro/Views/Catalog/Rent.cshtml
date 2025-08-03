@@ -84,19 +84,54 @@
                 <div class="row">
                     @foreach (var product in Model)
                     {
-                        <div class="col-md-4 mb-4">
-                            <div class="card h-100">
-                                <img src="@product.Product.ImagePath" class="card-img-top" alt="@product.Product.Name" style="height: 200px; object-fit: cover;">
+                        <div class="col-md-3 mb-4">
+                            <div class="card product-card h-100">
+                                <!-- Добавлен h-100 для выравнивания высоты -->
+                                <!-- Карусель изображений -->
+                                @if (product.Product.ProductImages != null && product.Product.ProductImages.Count > 0)
+                                {
+                                    var isFirst = true;
+                                    <div id="carousel-@product.ProductId" class="carousel slide h-100" data-bs-ride="carousel">
+                                        <!-- Добавлен h-100 -->
+                                        <div class="carousel-inner h-100">
+                                            <!-- Добавлен h-100 -->
+                                            @foreach (var image in product.Product.ProductImages)
+                                            {
+                                                <div class="carousel-item @(isFirst ? "active" : "") h-100">
+                                                    <!-- Добавлен h-100 -->
+                                                    <img src="/photoEquipment/@image.Path" class="d-block w-100 h-100 object-fit-cover" alt="@product.Product.Name">
+                                                </div>
+                                                { isFirst = false; }
+                                            }
+                                        </div>
+                                        @if (product.Product.ProductImages.Count > 1)
+                                        {
+                                            <button class="carousel-control-prev" type="button" data-bs-target="#carousel-@product.ProductId" data-bs-slide="prev">
+                                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                                <span class="visually-hidden">Previous</span>
+                                            </button>
+                                            <button class="carousel-control-next" type="button" data-bs-target="#carousel-@product.ProductId" data-bs-slide="next">
+                                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                                <span class="visually-hidden">Next</span>
+                                            </button>
+                                        }
+                                    </div>
+                                }
+                                else
+                                {
+                                    <!-- Заглушка, если нет изображений -->
+                                    <div class="no-image-placeholder h-100">
+                                        <!-- Добавлен h-100 -->
+                                        <img src="https://baids.ru/storage/lot-images/27/22/2722226/a036b6e9ad987f2eb92cf50944a70f50.jpeg" class="w-100 h-100 object-fit-cover" alt="Нет изображения">
+                                    </div>
+                                }
                                 <div class="card-body">
                                     <h5 class="card-title">@product.Product.Name</h5>
                                     <p class="card-text">@product.Product.ShortDescription</p>
-                                    <div class="mb-2">
-                                        <span class="text-primary font-weight-bold">@product.PricePerDay?.ToString("N2") ₽/сутки</span>
+                                    <div class="price-info">
+                                        <span class="price">от @product.PricePerDay?.ToString("N2") ₽/сутки</span>
                                     </div>
-                                </div>
-                                <div class="card-footer bg-transparent">
-                                    <a href="@Url.Action("ProductDetails", "Catalog", new { id = product.ProductId })"
-                                       class="btn btn-primary btn-block">Подробнее</a>
+                                    <a href="@Url.Action("ProductDetails", "Catalog", new { id = product.ProductId })" class="btn btn-outline-primary">Подробнее</a>
                                 </div>
                             </div>
                         </div>

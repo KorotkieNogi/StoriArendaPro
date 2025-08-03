@@ -9,6 +9,8 @@ public partial class Product
 
     public int? CategoryId { get; set; }
 
+    public int? TypeProductId { get; set; }
+
     public string? Sku { get; set; }
 
     public string Name { get; set; } = null!;
@@ -31,6 +33,8 @@ public partial class Product
 
     public virtual Category? Category { get; set; }
 
+    public virtual TypeProduct? TypeProduct { get; set; }
+
     public virtual ICollection<Inventory> Inventories { get; set; } = new List<Inventory>();
 
     //Не используется
@@ -42,4 +46,6 @@ public partial class Product
     //public virtual ICollection<SaleOrderItem> SaleOrderItems { get; set; } = new List<SaleOrderItem>();
 
     public virtual ICollection<SalePrice> SalePrices { get; set; } = new List<SalePrice>();
+
+    public virtual ICollection<ProductImage> ProductImages { get; set; } = new List<ProductImage>();
 }

@@ -19,8 +19,9 @@ namespace StoriArendaPro.Controllers
         public async Task<IActionResult> Index()
         {
             // Получаем популярные товары для аренды
-            var popularRentals = await _context.RentalPrices
+            var popularRentals = await _context.RentalPrices.AsNoTracking()
                 .Include(p => p.Product.Category)
+                .Include(p => p.Product).ThenInclude(p => p.ProductImages)
                 .Where(p => (bool)p.Product.Category.IsForRent)
                 .OrderByDescending(p => p.Product.Inventories.Sum(i => i.QuantityForRent))
                 .Take(8)
@@ -32,8 +33,14 @@ namespace StoriArendaPro.Controllers
                 .Where(c => (bool)c.IsForRent)
                 .ToListAsync();
 
+            // Получаем категории для аренды
+            var rentType = await _context.TypeProducts
+                .Where(c => (bool)c.IsForRent)
+                .ToListAsync();
+
             ViewBag.PopularRentals = popularRentals;
             ViewBag.RentCategories = rentCategories;
+            ViewBag.RentType = rentType;
 
             return View();
         }

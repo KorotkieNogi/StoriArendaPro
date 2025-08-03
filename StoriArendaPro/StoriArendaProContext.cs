@@ -22,9 +22,15 @@ public partial class StoriArendaProContext : DbContext
 
     public virtual DbSet<Category> Categories { get; set; }
 
+    public virtual DbSet<TypeProduct> TypeProducts { get; set; }
+
     public virtual DbSet<Inventory> Inventories { get; set; }
 
     public virtual DbSet<Product> Products { get; set; }
+
+    public virtual DbSet<ProductImage> ProductImages { get; set; }
+    
+
 
     //Не используется
     //public virtual DbSet<RentalOrder> RentalOrders { get; set; }
@@ -126,6 +132,38 @@ public partial class StoriArendaProContext : DbContext
                 .HasColumnName("updated_at");
         });
 
+        modelBuilder.Entity<TypeProduct>(entity =>
+        {
+            entity.HasKey(e => e.TypeProductId).HasName("type_product_pkey");
+
+            entity.ToTable("type_product");
+
+            entity.HasIndex(e => e.Slug, "type_product_slug_key").IsUnique();
+
+            entity.Property(e => e.TypeProductId).HasColumnName("type_product_id");
+            entity.Property(e => e.CreatedAt)
+                .HasDefaultValueSql("CURRENT_TIMESTAMP")
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("created_at");
+            entity.Property(e => e.Description).HasColumnName("description");
+            entity.Property(e => e.IsForRent)
+                .HasDefaultValue(true)
+                .HasColumnName("is_for_rent");
+            entity.Property(e => e.IsForSale)
+                .HasDefaultValue(false)
+                .HasColumnName("is_for_sale");
+            entity.Property(e => e.Name)
+                .HasMaxLength(100)
+                .HasColumnName("name");
+            entity.Property(e => e.Slug)
+                .HasMaxLength(100)
+                .HasColumnName("slug");
+            entity.Property(e => e.UpdatedAt)
+                .HasDefaultValueSql("CURRENT_TIMESTAMP")
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("updated_at");
+        });
+
         modelBuilder.Entity<Inventory>(entity =>
         {
             entity.HasKey(e => e.InventoryId).HasName("inventory_pkey");
@@ -174,6 +212,8 @@ public partial class StoriArendaProContext : DbContext
 
             entity.HasIndex(e => e.CategoryId, "idx_products_category");
 
+            entity.HasIndex(e => e.TypeProductId, "idx_products_type_product");
+
             entity.HasIndex(e => e.Slug, "idx_products_slug");
 
             entity.HasIndex(e => e.Sku, "products_sku_key").IsUnique();
@@ -182,6 +222,7 @@ public partial class StoriArendaProContext : DbContext
 
             entity.Property(e => e.ProductId).HasColumnName("product_id");
             entity.Property(e => e.CategoryId).HasColumnName("category_id");
+            entity.Property(e => e.TypeProductId).HasColumnName("type_product_id");
             entity.Property(e => e.CreatedAt)
                 .HasDefaultValueSql("CURRENT_TIMESTAMP")
                 .HasColumnType("timestamp without time zone")
@@ -214,7 +255,35 @@ public partial class StoriArendaProContext : DbContext
             entity.HasOne(d => d.Category).WithMany(p => p.Products)
                 .HasForeignKey(d => d.CategoryId)
                 .HasConstraintName("products_category_id_fkey");
+
+            entity.HasOne(d => d.TypeProduct).WithMany(p => p.Products)
+                .HasForeignKey(d => d.TypeProductId)
+                .HasConstraintName("products_type_product_id_fkey");
         });
+
+
+        modelBuilder.Entity<ProductImage>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("product_image_pkey");
+
+            entity.ToTable("product_image");
+
+            entity.HasIndex(e => e.Path, "idx_product_image_path");
+
+            entity.HasIndex(e => e.Path, "product_image_path_key").IsUnique();
+
+            entity.Property(e => e.Id).HasColumnName("id");
+
+            entity.Property(e => e.ProductId).HasColumnName("product_id");
+
+            entity.Property(e => e.Path).HasColumnName("path");
+
+            entity.HasOne(d => d.Product).WithMany(p => p.ProductImages)
+                .HasForeignKey(d => d.ProductId)
+                .HasConstraintName("product_image_product_id_fkey");
+        });
+
+
 
         //modelBuilder.Entity<RentalOrder>(entity =>
         //{

@@ -6,29 +6,105 @@
 <div class="container mt-5">
     <h1 class="mb-4">@ViewData["Title"]</h1>
 
-    <!-- Фильтры по категориям -->
+    <!-- Поиск по наименованию -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="input-group">
+                <input type="text" id="searchInput" class="form-control" placeholder="Поиск по наименованию оборудования..." value="@ViewBag.SearchQuery">
+                <button class="btn btn-primary" id="searchButton">
+                    <i class="fas fa-search"></i> Поиск
+                </button>
+            </div>
+        </div>
+        @if (ViewBag.CurrentCategory != null || ViewBag.CurrentType != null || !string.IsNullOrEmpty(ViewBag.SearchQuery))
+        {
+            <div class="col-md-3">
+                <a href="@Url.Action("Rent", "Catalog", new {
+                    categoryId = (int?)null,
+                    typeId = (int?)null,
+                    searchQuery = (string)null,
+                    showCategories = (bool?)true
+                })" class="btn btn-outline-secondary">
+                    <i class="fas fa-times me-2"></i>Сбросить фильтры
+                </a>
+            </div>
+        }
+    </div>
+
+    <!-- Фильтры по категориям и типам -->
     <div class="row mb-4">
         <div class="col-md-3">
-            <div class="card">
-                <div class="card-header bg-primary text-white">
-                    Категории
+            <div class="card" style="overflow: visible; position: relative; z-index: 1050;">
+                <div class="card-header bg-success text-white" style="z-index: 1051;">
+                    Фильтры
                 </div>
-                <div class="card-body p-0">
-                    <div class="list-group">
-                        <div class="dropdown">
+                <div class="card-body p-0" style="overflow: visible;">
+                    <!-- Отображение активных фильтров -->
+                    @if (ViewBag.CurrentCategory != null || ViewBag.CurrentType != null)
+                    {
+                        <div class="p-3 border-bottom">
+                            <h6 class="mb-2">Активные фильтры:</h6>
+                            @if (ViewBag.CurrentCategory != null)
+                            {
+                                <span class="badge bg-primary mb-2 d-flex align-items-center justify-content-between">
+                                    @GetCategoryName(ViewBag.CurrentCategory)
+                                    <a href="@Url.Action("Rent", "Catalog", new {
+                                categoryId = (int?)null,
+                                typeId = ViewBag.CurrentType,
+                                searchQuery = ViewBag.SearchQuery,
+                                showCategories = ViewBag.ShowCategories
+                            })" class="text-white ms-2">
+                                        <i class="fas fa-times"></i>
+                                    </a>
+                                </span>
+                            }
+                            @if (ViewBag.CurrentType != null)
+                            {
+                                <span class="badge bg-info mb-2 d-flex align-items-center justify-content-between">
+                                    @GetTypeName(ViewBag.CurrentType)
+                                    <a href="@Url.Action("Rent", "Catalog", new {
+                                categoryId = ViewBag.CurrentCategory,
+                                typeId = (int?)null,
+                                searchQuery = ViewBag.SearchQuery,
+                                showCategories = ViewBag.ShowCategories
+                            })" class="text-white ms-2">
+                                        <i class="fas fa-times"></i>
+                                    </a>
+                                </span>
+                            }
+                        </div>
+                    }
+
+                    <div class="list-group" style="position: relative; overflow: visible;">
+                        <!-- Фильтр по назначению -->
+                        <div class="dropdown mb-2">
                             <button class="list-group-item list-group-item-action dropdown-toggle d-flex justify-content-between align-items-center rounded-0"
                                     type="button"
                                     id="categoriesDropdown"
                                     data-bs-toggle="dropdown"
                                     aria-expanded="false"
                                     style="border-left: none; border-right: none;">
-                                По назначению
-                                <i class="fas fa-chevron-down ms-2"></i>
+                                <span>
+                                    По назначению
+                                    @if (ViewBag.CurrentCategory != null)
+                                    {
+                                        <span class="badge bg-primary ms-1">✓</span>
+                                    }
+                                </span>
+                                <i class="fas fa-chevron-up ms-2"></i>
                             </button>
-                            <ul class="dropdown-menu w-100 rounded-0 m-0" aria-labelledby="categoriesDropdown" style="max-height: 300px; overflow-y: auto;">
+                            <ul class="dropdown-menu w-100 rounded-0 m-0" aria-labelledby="categoriesDropdown"
+                                style="max-height: 400px; overflow-y: auto; position: absolute; z-index: 1060;">
                                 <li>
-                                    <a class="dropdown-item @(ViewBag.CurrentCategory == null && !ViewBag.ShowCategories ? "active" : "")"
-                                       href="@Url.Action("Rent", "Catalog", new { showCategories = true })">
+                                    <a class="dropdown-item @(ViewBag.CurrentCategory == null ? "active" : "")"
+                                       href="@Url.Action("Rent", "Catalog", new {
+                                   categoryId = (int?)null,
+                                   typeId = (int?)null,
+                                   searchQuery = (string)null,
+                                   showCategories = true,
+                                   activeTab = "purpose"
+                               })">
+                                        <i class="fas fa-list me-2"></i>
                                         Все назначения
                                     </a>
                                 </li>
@@ -37,9 +113,73 @@
                                 {
                                     <li>
                                         <a class="dropdown-item @(ViewBag.CurrentCategory == category.CategoryId ? "active" : "")"
-                                           href="@Url.Action("Rent", "Catalog", new { categoryId = category.CategoryId })">
+                                           href="@Url.Action("Rent", "Catalog", new {
+                                       categoryId = (int?)category.CategoryId,
+                                       typeId = ViewBag.CurrentType,
+                                       searchQuery = ViewBag.SearchQuery,
+                                       showCategories = false
+                                   })">
                                             <i class="fas @GetCategoryIcon(category.Name) me-2"></i>
                                             @category.Name
+                                            @if (ViewBag.CurrentCategory == category.CategoryId)
+                                            {
+                                                <i class="fas fa-check float-end text-success"></i>
+                                            }
+                                        </a>
+                                    </li>
+                                }
+                            </ul>
+                        </div>
+
+                        <!-- Фильтр по типу -->
+                        <div class="dropdown">
+                            <button class="list-group-item list-group-item-action dropdown-toggle d-flex justify-content-between align-items-center rounded-0"
+                                    type="button"
+                                    id="typesDropdown"
+                                    data-bs-toggle="dropdown"
+                                    aria-expanded="false"
+                                    style="border-left: none; border-right: none;">
+                                <span>
+                                    По типу оборудования
+                                    @if (ViewBag.CurrentType != null)
+                                    {
+                                        <span class="badge bg-info ms-1">✓</span>
+                                    }
+                                </span>
+                                <i class="fas fa-chevron-up ms-2"></i>
+                            </button>
+                            <ul class="dropdown-menu w-100 rounded-0 m-0" aria-labelledby="typesDropdown"
+                                style="max-height: 400px; overflow-y: auto; position: absolute; z-index: 1060;">
+                                <li>
+                                    <a class="dropdown-item @(ViewBag.CurrentType == null ? "active" : "")"
+                                       href="@Url.Action("Rent", "Catalog", new {
+                                   categoryId = (int?)null,
+                                   typeId = (int?)null,
+                                   searchQuery = (string)null,
+                                   showCategories = true,
+                                   activeTab = "type"
+                               })">
+                                        <i class="fas fa-list me-2"></i>
+                                        Все типы
+                                    </a>
+                                </li>
+                                <li><hr class="dropdown-divider m-0"></li>
+                                @foreach (var type in ViewBag.CategoriesType)
+                                {
+                                    <li>
+                                        <a class="dropdown-item @(ViewBag.CurrentType == type.TypeProductId ? "active" : "")"
+                                           href="@Url.Action("Rent", "Catalog", new {
+                                       categoryId = ViewBag.CurrentCategory,
+                                       typeId = (int?)type.TypeProductId,
+                                       searchQuery = ViewBag.SearchQuery,
+                                       showCategories = false
+                                   })">
+                                            <i class="fas @GetTypeIcon(type.Name) me-2"></i>
+                                            @type.Name
+                                            @if (ViewBag.CurrentType == type.TypeProductId)
+                                            {
+                                                <i class="fas fa-check float-end text-success"></i>
+                                            }
                                         </a>
                                     </li>
                                 }
@@ -51,88 +191,144 @@
         </div>
 
         <!-- Список оборудования или категорий -->
-        <div class="col-md-9">
+        <div class="col-md-9" style="position: relative; z-index: 1;">
             @if (ViewBag.ShowCategories)
             {
-                <!-- Отображаем список категорий -->
-                <div class="row">
-                    @foreach (var category in ViewBag.Categories)
-                    {
-                        <div class="col-md-4 mb-4">
-                            <div class="card h-100 category-card-rent">
-                                <div class="card-body d-flex flex-column">
-                                    <div class="category-icon-wrapper text-center mb-3">
-                                        <i class="fas @GetCategoryIcon(category.Name) fa-3x"></i>
-                                    </div>
-                                    <h5 class="card-title text-center">@category.Name</h5>
-                                    <p class="card-text flex-grow-1">@category.Description</p>
-                                    <div class="text-center mt-3">
-                                        <a href="@Url.Action("Rent", "Catalog", new { categoryId = category.CategoryId })"
-                                           class="btn btn-primary btn-category">
-                                            <i class="fas fa-tools me-2"></i>Показать оборудование
+                <!-- Определяем активную вкладку -->
+        
+                var activeTab = Context.Request.Query["activeTab"].ToString();
+                var purposeActive = string.IsNullOrEmpty(activeTab) || activeTab == "purpose";
+                var typeActive = activeTab == "type";
+        
+
+                <!-- Tabs Navigation -->
+                <ul class="nav nav-tabs justify-content-center mb-4" id="equipmentTypeTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link @(purposeActive ? "active" : "")" id="purpose-tab" data-bs-toggle="tab" data-bs-target="#purpose" type="button" role="tab">
+                            <i class="fas fa-bullseye me-2"></i>По назначению
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link @(typeActive ? "active" : "")" id="type-tab" data-bs-toggle="tab" data-bs-target="#type" type="button" role="tab">
+                            <i class="fas fa-tools me-2"></i>По типу оборудования
+                        </button>
+                    </li>
+                </ul>
+
+                <!-- Tabs Content -->
+                <div class="tab-content" id="equipmentTypeTabsContent">
+                    <!-- By Purpose Tab -->
+                    <div class="tab-pane fade @(purposeActive ? "show active" : "")" id="purpose" role="tabpanel" aria-labelledby="purpose-tab">
+                        <div class="row">
+                            @foreach (var category in ViewBag.Categories)
+                            {
+                                <div class="col-md-4 mb-4">
+                                    <div class="category-card h-100 p-4 border rounded-3 shadow-sm bg-white">
+                                        <div class="category-icon mb-3 text-primary">
+                                            <i class="fas @GetCategoryIcon(category.Name) fa-2x"></i>
+                                        </div>
+                                        <h3 class="h4">@category.Name</h3>
+                                        <p class="text-muted">@category.Description</p>
+                                        <a href="@Url.Action("Rent", "Catalog", new { 
+                                            categoryId = category.CategoryId,
+                                            showCategories = false
+                                        })" class="btn btn-outline-primary mt-3">
+                                            Смотреть оборудование
                                         </a>
                                     </div>
                                 </div>
-                            </div>
+                            }
                         </div>
-                    }
+                    </div>
+
+                <!-- By Type Tab -->
+                <div class="tab-pane fade @(typeActive ? "show active" : "")" id="type" role="tabpanel" aria-labelledby="type-tab">
+                    <div class="row">
+                        @foreach (var type in ViewBag.CategoriesType)
+                        {
+                            <div class="col-md-4 mb-4">
+                                <div class="category-card h-100 p-4 border rounded-3 shadow-sm bg-white">
+                                    <div class="category-icon mb-3 text-primary">
+                                        <i class="fas @GetTypeIcon(type.Name) fa-2x"></i>
+                                    </div>
+                                    <h3 class="h4">@type.Name</h3>
+                                    <p class="text-muted">@type.Description</p>
+                                    <a href="@Url.Action("Rent", "Catalog", new { 
+                                        typeId = type.TypeProductId,
+                                        showCategories = false
+                                    })" class="btn btn-outline-primary mt-3">
+                                        Все @type.Name
+                                    </a>
+                                </div>
+                            </div>
+                            }
+                        </div>
+                    </div>
                 </div>
             }
             else
             {
                 <!-- Отображаем список оборудования -->
                 <div class="row">
-                    @foreach (var product in Model)
+                    @if (Model.Any())
                     {
-                        <div class="col-md-3 mb-4">
-                            <div class="card product-card h-100">
-                                <!-- Добавлен h-100 для выравнивания высоты -->
-                                <!-- Карусель изображений -->
-                                @if (product.Product.ProductImages != null && product.Product.ProductImages.Count > 0)
-                                {
-                                    var isFirst = true;
-                                    <div id="carousel-@product.ProductId" class="carousel slide h-100" data-bs-ride="carousel">
-                                        <!-- Добавлен h-100 -->
-                                        <div class="carousel-inner h-100">
-                                            <!-- Добавлен h-100 -->
-                                            @foreach (var image in product.Product.ProductImages)
-                                            {
-                                                <div class="carousel-item @(isFirst ? "active" : "") h-100">
-                                                    <!-- Добавлен h-100 -->
-                                                    <img src="/photoEquipment/@image.Path" class="d-block w-100 h-100 object-fit-cover" alt="@product.Product.Name">
+                        @foreach (var product in Model)
+                        {
+                            <div class="col-md-3 mb-4">
+                                <div class="card product-card h-100">
+                                    <!-- Карусель изображений -->
+                                    @if (product.Product.ProductImages != null && product.Product.ProductImages.Count > 0)
+                                    {
+                                        var isFirst = true;
+                                        <div class="image-container" style="height: 320px;">
+                                            <div id="carousel-@product.ProductId" class="carousel slide h-100" data-bs-ride="carousel">
+                                                <div class="carousel-inner h-100">
+                                                    @foreach (var image in product.Product.ProductImages)
+                                                    {
+                                                        <div class="carousel-item @(isFirst ? "active" : "") h-100">
+                                                            <img src="/photoEquipment/@image.Path" class="d-block w-100 h-100 object-fit-contain" alt="@product.Product.Name">
+                                                        </div>
+                                                        { isFirst = false; }
+                                                    }
                                                 </div>
-                                                { isFirst = false; }
-                                            }
+                                                @if (product.Product.ProductImages.Count > 1)
+                                                {
+                                                    <button class="carousel-control-prev" type="button" data-bs-target="#carousel-@product.ProductId" data-bs-slide="prev">
+                                                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                                        <span class="visually-hidden">Previous</span>
+                                                    </button>
+                                                    <button class="carousel-control-next" type="button" data-bs-target="#carousel-@product.ProductId" data-bs-slide="next">
+                                                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                                        <span class="visually-hidden">Next</span>
+                                                    </button>
+                                                }
+                                            </div>
                                         </div>
-                                        @if (product.Product.ProductImages.Count > 1)
-                                        {
-                                            <button class="carousel-control-prev" type="button" data-bs-target="#carousel-@product.ProductId" data-bs-slide="prev">
-                                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                                                <span class="visually-hidden">Previous</span>
-                                            </button>
-                                            <button class="carousel-control-next" type="button" data-bs-target="#carousel-@product.ProductId" data-bs-slide="next">
-                                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                                                <span class="visually-hidden">Next</span>
-                                            </button>
-                                        }
+                                    }
+                                    else
+                                    {
+                                        <div class="image-container" style="height: 220px;">
+                                            <img src="https://baids.ru/storage/lot-images/27/22/2722226/a036b6e9ad987f2eb92cf50944a70f50.jpeg" class="w-100 h-100 object-fit-contain" alt="Нет изображения">
+                                        </div>
+                                    }
+                                    <div class="card-body d-flex flex-column p-3">
+                                        <h6 class="card-title mb-2 fw-bold text-dark">@product.Product.Name</h6>
+                                        <small class="card-text text-muted mb-2">@product.Product.ShortDescription</small>
+                                        <div class="price-info mt-auto pt-2">
+                                            <span class="price fw-bold text-danger fs-5">@product.PricePerDay?.ToString("N2") ₽/сутки</span>
+                                        </div>
+                                        <a href="@Url.Action("ProductDetails", "Catalog", new { id = product.ProductId })" class="btn btn-outline-primary" >Подробнее</a>
                                     </div>
-                                }
-                                else
-                                {
-                                    <!-- Заглушка, если нет изображений -->
-                                    <div class="no-image-placeholder h-100">
-                                        <!-- Добавлен h-100 -->
-                                        <img src="https://baids.ru/storage/lot-images/27/22/2722226/a036b6e9ad987f2eb92cf50944a70f50.jpeg" class="w-100 h-100 object-fit-cover" alt="Нет изображения">
-                                    </div>
-                                }
-                                <div class="card-body">
-                                    <h5 class="card-title">@product.Product.Name</h5>
-                                    <p class="card-text">@product.Product.ShortDescription</p>
-                                    <div class="price-info">
-                                        <span class="price">от @product.PricePerDay?.ToString("N2") ₽/сутки</span>
-                                    </div>
-                                    <a href="@Url.Action("ProductDetails", "Catalog", new { id = product.ProductId })" class="btn btn-outline-primary">Подробнее</a>
                                 </div>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <div class="col-12 text-center">
+                            <div class="alert alert-info">
+                                <i class="fas fa-info-circle me-2"></i>
+                                По вашему запросу ничего не найдено. Попробуйте изменить параметры поиска.
                             </div>
                         </div>
                     }
@@ -140,43 +336,210 @@
             }
         </div>
     </div>
+    <style>
+        .dropdown-menu {
+            z-index: 1060 !important;
+        }
+
+        .card-body {
+            overflow: visible !important;
+        }
+
+        .list-group {
+            overflow: visible !important;
+        }
+
+        .card {
+            overflow: visible !important;
+        }
+
+        .col-md-9 {
+            position: relative;
+            z-index: 1;
+        }
+    </style>
 </div>
 
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Поиск при нажатии кнопки
+            $('#searchButton').click(function() {
+                performSearch();
+            });
 
+            // Поиск при нажатии Enter
+            $('#searchInput').keypress(function(e) {
+                if (e.which === 13) {
+                    performSearch();
+                }
+            });
 
+            function performSearch() {
+                const searchQuery = $('#searchInput').val().trim();
 
+                // Получаем текущие значения фильтров
+                const categoryId = @(ViewBag.CurrentCategory != null ? ViewBag.CurrentCategory : "null");
+                const typeId = @(ViewBag.CurrentType != null ? ViewBag.CurrentType : "null");
 
+                // Строим URL с учетом всех параметров
+                let url = '@Url.Action("Rent", "Catalog")' +
+                    '?showCategories=false';
 
+                // Добавляем searchQuery если он есть
+                if (searchQuery) {
+                    url += '&searchQuery=' + encodeURIComponent(searchQuery);
+                }
 
+                // Добавляем categoryId если он есть
+                if (categoryId !== null) {
+                    url += '&categoryId=' + categoryId;
+                }
+
+                // Добавляем typeId если он есть
+                if (typeId !== null) {
+                    url += '&typeId=' + typeId;
+                }
+
+                window.location.href = url;
+            }
+
+            // Анимация стрелок в выпадающих списках
+            $('.dropdown').on('show.bs.dropdown', function () {
+                $(this).find('.fa-chevron-up').removeClass('fa-chevron-up').addClass('fa-chevron-down');
+            });
+
+            $('.dropdown').on('hide.bs.dropdown', function () {
+                $(this).find('.fa-chevron-down').removeClass('fa-chevron-down').addClass('fa-chevron-up');
+            });
+
+                // Активируем нужную вкладку при загрузке
+        @if (ViewBag.CurrentType != null)
+        {
+            <text>
+                $('#type-tab').tab('show');
+                $('#type').addClass('show active');
+                $('#purpose').removeClass('show active');
+                $('#purpose-tab').removeClass('active');
+                $('#type-tab').addClass('active');
+            </text>
+        }
+        else if (!string.IsNullOrEmpty(Context.Request.Query["activeTab"]))
+        {
+            var activeTab = Context.Request.Query["activeTab"].ToString();
+            if (activeTab == "type")
+            {
+                <text>
+                        $('#type-tab').tab('show');
+                        $('#type').addClass('show active');
+                        $('#purpose').removeClass('show active');
+                        $('#purpose-tab').removeClass('active');
+                        $('#type-tab').addClass('active');
+                </text>
+            }
+            else if (activeTab == "purpose")
+            {
+                <text>
+                        $('#purpose-tab').tab('show');
+                        $('#purpose').addClass('show active');
+                        $('#type').removeClass('show active');
+                        $('#type-tab').removeClass('active');
+                        $('#purpose-tab').addClass('active');
+                </text>
+            }
+        }
+        });
+    </script>
+}
 
 @functions {
-    // Helper function to get icons for categories
+    // Helper function to get icons for categories (по назначению)
     public string GetCategoryIcon(string categoryName)
     {
         return categoryName switch
         {
+            "Каркасные конструкции" => "fa-cubes",
+            "Бетонные работы" => "fa-cubes",
+            "Грунт и земляные работы" => "fa-mountain",
+            "Силовое оборудование" => "fa-bolt",
+            "Отделочные работы" => "fa-paint-roller",
+            "Резка и раскрой" => "fa-cut",
+            "Сварочные технологии" => "fa-fire",
+            "Насосные станции" => "fa-water",
+            "Климатическое оборудование" => "fa-fan",
+            "Измерительная техника" => "fa-ruler-combined",
+            "Такелаж и подъем" => "fa-chain",
+            "Садово-парковая техника" => "fa-leaf",
+            "Профессиональный инструмент" => "fa-tools",
+            "Безопасность и освещение" => "fa-shield-alt",
             "Строительство, бетон" => "fa-concrete",
-            "Для дома и дачи" => "fa-paint-roller",
+            "Для дома и дачи" => "fa-home",
             "Грузоподъемное" => "fa-crane",
             "Земляройная техника" => "fa-shovel",
-            "Электроинструмент" => "fa-bolt",
+            "Электроинструмент" => "fa-plug",
             "Временные сооружения" => "fa-layer-group",
-            _ => "fa-tools"
+            _ => "fa-toolbox"
         };
     }
 
-    // Helper function to get icons for equipment types
+    // Helper function to get icons for equipment types (по типу)
     public string GetTypeIcon(string typeName)
     {
         return typeName switch
         {
+            "Электроинструменты" => "fa-plug",
+            "Бензоинструменты" => "fa-gas-pump",
+            "Шнеки и удлинители" => "fa-screwdriver",
+            "Сварочные аппараты" => "fa-bolt",
+            "Насосы" => "fa-tint",
+            "Режущие диски" => "fa-cut",
+            "Компрессоры" => "fa-wind",
+            "Лестницы" => "fa-stairs",
+            "Мозаично-шлифовальные машины" => "fa-expand-arrows-alt",
+            "Тепловые пушки" => "fa-fire",
+            "Измерительные приборы" => "fa-ruler",
+            "Окрасочное оборудование" => "fa-paint-brush",
+            "Бетономешалки" => "fa-cubes",
+            "Плиткорезы" => "fa-cut",
+            "Гидравлическое оборудование" => "fa-oil-can",
+            "Алмазный инструмент" => "fa-gem",
+            "Генераторы" => "fa-bolt",
+            "Снегоуборочная техника" => "fa-snowflake",
             "Электроинструмент" => "fa-plug",
             "Бензоинструмент" => "fa-gas-pump",
             "Гидравлическое" => "fa-oil-can",
             "Пневматическое" => "fa-wind",
             "Ручной инструмент" => "fa-hammer",
             "Грузоподъемное" => "fa-crane",
-            _ => "fa-toolbox"
+            _ => "fa-tools"
         };
+    }
+
+    // Helper function to get category name by ID
+    public string GetCategoryName(int? categoryId)
+    {
+        if (categoryId == null) return "";
+        foreach (var category in ViewBag.Categories)
+        {
+            if (category.CategoryId == categoryId)
+            {
+                return category.Name;
+            }
+        }
+        return "";
+    }
+
+    // Helper function to get type name by ID
+    public string GetTypeName(int? typeId)
+    {
+        if (typeId == null) return "";
+        foreach (var type in ViewBag.CategoriesType)
+        {
+            if (type.TypeProductId == typeId)
+            {
+                return type.Name;
+            }
+        }
+        return "";
     }
 }

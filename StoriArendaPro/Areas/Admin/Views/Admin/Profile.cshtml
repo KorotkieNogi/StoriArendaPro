@@ -1,0 +1,249 @@
+﻿@model StoriArendaPro.Models.Entities.User
+@{
+    ViewData["Title"] = "Профиль администратора";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<div class="container-fluid px-4">
+    <div class="d-flex justify-content-between align-items-center py-3 mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Профиль администратора</h1>
+        <span class="badge bg-danger fs-6">
+            <i class="fas fa-user-shield me-1"></i>Администратор
+        </span>
+    </div>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <div class="row">
+        <!-- Основная информация -->
+        <div class="col-xl-4 col-lg-5">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Основная информация</h6>
+                </div>
+                <div class="card-body text-center">
+                    <div class="avatar-profile mb-3">
+                        <div class="avatar-initials bg-primary text-white rounded-circle mx-auto" style="width: 80px; height: 80px; line-height: 80px; font-size: 32px;">
+                            @Model.FullName?[0]
+                        </div>
+                    </div>
+                    <h4 class="mb-1">@Model.FullName</h4>
+                    <p class="text-muted mb-3">
+                        <i class="fas fa-user-shield me-1"></i>
+                        @string.Join(", ", ViewBag.UserRoles as IEnumerable<string> ?? new List<string>())
+                    </p>
+
+                    <div class="row text-start">
+                        <div class="col-12 mb-2">
+                            <i class="fas fa-envelope me-2 text-primary"></i>
+                            <strong>Email:</strong> @Model.Email
+                        </div>
+                        <div class="col-12 mb-2">
+                            <i class="fas fa-phone me-2 text-primary"></i>
+                            <strong>Телефон:</strong> @Model.PhoneNumber
+                        </div>
+                        <div class="col-12 mb-2">
+                            <i class="fas fa-calendar me-2 text-primary"></i>
+                            <strong>Регистрация:</strong> @Model.CreatedAt?.ToString("dd.MM.yyyy")
+                        </div>
+                        <div class="col-12">
+                            <i class="fas fa-sync-alt me-2 text-primary"></i>
+                            <strong>Обновлено:</strong> @Model.UpdatedAt?.ToString("dd.MM.yyyy HH:mm")
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Статистика администрирования -->
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-info">Статистика администрирования</h6>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between">
+                            <span>Проверено паспортов:</span>
+                            <strong class="text-primary">@ViewBag.VerifiedPassports</strong>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between">
+                            <span>Обработано заказов:</span>
+                            <strong class="text-success">@ViewBag.ProcessedOrders</strong>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between">
+                            <span>Решено тикетов:</span>
+                            <strong class="text-warning">@ViewBag.SolvedTickets</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Настройки профиля -->
+        <div class="col-xl-8 col-lg-7">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Редактирование профиля</h6>
+                </div>
+                <div class="card-body">
+                    <form asp-action="UpdateProfile" method="post">
+                        @Html.AntiForgeryToken()
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Полное имя *</label>
+                                    <input type="text" class="form-control" name="FullName"
+                                           value="@Model.FullName" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Email *</label>
+                                    <input type="email" class="form-control" name="Email"
+                                           value="@Model.Email" required>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Телефон *</label>
+                                    <input type="tel" class="form-control" name="Phone"
+                                           value="@Model.PhoneNumber" required>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Серия паспорта</label>
+                                    <input type="text" class="form-control" name="PassportSeria"
+                                           value="@Model.PassportSeria" maxlength="4">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Номер паспорта</label>
+                                    <input type="text" class="form-control" name="PassportNumber"
+                                           value="@Model.PassportNumber" maxlength="6">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Прописка</label>
+                                    <textarea class="form-control" name="Propiska" rows="2">@Model.Propiska</textarea>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Место проживания</label>
+                                    <textarea class="form-control" name="PlaceLive" rows="2">@Model.PlaceLive</textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                        <hr class="my-4">
+
+                        <h6 class="mb-3">Смена пароля</h6>
+
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label">Текущий пароль</label>
+                                    <input type="password" class="form-control" name="CurrentPassword">
+                                    <small class="text-muted">Обязательно для смены пароля</small>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label">Новый пароль</label>
+                                    <input type="password" class="form-control" name="NewPassword">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label">Подтверждение пароля</label>
+                                    <input type="password" class="form-control" name="ConfirmPassword">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save me-1"></i>Сохранить изменения
+                            </button>
+                            <a href="@Url.Action("Profile")" class="btn btn-outline-secondary">
+                                <i class="fas fa-undo me-1"></i>Отмена
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        .avatar-initials {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .form-label {
+            font-weight: 500;
+        }
+    </style>
+}
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Валидация формы
+            $('form').validate({
+                rules: {
+                    FullName: { required: true, minlength: 2 },
+                    Email: { required: true, email: true },
+                    Phone: { required: true },
+                    NewPassword: {
+                        minlength: 6
+                    },
+                    ConfirmPassword: {
+                        equalTo: "input[name='NewPassword']"
+                    }
+                },
+                messages: {
+                    ConfirmPassword: "Пароли должны совпадать"
+                }
+            });
+
+            // Ограничение ввода для паспортных данных
+            $('input[name="PassportSeria"]').on('input', function() {
+                this.value = this.value.replace(/[^0-9]/g, '').substring(0, 4);
+            });
+
+            $('input[name="PassportNumber"]').on('input', function() {
+                this.value = this.value.replace(/[^0-9]/g, '').substring(0, 6);
+            });
+        });
+    </script>
+}

@@ -1,0 +1,178 @@
+﻿@model IEnumerable<StoriArendaPro.Models.Entities.SalePrice>
+@{
+    ViewData["Title"] = "Каталог оборудования для покупки";
+}
+
+<div class="container mt-5">
+    <h1 class="mb-4">@ViewData["Title"]</h1>
+
+    <!-- Фильтры и сортировка -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    Фильтры
+                </div>
+                <div class="card-body">
+                    <!-- Категории -->
+                    <div class="mb-4">
+                        <h5 class="mb-3">Категории</h5>
+                        <div class="list-group">
+                            @foreach (var category in ViewBag.Categories)
+                            {
+                                <a href="@Url.Action("Sale", "Catalog", new { categoryId = category.CategoryId })"
+                                   class="list-group-item list-group-item-action @(ViewBag.CurrentCategory == category.CategoryId ? "active" : "")">
+                                    <i class="fas @GetCategoryIcon(category.Name) me-2"></i>
+                                    @category.Name
+                                </a>
+                            }
+                        </div>
+                    </div>
+
+                    <!-- Цена -->
+                    <div class="mb-4">
+                        <h5 class="mb-3">Цена</h5>
+                        <div class="price-range-slider mb-3">
+                            <input type="range" class="form-range" min="0" max="100000" step="1000" id="priceMin" value="@(ViewBag.MinPrice ?? 0)">
+                            <input type="range" class="form-range" min="0" max="100000" step="1000" id="priceMax" value="@(ViewBag.MaxPrice ?? 100000)">
+                            <div class="d-flex justify-content-between">
+                                <span id="priceMinValue">@((ViewBag.MinPrice ?? 0).ToString("N0")) ₽</span>
+                                <span id="priceMaxValue">@((ViewBag.MaxPrice ?? 100000).ToString("N0")) ₽</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Производители -->
+                    <div class="mb-4">
+                        <h5 class="mb-3">Производители</h5>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="" id="manufacturer1">
+                            <label class="form-check-label" for="manufacturer1">
+                                Bosch
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="" id="manufacturer2">
+                            <label class="form-check-label" for="manufacturer2">
+                                Makita
+                            </label>
+                        </div>
+                        <!-- Добавьте других производителей -->
+                    </div>
+
+                    <button class="btn btn-primary w-100">Применить фильтры</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Список товаров -->
+        <div class="col-md-9">
+            <!-- Сортировка -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div class="text-muted">
+                    Найдено @Model.Count() товаров
+                </div>
+                <div class="dropdown">
+                    <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="sortDropdown" data-bs-toggle="dropdown">
+                        Сортировка: @(ViewBag.SortBy ?? "По умолчанию")
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="@Url.Action("Sale", "Catalog", new { sortBy = "default" })">По умолчанию</a></li>
+                        <li><a class="dropdown-item" href="@Url.Action("Sale", "Catalog", new { sortBy = "price_asc" })">Цена по возрастанию</a></li>
+                        <li><a class="dropdown-item" href="@Url.Action("Sale", "Catalog", new { sortBy = "price_desc" })">Цена по убыванию</a></li>
+                        <li><a class="dropdown-item" href="@Url.Action("Sale", "Catalog", new { sortBy = "popular" })">По популярности</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Товары -->
+            <div class="row">
+                @foreach (var product in Model)
+                {
+                    <div class="col-md-4 mb-4">
+                        <div class="card product-card h-100">
+                            <!-- Изображение товара -->
+                            <div class="product-image-container">
+                                @if (product.Product.ProductImages != null && product.Product.ProductImages.Count > 0)
+                                {
+                                    <img src="/photoEquipment/@product.Product.ProductImages.First().Path" class="product-image" alt="@product.Product.Name">
+                                }
+                                else
+                                {
+                                    <img src="https://baids.ru/storage/lot-images/27/22/2722226/a036b6e9ad987f2eb92cf50944a70f50.jpeg" class="product-image" alt="Нет изображения">
+                                }
+                                @* <!-- Бейдж новинки/акции -->
+                                @if (product.IsNew)
+                                {
+                                    <span class="badge bg-danger position-absolute top-0 start-0 m-2">Новинка</span>
+                                }
+                                @if (product.Discount > 0)
+                                {
+                                    <span class="badge bg-success position-absolute top-0 end-0 m-2">-@product.Discount%</span>
+                                } *@
+                            </div>
+
+                            <div class="card-body">
+                                <h5 class="card-title">@product.Product.Name</h5>
+                                <p class="card-text text-muted">@product.Product.ShortDescription</p>
+
+                                <!-- Цена -->
+                                <div class="price-info mb-3">
+                                    @* @if (product.Discount > 0)
+                                    {
+                                        <span class="text-muted text-decoration-line-through me-2">@product.Price.ToString("N0") ₽</span>
+                                        <span class="text-danger fw-bold">@((product.Price * (100 - product.Discount) / 100).ToString("N0")) ₽</span>
+                                    }
+                                    else
+                                    { *@
+                                        <span class="fw-bold">@product.Price.ToString("N0") ₽</span>
+                                    @* } *@
+                                </div>
+
+                                <!-- Кнопки -->
+                                <div class="d-flex justify-content-between">
+                                    <a href="@Url.Action("ProductDetails", "Catalog", new { id = product.ProductId })" class="btn btn-outline-primary">Подробнее</a>
+                                    <button class="btn btn-primary add-to-cart" data-product-id="@product.ProductId">
+                                        <i class="fas fa-shopping-cart me-1"></i> В корзину
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+
+            <!-- Пагинация -->
+            <nav aria-label="Page navigation">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item disabled">
+                        <a class="page-link" href="#" tabindex="-1">Назад</a>
+                    </li>
+                    <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                    <li class="page-item"><a class="page-link" href="#">2</a></li>
+                    <li class="page-item"><a class="page-link" href="#">3</a></li>
+                    <li class="page-item">
+                        <a class="page-link" href="#">Вперед</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+@functions {
+    // Helper function to get icons for categories
+    public string GetCategoryIcon(string categoryName)
+    {
+        return categoryName switch
+        {
+            "Строительство, бетон" => "fa-concrete",
+            "Для дома и дачи" => "fa-paint-roller",
+            "Грузоподъемное" => "fa-crane",
+            "Земляройная техника" => "fa-shovel",
+            "Электроинструмент" => "fa-bolt",
+            "Временные сооружения" => "fa-layer-group",
+            _ => "fa-tools"
+        };
+    }
+}

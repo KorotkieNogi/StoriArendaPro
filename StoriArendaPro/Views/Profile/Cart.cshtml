@@ -1,0 +1,73 @@
+﻿@model List<StoriArendaPro.Models.Entities.ShoppingCart>
+@{
+    ViewData["Title"] = "Корзина";
+}
+
+<div class="container py-5">
+    <h1 class="mb-4">Корзина</h1>
+
+    @if (Model.Any())
+    {
+        <div class="row">
+            <div class="col-lg-8">
+                @foreach (var item in Model)
+                {
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <img src="/photoEquipment/@item.RentalPrice.Product.ProductImages.FirstOrDefault()?.Path"
+                                         class="img-fluid rounded" alt="@item.RentalPrice.Product.Name">
+                                </div>
+                                <div class="col-md-6">
+                                    <h5>@item.RentalPrice.Product.Name</h5>
+                                    <p>@item.StartDate?.ToString("dd.MM.yyyy") - @item.EndDate?.ToString("dd.MM.yyyy")</p>
+
+                                    <div class="d-flex align-items-center">
+                                        <form method="post" action="@Url.Action("UpdateCartQuantity", "Profile")" class="d-flex align-items-center">
+                                            <input type="hidden" name="cartId" value="@item.CartId">
+                                            <label class="me-2">Количество:</label>
+                                            <input type="number" name="quantity" value="@item.Quantity"
+                                                   min="1" max="@item.RentalPrice.Product.Inventories.FirstOrDefault()?.QuantityForRent"
+                                                   class="form-control form-control-sm" style="width: 80px;">
+                                            <button type="submit" class="btn btn-sm btn-outline-primary ms-2">
+                                                <i class="fas fa-sync-alt"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+
+                                    <p class="mt-2">Цена за единицу: @item.UnitPrice.ToString("N2") ₽</p>
+                                </div>
+                                <div class="col-md-3 text-end">
+                                    <p class="h5">@item.Subtotal.ToString("N2") ₽</p>
+                                    <form method="post" action="@Url.Action("RemoveFromCart", "Profile")">
+                                        <input type="hidden" name="cartId" value="@item.CartId">
+                                        <button type="submit" class="btn btn-danger btn-sm">Удалить</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+            <div class="col-lg-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5>Итого</h5>
+                        <p>Общая стоимость: @Model.Sum(i => i.Subtotal).ToString("N2") ₽</p>
+                        <a href="@Url.Action("Checkout", "Order")" class="btn btn-primary w-100">Оплатить</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="text-center py-5">
+            <i class="fas fa-shopping-cart fa-4x text-muted mb-3"></i>
+            <h4>Корзина пуста</h4>
+            <p>Добавьте товары в корзину для аренды</p>
+            <a href="@Url.Action("Index", "Home")" class="btn btn-primary">Перейти к товарам</a>
+        </div>
+    }
+</div>

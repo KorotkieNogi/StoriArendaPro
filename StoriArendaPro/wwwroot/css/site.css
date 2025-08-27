@@ -1,33 +1,200 @@
-/* Base Styles */
+/* ===== BASE STYLES ===== */
 :root {
     --primary-color: #2c3e50;
     --secondary-color: #e74c3c;
     --accent-color: #3498db;
     --light-color: #ecf0f1;
     --dark-color: #2c3e50;
+    --success-color: #27ae60;
+    --warning-color: #f39c12;
+    --danger-color: #e74c3c;
+    --orange-color: #e67e22;
+    --orange-dark: #d35400;
     --text-color: #333;
     --text-light: #7f8c8d;
+    --border-radius: 8px;
+    --shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    --transition: all 0.3s ease;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
 body {
-    font-family: 'Roboto', sans-serif;
+    font-family: 'Roboto', 'Inter', sans-serif;
     color: var(--text-color);
     line-height: 1.6;
+    overflow-x: hidden;
+    background-color: #f8f9fa;
 }
 
+/* ===== LAYOUT COMPONENTS ===== */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 15px;
+}
 
+/* Header & Navigation */
+.navbar {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--dark-color) 100%) !important;
+    box-shadow: var(--shadow);
+}
 
+.navbar-brand {
+    font-weight: 700;
+    font-size: 1.5rem;
+    color: white !important;
+}
 
+.navbar-nav .nav-link {
+    color: rgba(255, 255, 255, 0.9) !important;
+    font-weight: 500;
+    padding: 0.5rem 1rem;
+    transition: var(--transition);
+}
 
+    .navbar-nav .nav-link:hover {
+        color: white !important;
+        transform: translateY(-2px);
+    }
 
-/* Hero Section используемая*/
+.dropdown-menu {
+    border: none;
+    box-shadow: var(--shadow);
+    border-radius: var(--border-radius);
+}
+
+.dropdown-item {
+    transition: var(--transition);
+}
+
+    .dropdown-item:hover {
+        background-color: var(--light-color);
+        color: var(--accent-color);
+    }
+
+/* ===== УЛУЧШЕННЫЕ ФИЛЬТРЫ ===== */
+.filter-dropdown {
+    margin-bottom: 0.5rem;
+}
+
+    .filter-dropdown .dropdown-toggle {
+        border: 1px solid #dee2e6;
+        border-radius: var(--border-radius);
+        padding: 0.75rem 1rem;
+        font-weight: 500;
+        color: var(--text-color);
+        background: white;
+        text-align: left;
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        transition: var(--transition);
+    }
+
+        .filter-dropdown .dropdown-toggle:hover {
+            border-color: var(--accent-color);
+            background-color: #f8f9fa;
+        }
+
+        .filter-dropdown .dropdown-toggle:focus {
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.25);
+        }
+
+    .filter-dropdown .dropdown-menu {
+        max-height: 500px; /* Увеличиваем высоту выпадающего списка */
+        min-width: 280px; /* Увеличиваем минимальную ширину */
+        overflow-y: auto;
+        padding: 0.5rem;
+        border: 1px solid #dee2e6;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    .filter-dropdown .dropdown-item {
+        padding: 0.75rem 1rem;
+        margin: 0.25rem 0;
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        transition: var(--transition);
+        color: var(--text-color);
+        font-weight: 400;
+    }
+
+        .filter-dropdown .dropdown-item:hover {
+            background-color: #e9ecef;
+            color: var(--accent-color);
+            transform: translateX(5px);
+        }
+
+        .filter-dropdown .dropdown-item.active {
+            background-color: var(--accent-color);
+            color: white;
+            font-weight: 500;
+        }
+
+        .filter-dropdown .dropdown-item i {
+            width: 20px;
+            text-align: center;
+            margin-right: 0.75rem;
+            font-size: 0.9rem;
+        }
+
+    .filter-dropdown .dropdown-divider {
+        margin: 0.5rem 0;
+        border-color: #dee2e6;
+    }
+
+/* Специфичные стили для фильтров в Rent.cshtml */
+.card .filter-dropdown .dropdown-menu {
+    min-width: 100%;
+    max-width: 300px;
+}
+
+.card .filter-dropdown .dropdown-item {
+    white-space: normal;
+    line-height: 1.4;
+}
+
+/* Footer */
+.footer {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--dark-color) 100%);
+    color: white;
+    padding: 3rem 0;
+}
+
+    .footer h4 {
+        color: white;
+        margin-bottom: 1rem;
+        font-weight: 600;
+    }
+
+    .footer a {
+        color: rgba(255, 255, 255, 0.8);
+        text-decoration: none;
+        transition: var(--transition);
+    }
+
+        .footer a:hover {
+            color: white;
+            text-decoration: underline;
+        }
+
+/* ===== HERO SECTIONS ===== */
 .hero-section {
     position: relative;
     height: 100vh;
-    min-height: 700px;
+    min-height: 600px;
     display: flex;
     align-items: center;
     overflow: hidden;
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-color) 100%);
 }
 
 .hero-video {
@@ -41,8 +208,7 @@ body {
     height: auto;
     z-index: 0;
     object-fit: cover;
-    filter: brightness(0.8);
-    background-size: cover;
+    filter: brightness(0.7);
 }
 
 .video-overlay {
@@ -51,7 +217,7 @@ body {
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.4);
+    background: rgba(0, 0, 0, 0.1);
     z-index: 1;
 }
 
@@ -60,66 +226,321 @@ body {
     z-index: 2;
     color: white;
     text-align: center;
-    padding: 0 20px;
-    max-width: 900px;
+    max-width: 800px;
     margin: 0 auto;
 }
 
 .hero-section h1 {
-    font-size: 3.5rem;
+    font-size: 3rem;
     font-weight: 800;
     margin-bottom: 1.5rem;
     text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
-    letter-spacing: 1px;
 }
 
 .hero-section .lead {
-    font-size: 1.8rem;
-    margin-bottom: 2.5rem;
-    text-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+    font-size: 1.4rem;
+    margin-bottom: 2rem;
+    opacity: 0.9;
 }
+
+.hero-section-catalog-choice {
+    background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
+    background-size: cover;
+    background-position: center;
+    padding: 100px 0;
+    color: white;
+    text-align: center;
+}
+
+/* ===== BUTTONS ===== */
+.btn {
+    border-radius: var(--border-radius);
+    font-weight: 500;
+    transition: var(--transition);
+    border: none;
+    padding: 0.75rem 1.5rem;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, var(--accent-color) 0%, #2980b9 100%);
+    border: none;
+}
+
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(52, 152, 219, 0.4);
+    }
+
+.btn-outline-primary {
+    border: 2px solid var(--accent-color);
+    color: var(--accent-color);
+}
+
+    .btn-outline-primary:hover {
+        background: var(--accent-color);
+        color: white;
+    }
 
 .btn-lg {
-    padding: 15px 40px;
-    font-size: 1.2rem;
-    border-radius: 50px;
-    transition: all 0.3s;
+    padding: 1rem 2rem;
+    font-size: 1.1rem;
 }
 
-.pulse-animation {
-    animation: pulse 2s infinite;
+/* ===== CARDS ===== */
+.card {
+    border: 1px solid #e9ecef;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    transition: var(--transition);
+    overflow: hidden;
+    background: white;
 }
 
-@keyframes pulse {
-    0% {
-        transform: scale(1);
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        border-color: var(--accent-color);
     }
 
-    50% {
-        transform: scale(1.05);
-    }
-
-    100% {
-        transform: scale(1);
-    }
+.product-card {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    background: white;
+    border: 1px solid #e9ecef;
 }
 
-.foot {
-    background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('https://static.tildacdn.com/tild3033-6434-4966-b538-656162313136/9c69e719-cf9e-4d3c-9.jpg') no-repeat center center;
-    background-size: cover;
-    padding: 120px 0;
+    .product-card .card-body {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        padding: 1.25rem;
+        color: var(--text-color);
+    }
+
+    .product-card .price-info {
+        margin-top: auto;
+        padding-top: 1rem;
+        color: var(--text-color);
+    }
+
+.category-card {
     text-align: center;
+    padding: 2rem 1.5rem;
+    height: 100%;
+    background: white;
+    color: var(--text-color);
+    border: 1px solid #dee2e6;
 }
 
-/* Section Styling */
-    .section-title {
+.category-icon {
+    font-size: 2.5rem;
+    color: var(--accent-color);
+    margin-bottom: 1rem;
+}
+
+.catalog-card {
     text-align: center;
-    padding-top: 20px;
-    margin-bottom: 50px;
+    padding: 3rem 2rem;
+    transition: var(--transition);
+    background: white;
+    color: var(--text-color);
+    border: 1px solid #dee2e6;
+}
+
+    .catalog-card:hover {
+        transform: translateY(-10px);
+    }
+
+.catalog-icon {
+    font-size: 4rem;
+    color: var(--accent-color);
+    margin-bottom: 1.5rem;
+    transition: var(--transition);
+}
+
+.catalog-card:hover .catalog-icon {
+    transform: scale(1.1);
+}
+
+/* ===== IMAGES & CAROUSELS ===== */
+.image-container {
+    height: 250px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f8f9fa;
+    padding: 1rem;
+    border-radius: var(--border-radius);
+    margin: 1rem;
+}
+
+    .image-container img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        transition: var(--transition);
+    }
+
+.product-card:hover .image-container img {
+    transform: scale(1.05);
+}
+
+.carousel {
+    height: 100%;
+}
+
+.carousel-inner, .carousel-item {
+    height: 100%;
+}
+
+    .carousel-item img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+    }
+
+.carousel-control-prev, .carousel-control-next {
+    width: 40px;
+    height: 40px;
+    background: rgba(52, 152, 219, 0.8) !important; /* Голубой цвет с прозрачностью */
+    border-radius: 50%;
+    top: 50%;
+    transform: translateY(-50%);
+    opacity: 0.8;
+    transition: var(--transition);
+}
+
+.carousel-control-prev {
+    left: 10px;
+}
+
+.carousel-control-next {
+    right: 10px;
+}
+
+    .carousel-control-prev:hover, .carousel-control-next:hover {
+        background: rgba(52, 152, 219, 1) !important; /* Полностью непрозрачный при наведении */
+        opacity: 1;
+    }
+
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+    filter: brightness(0) invert(1); /* Делает иконки белыми */
+    width: 20px;
+    height: 20px;
+}
+
+/* ===== TABS WITH GLOW EFFECT===== */
+.nav-tabs {
+    border-bottom: 2px solid #e9ecef;
+}
+
+    .nav-tabs .nav-link {
+        border: none;
+        color: var(--text-light);
+        font-weight: 500;
+        padding: 1rem 1.5rem;
+        transition: var(--transition);
+        position: relative;
+        overflow: hidden;
+        background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+        background-size: 200% 100%;
+        background-position: 100% 0;
+    }
+
+        .nav-tabs .nav-link::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.3), transparent);
+            transition: all 0.6s ease;
+            z-index: 1;
+        }
+
+        .nav-tabs .nav-link:hover::before,
+        .nav-tabs .nav-link:focus::before,
+        .nav-tabs .nav-link.active::before {
+            left: 100%;
+        }
+
+        .nav-tabs .nav-link.active {
+            color: var(--accent-color);
+            background: transparent;
+            border-bottom: 3px solid var(--accent-color);
+            background-position: 0 0;
+        }
+
+        .nav-tabs .nav-link:hover:not(.active) {
+            color: var(--accent-color);
+            border-bottom: 3px solid rgba(52, 152, 219, 0.3);
+        }
+
+/* Specific styles for equipment type tabs */
+#equipmentTypeTabs .nav-link {
+    color: black;
+    background: linear-gradient(45deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0.2));
+    border-radius: 25px;
+    margin: 0 5px;
+    border: 2px solid transparent;
+}
+
+    #equipmentTypeTabs .nav-link.active {
+        color: white !important;
+        background: linear-gradient(45deg, #3b5998, #2c3e50);
+        border-bottom: 3px solid #3b5998;
+        box-shadow: 0 4px 15px rgba(59, 89, 152, 0.4);
+    }
+
+    #equipmentTypeTabs .nav-link:not(.active) {
+        color: #2c3e50 !important;
+        background: linear-gradient(45deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.3));
+    }
+
+    #equipmentTypeTabs .nav-link:hover:not(.active) {
+        color: #3b5998 !important;
+        background: linear-gradient(45deg, rgba(59, 89, 152, 0.1), rgba(59, 89, 152, 0.2), rgba(59, 89, 152, 0.1));
+        border-bottom: 3px solid rgba(59, 89, 152, 0.3);
+    }
+.tab-content {
+    padding: 2rem 0;
+}
+
+/* ===== FORMS ===== */
+.form-control {
+    border-radius: var(--border-radius);
+    border: 2px solid #e9ecef;
+    padding: 0.75rem 1rem;
+    transition: var(--transition);
+}
+
+    .form-control:focus {
+        border-color: var(--accent-color);
+        box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.25);
+    }
+
+.input-group .btn {
+    border-radius: 0 var(--border-radius) var(--border-radius) 0;
+}
+
+/* ===== BADGES ===== */
+.badge {
+    font-weight: 500;
+    padding: 0.5rem 0.75rem;
+    border-radius: 20px;
+}
+
+/* ===== UTILITY CLASSES ===== */
+.section-title {
+    text-align: center;
+    margin-bottom: 3rem;
     font-weight: 700;
-    color: var(--primary-color);
     position: relative;
-    padding-bottom: 15px;
+    padding-bottom: 1rem;
 }
 
     .section-title:after {
@@ -130,506 +551,480 @@ body {
         transform: translateX(-50%);
         width: 80px;
         height: 3px;
-        background: var(--secondary-color);
+        background: var(--accent-color);
     }
 
-/* Product Card */
-.product-card {
-    border: 1px solid #e9ecef;
-    border-radius: 8px;
-    overflow: hidden;
-    transition: all 0.3s ease;
-    display: flex;
-    flex-direction: column;
-    height: 100%;
+.text-primary {
+    color: var(--accent-color) !important;
 }
 
-    .product-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-    }
-
-    .product-card .card-img-top {
-        height: 0px;
-        object-fit: cover;
-    }
-
-    .product-card .card-body {
-        padding: 20px;
-    }
-
-    .product-card .price-info {
-        margin: 15px 0;
-    }
-
-    .product-card .price {
-        font-size: 1.2rem;
-        font-weight: 700;
-        color: var(--secondary-color);
-    }
-    /* Image Container */
-    .product-card .image-container {
-        
-        overflow: hidden;
-        background-color: #f8f9fa;
-    }
-    .product-card .image-container img {
-        width: 100%;
-        height: 100%;
-        object-fit: contain;
-        padding: 10px;
-    }
-    /* Carousel Improvements */
-    .product-card .carousel {
-        height: 200px; /* Фиксированная высота карусели */
-    }
-    .product-card .carousel-inner,
-    .product-card .carousel-item,
-    .product-card .image-container {
-        height: 100%;
-        width: 100%;
-    }
-    .product-card .carousel-item img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover; /* Заполнение всего пространства с сохранением пропорций */
-    }
-/* No Image Placeholder */
-.no-image-placeholder {
-    height: 200px;
-    background-color: #f8f9fa;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+.text-success {
+    color: var(--success-color) !important;
 }
 
-    .no-image-placeholder img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-    }
-
-/* Card Body */
-.product-card .card-body {
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    flex-grow: 1;
+.text-warning {
+    color: var(--warning-color) !important;
 }
 
-.product-card .card-title {
-    font-size: 1.1rem;
-    font-weight: 600;
-    margin-bottom: 10px;
-    color: var(--dark-color);
+.text-danger {
+    color: var(--danger-color) !important;
 }
 
-.product-card .card-text {
-    font-size: 0.9rem;
-    color: var(--text-light);
-    margin-bottom: 15px;
+.bg-primary {
+    background-color: var(--accent-color) !important;
 }
 
-.product-card .price-info {
-    margin-top: auto;
+.bg-success {
+    background-color: var(--success-color) !important;
 }
 
-.product-card .price {
-    font-size: 1.2rem;
-    font-weight: 700;
-    color: var(--secondary-color);
+.bg-warning {
+    background-color: var(--warning-color) !important;
 }
 
-
-/* Carousel Controls - Updated for better visibility */
-.carousel-control-prev,
-.carousel-control-next {
-    width: 40px;
-    height: 40px;
-    top: 50%;
-    transform: translateY(-50%);
-    background-color: rgba(255, 255, 255, 0.9);
-    border-radius: 50%;
-    opacity: 1;
-    transition: all 0.3s ease;
-    border: 1px solid #e0e0e0;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+.bg-danger {
+    background-color: var(--danger-color) !important;
 }
 
-    .carousel-control-prev:hover,
-    .carousel-control-next:hover {
-        background-color: white;
-        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.2);
-    }
-
-.carousel-control-prev-icon,
-.carousel-control-next-icon {
-    width: 1.5rem;
-    height: 1.5rem;
-    background-size: 100% 100%;
-    filter: brightness(0) invert(0);
-    opacity: 0.8;
+.bg-orange-dark {
+    background: linear-gradient(135deg, var(--orange-color) 0%, var(--orange-dark) 100%);
+    color: white;
+    padding: 4rem 0;
 }
 
-.carousel-control-prev {
-    left: 15px;
+.bg-dark {
+    background: var(--dark-color) !important;
+    color: white;
+    padding: 4rem 0;
 }
 
-.carousel-control-next {
-    right: 15px;
-}
- 
-/* Carousel Controls */
-/* Для карусели в карточках товаров */
-.product-card .carousel-control-prev,
-.product-card .carousel-control-next {
-    width: 30px;
-    height: 30px;
-    background-color: rgba(255, 255, 255, 0.9);
+.bg-light {
+    background: #f8f9fa !important;
+    padding: 4rem 0;
 }
 
-.product-card .carousel-control-prev {
-    left: 10px;
+/* ===== ADVANTAGES SECTION ===== */
+.advantages-section {
+    padding: 4rem 0;
 }
 
-.product-card .carousel-control-next {
-    right: 10px;
-}
-
-.product-card .carousel-control-prev-icon,
-.product-card .carousel-control-next-icon {
-    width: 1rem;
-    height: 1rem;
-}
-
-/* Responsive Adjustments */
-@media (max-width: 767.98px) {
-    .product-card .carousel,
-    .no-image-placeholder {
-        height: 180px;
-    }
-}
-
-@media (max-width: 575.98px) {
-    .product-card .carousel,
-    .no-image-placeholder {
-        height: 160px;
-    }
-}
-
-/* Categories Section */
-.category-card {
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    display: flex;
-    flex-direction: column;
-}
-
-    .category-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-    }
-
-.category-icon {
-    transition: transform 0.3s ease;
-}
-
-.category-card:hover .category-icon {
-    transform: scale(1.1);
-}
-
-
-
-
-
-
-
-
-
-
-
-/* Стили для карточек категорий аренды в самом уже каталоке */
-.category-card-rent {
-    border: none;
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-    transition: all 0.3s ease;
-    background: linear-gradient(145deg, #ffffff, #f8f9fa);
-}
-
-    .category-card-rent:hover {
-        transform: translateY(-8px);
-        box-shadow: 0 12px 25px rgba(0, 0, 0, 0.15);
-    }
-
-.category-icon-wrapper {
-    background: linear-gradient(135deg, #e3f2fd, #bbdefb);
-    width: 80px;
-    height: 80px;
-    margin: 0 auto;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #1976d2;
-    box-shadow: 0 4px 8px rgba(25, 118, 210, 0.2);
-}
-
-.card-title {
-    color: #2c3e50;
-    font-weight: 600;
-    margin: 15px 0;
-    font-size: 1.25rem;
-}
-
-.card-text {
-    color: #546e7a;
-    font-size: 0.95rem;
-    line-height: 1.5;
-    margin-bottom: 20px;
-}
-
-.btn-category {
-    background: linear-gradient(135deg, #1976d2, #2196f3);
-    border: none;
-    border-radius: 30px;
-    padding: 10px 25px;
-    font-weight: 500;
-    box-shadow: 0 4px 8px rgba(25, 118, 210, 0.3);
-    transition: all 0.3s ease;
-    width: auto;
-    display: inline-block;
-}
-
-    .btn-category:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 12px rgba(25, 118, 210, 0.4);
-        background: linear-gradient(135deg, #1565c0, #1976d2);
-    }
-
-/* Фиксированное положение кнопки */
-.card-body {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-}
-
-.card-text {
-    flex-grow: 1;
-}
-/*Для адаптивности на мобильных устройствах*/
-@media (max-width: 768px) {
-    .category-card-rent {
-        margin-bottom: 20px;
-    }
-
-    .btn-category {
-        padding: 8px 20px;
-        font-size: 0.9rem;
-    }
-}
-
-
-
-
-
-
-
-/* Tabs customization */
-.nav-tabs .nav-link {
-    border: none;
-    color: #6c757d;
-    font-weight: 500;
-    padding: 0.75rem 1.5rem;
-    border-radius: 0;
-}
-
-    .nav-tabs .nav-link.active {
-        color: #0d6efd;
-        background: transparent;
-        border-bottom: 3px solid #0d6efd;
-    }
-
-    .nav-tabs .nav-link:hover:not(.active) {
-        color: #0d6efd;
-        border-bottom: 3px solid rgba(13, 110, 253, 0.2);
-    }
 .advantage-item {
     text-align: center;
-    padding: 20px;
+    padding: 2rem 1rem;
+    transition: var(--transition);
 }
 
 .advantage-icon {
     width: 80px;
     height: 80px;
-    background: var(--accent-color);
+    background: rgba(255, 255, 255, 0.2);
     color: white;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin: 0 auto 20px;
+    margin: 0 auto 1.5rem;
     font-size: 2rem;
+    transition: var(--transition);
+    
 }
 
-/* Responsive Adjustments */
-@media (max-width: 768px) {
-    .hero-content h1 {
-        font-size: 2rem;
-    }
-
-    .hero-content .lead {
-        font-size: 1.2rem;
-    }
+.advantage-item:hover .advantage-icon {
+    transform: scale(1.1) rotate(5deg);
 }
 
+.advantage-item h3 {
+    color: darkslategray;
+    margin-bottom: 1rem;
+}
 
+.advantage-item p {
+    color: rgba(255, 255, 255);
+}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-.phone-link {
-    display: inline-flex;
-    align-items: center;
+/* ===== PRODUCT DETAILS ===== */
+.product-detail-img {
+    width: 100%;
+    height: 400px;
+    object-fit: contain;
     background: #f8f9fa;
-    border-radius: 50px;
-    padding: 8px 15px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    border-radius: var(--border-radius);
+    padding: 1rem;
 }
 
-.call-link {
-    color: #212529;
-    text-decoration: none;
-    font-weight: 500;
-    margin-right: 10px;
+.pricing-card {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-radius: var(--border-radius);
+    padding: 2rem;
+    margin-bottom: 2rem;
 }
 
-    .call-link:hover {
-        color: #0d6efd;
+.price-option {
+    background: white;
+    border-radius: var(--border-radius);
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    box-shadow: var(--shadow);
+    transition: var(--transition);
+}
+
+    .price-option:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 5px 20px rgba(0,0,0,0.15);
     }
 
-.copy-btn {
-    background: none;
+.price-value {
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: var(--danger-color);
+}
+
+.deposit-info {
+    background: #fff3cd;
+    border: 1px solid #ffeaa7;
+    border-radius: var(--border-radius);
+    padding: 1rem;
+    color: #856404;
+    font-weight: 500;
+}
+
+.availability {
+    background: #d4edda;
+    border: 1px solid #c3e6cb;
+    border-radius: var(--border-radius);
+    padding: 1rem;
+    color: #155724;
+    font-weight: 500;
+}
+
+/* ===== PROFILE PAGE ===== */
+.profile-tabs .nav-link {
     border: none;
-    color: #6c757d;
-    cursor: pointer;
-    padding: 5px;
-    border-radius: 50%;
-    transition: all 0.3s;
+    padding: 1rem 1.5rem;
+    font-weight: 500;
+    color: var(--text-light);
+    transition: var(--transition);
 }
 
-    .copy-btn:hover {
-        color: #0d6efd;
-        background: rgba(0,0,0,0.05);
+    .profile-tabs .nav-link.active {
+        color: var(--accent-color);
+        border-bottom: 3px solid var(--accent-color);
+        background: transparent;
+    }
+
+    .profile-tabs .nav-link:hover:not(.active) {
+        color: var(--accent-color);
+        border-bottom: 3px solid rgba(52, 152, 219, 0.3);
     }
 
 
-
-
-/* Стили для аккордеона категорий */
-.list-group-item[data-bs-toggle="collapse"] {
-    cursor: pointer;
-    transition: all 0.3s;
+/* Стили для страницы условий аренды */
+.rental-terms-section {
+    scroll-margin-top: 100px;
 }
 
-    .list-group-item[data-bs-toggle="collapse"] .fa-chevron-down {
-        transition: transform 0.3s;
+.rental-steps .card {
+    transition: transform 0.3s ease;
+    border: none;
+    box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+}
+
+    .rental-steps .card:hover {
+        transform: translateY(-5px);
     }
 
-    .list-group-item[data-bs-toggle="collapse"][aria-expanded="true"] .fa-chevron-down {
-        transform: rotate(180deg);
-    }
+/* Анимация для якорных ссылок */
+html {
+    scroll-behavior: smooth;
+}
 
-.list-group-item.active {
+/* Стили для таблицы скидок */
+.discount-table th {
+    background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+    color: white;
+    border: none;
+}
+
+/* Стили для блока контактов на странице продукта */
+.interest-block {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border: 1px solid #dee2e6;
+    border-radius: 15px;
+}
+
+.contact-buttons .btn {
+    min-width: 200px;
     font-weight: 500;
 }
 
-/* Отступ для вложенных элементов */
-.dropdown-menu {
-    border: 1px solid rgba(0,0,0,.15);
-    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+/* ===== RESPONSIVE DESIGN ===== */
+@media (max-width: 1200px) {
+    .hero-section h1 {
+        font-size: 2.5rem;
+    }
+
+    .image-container {
+        height: 220px;
+    }
 }
 
-.list-group-item {
-    border-radius: 0 !important;
+@media (max-width: 992px) {
+    .hero-section {
+        min-height: 500px;
+    }
+
+        .hero-section h1 {
+            font-size: 2.2rem;
+        }
+
+        .hero-section .lead {
+            font-size: 1.2rem;
+        }
+
+    .image-container {
+        height: 200px;
+    }
+
+    .catalog-card {
+        padding: 2rem 1.5rem;
+    }
+
+    .catalog-icon {
+        font-size: 3rem;
+    }
+
+    .filter-dropdown .dropdown-menu {
+        min-width: 250px;
+    }
 }
 
-.dropdown-item {
-    white-space: normal;
-    word-wrap: break-word;
-}
-
-/* Для мобильных устройств */
 @media (max-width: 768px) {
-    .dropdown-menu {
-        position: static !important;
-        transform: none !important;
-        width: 100% !important;
+    .hero-section {
+        min-height: 400px;
+    }
+
+        .hero-section h1 {
+            font-size: 2rem;
+        }
+
+    .section-title {
+        font-size: 1.8rem;
+    }
+
+    .advantage-item {
+        margin-bottom: 2rem;
+    }
+
+    .image-container {
+        height: 180px;
+    }
+
+    .product-detail-img {
+        height: 300px;
+    }
+
+    .filter-dropdown .dropdown-menu {
+        min-width: 100%;
+        max-width: 100%;
+    }
+}
+
+@media (max-width: 576px) {
+    .hero-section h1 {
+        font-size: 1.8rem;
+    }
+
+    .hero-section .lead {
+        font-size: 1.1rem;
+    }
+
+    .btn-lg {
+        padding: 0.8rem 1.5rem;
+        font-size: 1rem;
+    }
+
+    .image-container {
+        height: 160px;
+    }
+
+    .product-detail-img {
+        height: 250px;
+    }
+
+    .catalog-card {
+        padding: 1.5rem 1rem;
+    }
+
+    .catalog-icon {
+        font-size: 2.5rem;
+    }
+
+    .filter-dropdown .dropdown-toggle {
+        padding: 0.6rem 0.8rem;
+        font-size: 0.9rem;
+    }
+
+    .filter-dropdown .dropdown-item {
+        padding: 0.6rem 0.8rem;
+        font-size: 0.9rem;
+    }
+}
+
+/* ===== ANIMATIONS ===== */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+        box-shadow: 0 0 0 rgba(52, 152, 219, 0.4);
+    }
+
+    50% {
+        transform: scale(1.05);
+        box-shadow: 0 0 20px rgba(52, 152, 219, 0.8);
+    }
+
+    100% {
+        transform: scale(1);
+        box-shadow: 0 0 0 rgba(52, 152, 219, 0.4);
+    }
+}
+
+.fade-in-up {
+    animation: fadeInUp 0.6s ease-out;
+}
+
+.pulse {
+    animation: pulse 2s infinite;
+}
+
+/* ===== ACCESSIBILITY ===== */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* Focus styles for accessibility */
+button:focus,
+input:focus,
+select:focus,
+textarea:focus,
+a:focus {
+    outline: 2px solid var(--accent-color);
+    outline-offset: 2px;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+    :root {
+        --text-color: #000;
+        --text-light: #444;
+    }
+
+    .card {
+        border: 2px solid #000;
+    }
+}
+
+.toast {
+    min-width: 300px;
+}
+
+.toast-body {
+    padding: 0.75rem;
+}
+
+
+
+/* Pulse animation for active tab */
+@keyframes tabPulse {
+    0% {
+        box-shadow: 0 0 0 rgba(59, 89, 152, 0.4);
+    }
+
+    50% {
+        box-shadow: 0 0 20px rgba(59, 89, 152, 0.8);
+    }
+
+    100% {
+        box-shadow: 0 0 0 rgba(59, 89, 152, 0.4);
+    }
+}
+
+#equipmentTypeTabs .nav-link.active {
+    animation: tabPulse 2s infinite;
+}
+
+/* Shine effect on click */
+@keyframes buttonShine {
+    0% {
+        background-position: 100% 0;
+    }
+
+    100% {
+        background-position: -100% 0;
+    }
+}
+
+/* Адаптивность для мобильных устройств кнопки карусели*/
+@media (max-width: 768px) {
+    .carousel-control-prev,
+    .carousel-control-next {
+        width: 30px;
+        height: 30px;
+    }
+
+    .carousel-control-prev-icon,
+    .carousel-control-next-icon {
+        width: 15px;
+        height: 15px;
     }
 }
 
 
 
 
-/* Стили для выпадающего меню каталога в header-е*/
-.navbar .dropdown-menu {
-    border: none;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-    border-radius: 8px;
-    padding: 0.5rem 0;
-    margin-top: 0.5rem;
+.nav-tabs .nav-link:active {
+    animation: buttonShine 0.6s ease-out;
 }
 
-.navbar .dropdown-item {
-    padding: 0.5rem 1.5rem;
-    font-weight: 500;
-    transition: all 0.2s;
-    border-radius: 4px;
-    margin: 0 0.5rem;
-}
 
-    .navbar .dropdown-item:hover {
-        background-color: #f8f9fa;
-        color: #0d6efd;
+/*Условие аренды: MAX под мобильные устройства*/
+@media (max-width: 768px) {
+    .d-flex.flex-wrap {
+        flex-direction: column;
+        gap: 12px !important;
     }
 
-    .navbar .dropdown-item i {
-        width: 20px;
-        text-align: center;
+    .btn-lg {
+        width: 100%;
+        max-width: 280px;
+        margin: 5px 0;
     }
 
-.navbar .dropdown-divider {
-    margin: 0.25rem 0;
-}
-
-/* Анимация при наведении */
-.nav-item.dropdown:hover .dropdown-menu {
-    display: block;
-}
-
-@media (max-width: 991.98px) {
-    .navbar .dropdown-menu {
-        box-shadow: none;
-        border-radius: 0;
-        margin-top: 0;
-        border-left: 3px solid #0d6efd;
+    .max-logo-img {
+        width: 22px;
+        height: 22px;
     }
+}
 
-    .navbar .dropdown-item {
-        padding: 0.75rem 1.5rem;
+@media (max-width: 576px) {
+    .btn-lg {
+        font-size: 14px;
+        padding: 10px 16px;
     }
 }
 

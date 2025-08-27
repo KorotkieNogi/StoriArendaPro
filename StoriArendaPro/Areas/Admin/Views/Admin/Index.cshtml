@@ -1,0 +1,448 @@
+﻿@model StoriArendaPro.Models.ViewModels.AdminDashboardViewModel
+@{
+    ViewData["Title"] = "Админ-панель";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<div class="container-fluid px-4">
+    <!-- Заголовок -->
+    <div class="d-flex justify-content-between align-items-center py-3 mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Админ-панель</h1>
+        <span class="badge bg-primary fs-6">
+            <i class="fas fa-user-shield me-1"></i>Администратор
+        </span>
+    </div>
+
+    <!-- Статистика -->
+    <div class="row">
+        <!-- Пользователи -->
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                Пользователи
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.TotalUsers</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-users fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                    <div class="mt-2">
+                        <a href="@Url.Action("Users", "Admin")" class="btn btn-sm btn-outline-primary">
+                            <i class="fas fa-list me-1"></i>Управление
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Товары -->
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                Товары
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.TotalProducts</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-tools fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                    <div class="mt-2">
+                        <a href="@Url.Action("Products", "Admin")" class="btn btn-sm btn-outline-success">
+                            <i class="fas fa-cog me-1"></i>Управление
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Паспортные проверки -->
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-warning shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                Паспортные проверки
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.PendingVerifications</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-passport fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                    <div class="mt-2">
+                        <a href="@Url.Action("PassportVerifications", "Admin")" class="btn btn-sm btn-outline-warning">
+                            <i class="fas fa-check-circle me-1"></i>Проверить
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Доход -->
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-info shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                Доход (месяц)
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.MonthlyRevenue.ToString("N2") ₽</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-ruble-sign fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                    <div class="mt-2">
+                        <a href="@Url.Action("Finance", "Admin")" class="btn btn-sm btn-outline-info">
+                            <i class="fas fa-chart-line me-1"></i>Отчеты
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Активные аренды -->
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-danger shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">
+                                Активные аренды
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.ActiveRentals</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-shopping-cart fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                    <div class="mt-2">
+                        <a href="@Url.Action("Orders", "Admin")" class="btn btn-sm btn-outline-danger">
+                            <i class="fas fa-list-alt me-1"></i>Заказы
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Запросы в поддержку -->
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-secondary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-secondary text-uppercase mb-1">
+                                Запросы в поддержку
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.PendingRequests</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-headset fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                    <div class="mt-2">
+                        <a href="@Url.Action("Support", "Admin")" class="btn btn-sm btn-outline-secondary">
+                            <i class="fas fa-comments me-1"></i>Поддержка
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Основной контент -->
+    <div class="row">
+        <!-- Последние проверки паспортов -->
+        <div class="col-xl-6 col-lg-6">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3 d-flex justify-content-between align-items-center">
+                    <h6 class="m-0 font-weight-bold text-primary">Последние проверки паспортов</h6>
+                    <a href="@Url.Action("PassportVerifications", "Admin")" class="btn btn-sm btn-primary">Все проверки</a>
+                </div>
+                <div class="card-body">
+                    @if (Model.Verifications.Any())
+                    {
+                        <div class="list-group list-group-flush">
+                            @foreach (var verification in Model.Verifications)
+                            {
+                                <a href="@Url.Action("PassportVerificationDetail", "Admin", new { id = verification.VerificationId })"
+                                   class="list-group-item list-group-item-action">
+                                    <div class="d-flex w-100 justify-content-between align-items-center">
+                                        <div>
+                                            <h6 class="mb-1">@verification.User.FullName</h6>
+                                            <small class="text-muted">@verification.PassportSeria @verification.PassportNumber</small>
+                                        </div>
+                                        <span class="badge bg-warning">@verification.Status</span>
+                                    </div>
+                                    <small class="text-muted">
+                                        <i class="fas fa-clock me-1"></i>
+                                        @verification.CreatedAt.ToString("dd.MM.yyyy HH:mm")
+                                    </small>
+                                </a>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center py-3">
+                            <i class="fas fa-check-circle fa-2x text-success mb-2"></i>
+                            <p class="text-muted mb-0">Все проверки завершены</p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Последние заказы -->
+        <div class="col-xl-6 col-lg-6">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3 d-flex justify-content-between align-items-center">
+                    <h6 class="m-0 font-weight-bold text-success">Последние заказы</h6>
+                    <a href="@Url.Action("Orders", "Admin")" class="btn btn-sm btn-success">Все заказы</a>
+                </div>
+                <div class="card-body">
+                    @if (Model.RecentOrders.Any())
+                    {
+                        <div class="list-group list-group-flush">
+                            @foreach (var order in Model.RecentOrders)
+                            {
+                                <div class="list-group-item">
+                                    <div class="d-flex w-100 justify-content-between">
+                                        <h6 class="mb-1">Заказ #@order.RentalOrderId</h6>
+                                        <span class="badge @GetOrderStatusBadge(order.Status)">@order.Status</span>
+                                    </div>
+                                    <p class="mb-1">@order.User.FullName</p>
+                                    <div class="d-flex justify-content-between">
+                                        <small class="text-muted">@order.TotalAmount.ToString("N2") ₽</small>
+                                        <small class="text-muted">@order.CreatedAt?.ToString("dd.MM.yyyy HH:mm")</small>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center py-3">
+                            <i class="fas fa-shopping-cart fa-2x text-muted mb-2"></i>
+                            <p class="text-muted mb-0">Заказов нет</p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Активные чаты поддержки -->
+        <div class="col-12">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3 d-flex justify-content-between align-items-center">
+                    <h6 class="m-0 font-weight-bold text-info">Активные чаты поддержки</h6>
+                    <a href="@Url.Action("Support", "Admin")" class="btn btn-sm btn-info">Все чаты</a>
+                </div>
+                <div class="card-body">
+                    @if (Model.ActiveChats.Any())
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Тема</th>
+                                        <th>Пользователь</th>
+                                        <th>Статус</th>
+                                        <th>Последнее обновление</th>
+                                        <th>Действия</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var chat in Model.ActiveChats)
+                                    {
+                                        <tr>
+                                            <td>@chat.Subject</td>
+                                            <td>@chat.User.FullName</td>
+                                            <td>
+                                                <span class="badge @GetChatStatusBadge(chat.Status)">@chat.Status</span>
+                                            </td>
+                                            <td>@chat.UpdatedAt.ToString("dd.MM.yyyy HH:mm")</td>
+                                            <td>
+                                                <a href="@Url.Action("Chat", "Admin", new { id = chat.ChatId })"
+                                                   class="btn btn-sm btn-outline-primary">
+                                                    <i class="fas fa-comment"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center py-3">
+                            <i class="fas fa-comments fa-2x text-muted mb-2"></i>
+                            <p class="text-muted mb-0">Активных чатов нет</p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Быстрые действия -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Быстрые действия</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3 col-6 mb-3">
+                            <a href="@Url.Action("Create", "Product")" class="btn btn-outline-primary w-100">
+                                <i class="fas fa-plus me-2"></i>Добавить товар
+                            </a>
+                        </div>
+                        <div class="col-md-3 col-6 mb-3">
+                            <a href="@Url.Action("Create", "Category")" class="btn btn-outline-success w-100">
+                                <i class="fas fa-folder-plus me-2"></i>Добавить категорию
+                            </a>
+                        </div>
+                        <div class="col-md-3 col-6 mb-3">
+                            <a href="@Url.Action("Reports", "Admin")" class="btn btn-outline-info w-100">
+                                <i class="fas fa-chart-bar me-2"></i>Отчеты
+                            </a>
+                        </div>
+                        <div class="col-md-3 col-6 mb-3">
+                            <a href="@Url.Action("Settings", "Admin")" class="btn btn-outline-secondary w-100">
+                                <i class="fas fa-cog me-2"></i>Настройки
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        .card {
+            border: none;
+            border-radius: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+            .card:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 4px 20px rgba(0,0,0,0.15) !important;
+            }
+
+        .border-left-primary {
+            border-left: 4px solid #4e73df !important;
+        }
+
+        .border-left-success {
+            border-left: 4px solid #1cc88a !important;
+        }
+
+        .border-left-info {
+            border-left: 4px solid #36b9cc !important;
+        }
+
+        .border-left-warning {
+            border-left: 4px solid #f6c23e !important;
+        }
+
+        .border-left-danger {
+            border-left: 4px solid #e74a3b !important;
+        }
+
+        .border-left-secondary {
+            border-left: 4px solid #858796 !important;
+        }
+
+        .list-group-item {
+            border: 1px solid rgba(0,0,0,0.08);
+            margin-bottom: 0.5rem;
+            border-radius: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+            .list-group-item:hover {
+                background-color: #f8f9fa;
+                border-color: #4e73df;
+            }
+
+        .avatar-sm {
+            width: 32px;
+            height: 32px;
+            font-size: 14px;
+        }
+
+        .avatar-lg {
+            width: 60px;
+            height: 60px;
+            font-size: 24px;
+        }
+    </style>
+}
+
+@section Scripts {
+    <script>
+        // Обновление статистики каждые 5 минут
+        setInterval(function() {
+            $.get('@Url.Action("DashboardStats", "Admin")', function(data) {
+                $('#userCount').text(data.totalUsers);
+                $('#productCount').text(data.totalProducts);
+                $('#verificationCount').text(data.pendingVerifications);
+                $('#revenueCount').text(data.monthlyRevenue.toFixed(2) + ' ₽');
+            });
+        }, 300000);
+
+        // Быстрый поиск
+        $('#searchInput').on('keyup', function() {
+            var value = $(this).val().toLowerCase();
+            $('.list-group-item').filter(function() {
+                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+            });
+        });
+    </script>
+}
+
+@functions {
+    public string GetOrderStatusBadge(string status)
+    {
+        return status switch
+        {
+            "активен" => "bg-success",
+            "оформлен" => "bg-primary",
+            "завершен" => "bg-info",
+            "отменен" => "bg-danger",
+            _ => "bg-secondary"
+        };
+    }
+
+    public string GetChatStatusBadge(string status)
+    {
+        return status switch
+        {
+            "открыто" => "bg-warning",
+            "в процессе" => "bg-info",
+            "решено" => "bg-success",
+            "закрыто" => "bg-secondary",
+            _ => "bg-primary"
+        };
+    }
+}

@@ -23,8 +23,6 @@ public partial class Product
 
     public string? Specifications { get; set; }
 
-    public string? ImagePath { get; set; }
-
     public bool? IsActive { get; set; }
 
     public DateTime? CreatedAt { get; set; }
@@ -37,8 +35,7 @@ public partial class Product
 
     public virtual ICollection<Inventory> Inventories { get; set; } = new List<Inventory>();
 
-    //Не используется
-    //public virtual ICollection<RentalOrderItem> RentalOrderItems { get; set; } = new List<RentalOrderItem>();
+    
 
     public virtual ICollection<RentalPrice> RentalPrices { get; set; } = new List<RentalPrice>();
 

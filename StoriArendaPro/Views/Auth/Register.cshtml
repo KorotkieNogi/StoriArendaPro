@@ -1,0 +1,334 @@
+﻿@* @model StoriArendaPro.Models.ViewModels.RegisterViewModel
+@{
+    ViewData["Title"] = "Регистрация";
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5">
+            <div class="card shadow">
+                <div class="card-body p-5">
+                    <h2 class="card-title text-center mb-4">Регистрация аккаунта</h2>
+
+                    <form asp-action="Register" method="post" id="registerForm">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                        <input type="hidden" id="normalizedPhone" name="Phone" />
+
+                        <!-- Шаг 1: Имя, телефон и email -->
+                        <div id="step1" style="@(Model.CurrentStep == 1 ? "display:block;" : "display:none;")">
+                            <div class="mb-3">
+                                <label asp-for="FullName" class="form-label">Ваше имя *</label>
+                                <input asp-for="FullName" class="form-control" placeholder="Ваше имя" required />
+                                <span asp-validation-for="FullName" class="text-danger"></span>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Номер телефона *</label>
+                                <input type="text" class="form-control" id="phoneInput" placeholder="+7 (999) 999-99-99" required />
+                                <span class="text-danger" id="phoneError"></span>
+                            </div>
+
+                            <div class="mb-3">
+                                <label asp-for="Email" class="form-label">Email *</label>
+                                <input asp-for="Email" type="email" class="form-control" placeholder="your@email.com" required />
+                                <span asp-validation-for="Email" class="text-danger"></span>
+                            </div>
+
+                            <button type="button" id="sendCodeBtn" class="btn btn-primary w-100">
+                                Отправить код подтверждения
+                            </button>
+
+                            <div id="errorMessage" class="alert alert-danger mt-3" style="display: none;"></div>
+                            <div id="successMessage" class="alert alert-success mt-3" style="display: none;"></div>
+                        </div>
+
+                        <!-- Шаг 2: Ввод кода -->
+                        <div id="step2" style="@(Model.CurrentStep == 2 ? "display:block;" : "display:none;")">
+                            <div class="mb-3">
+                                <label class="form-label">Код подтверждения *</label>
+                                <input type="text" class="form-control" id="verificationCode" placeholder="Введите код из email" required />
+                                <span class="text-danger" id="codeError"></span>
+                            </div>
+
+                            <button type="button" id="verifyCodeBtn" class="btn btn-primary w-100 mb-3">
+                                Подтвердить код
+                            </button>
+
+                            <button type="button" id="backToStep1" class="btn btn-outline-secondary w-100">
+                                Назад
+                            </button>
+                        </div>
+
+                        <!-- Шаг 3: Ввод пароля -->
+                        <div id="step3" style="@(Model.CurrentStep == 3 ? "display:block;" : "display:none;")">
+                            <div class="mb-3">
+                                <label asp-for="Password" class="form-label">Пароль *</label>
+                                <div class="input-group">
+                                    <input asp-for="Password" type="password" class="form-control" id="passwordRegister"
+                                           placeholder="Не менее 8 символов" required />
+                                    <button type="button" class="btn btn-outline-secondary" id="togglePasswordRegister">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </div>
+                                <span asp-validation-for="Password" class="text-danger"></span>
+                            </div>
+
+                            <div class="mb-3">
+                                <label asp-for="ConfirmPassword" class="form-label">Подтвердите пароль *</label>
+                                <div class="input-group">
+                                    <input asp-for="ConfirmPassword" type="password" class="form-control" id="confirmPassword"
+                                           placeholder="Повторите пароль" required />
+                                    <button type="button" class="btn btn-outline-secondary" id="toggleConfirmPassword">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </div>
+                                <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                            </div>
+
+                           
+                            <button type="submit" class="btn btn-success w-100 mb-3" id="registerBtn">
+                                Зарегистрироваться
+                            </button>
+
+                            <button type="button" id="backToStep2" class="btn btn-outline-secondary w-100">
+                                Назад
+                            </button>
+                        </div>
+                    </form>
+
+                    <hr class="my-4">
+                    <div class="text-center">
+                        <span>Уже есть аккаунт?</span>
+                        <a asp-action="Login">Войти</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.inputmask/5.0.8/jquery.inputmask.min.js"></script>
+    <script>
+                $(document).ready(function() {
+            let currentStep = 1;
+            let userEmail = '';
+
+            // Маска для номера телефона
+            $('#phoneInput').inputmask('+7 (999) 999-99-99');
+
+            // Валидация пароля при вводе
+            $('#Password').on('input', function() {
+                validatePassword($(this).val());
+            });
+
+                // Валидация формы при отправке
+        $('#registerForm').on('submit', function(e) {
+            // Сохраняем нормализованный телефон в скрытое поле
+            var phoneInput = document.getElementById('phoneInput');
+            var unmaskedPhone = phoneInput.value.replace(/\D/g, '');
+            $('#normalizedPhone').val(unmaskedPhone);
+
+            // Остальная валидация...
+            if (currentStep === 3) {
+                if (!validatePassword($('#Password').val())) {
+                    e.preventDefault();
+                    return false;
+                }
+
+                if ($('#Password').val() !== $('#ConfirmPassword').val()) {
+                    $('#ConfirmPassword').siblings('.text-danger').text('Пароли не совпадают');
+                    e.preventDefault();
+                    return false;
+                }
+            }
+            return true;
+        });
+
+            // Функция для переключения видимости пароля
+            function togglePassword(inputId, buttonId) {
+                const passwordInput = document.getElementById(inputId);
+                const toggleButton = document.getElementById(buttonId);
+
+                if (passwordInput.type === 'password') {
+                    passwordInput.type = 'text';
+                    toggleButton.innerHTML = '<i class="fas fa-eye-slash"></i>';
+                } else {
+                    passwordInput.type = 'password';
+                    toggleButton.innerHTML = '<i class="fas fa-eye"></i>';
+                }
+            }
+
+            // Обработчики для всех полей пароля
+            document.getElementById('togglePasswordLogin')?.addEventListener('click', function() {
+                togglePassword('passwordLogin', 'togglePasswordLogin');
+            });
+
+            document.getElementById('togglePasswordRegister')?.addEventListener('click', function() {
+                togglePassword('passwordRegister', 'togglePasswordRegister');
+            });
+
+            document.getElementById('toggleConfirmPassword')?.addEventListener('click', function() {
+                togglePassword('confirmPassword', 'toggleConfirmPassword');
+            });
+
+            function validatePassword(password) {
+                const errorElement = $('#Password').siblings('.text-danger');
+
+                // Минимальная длина
+                if (password.length < 8) {
+                    errorElement.text('Пароль должен содержать не менее 8 символов');
+                    return false;
+                }
+
+                // Проверка на английские символы
+                const englishRegex = /^[a-zA-Z0-9!#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]*$/;
+                if (!englishRegex.test(password)) {
+                    errorElement.text('Пароль может содержать только английские буквы, цифры и специальные символы');
+                    return false;
+                }
+
+                // Проверка на сложность
+                const hasUpperCase = /[A-Z]/.test(password);
+                const hasLowerCase = /[a-z]/.test(password);
+                const hasNumbers = /\d/.test(password);
+                const hasSpecialChar = /[!#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password);
+
+                if (!hasUpperCase || !hasLowerCase || !hasNumbers || !hasSpecialChar) {
+                    errorElement.text('Пароль должен содержать заглавные и строчные буквы, цифры и специальные символы');
+                    return false;
+                }
+
+                // Проверка на простые пароли
+                const weakPasswords = [
+                    '12345678', '123456789', '1234567890', 'qwertyui', 'password',
+                    'abcdefgh', '87654321', '11111111', '00000000', 'aaaaaaaa'
+                ];
+
+                if (weakPasswords.includes(password.toLowerCase())) {
+                    errorElement.text('Пароль слишком простой. Используйте более сложную комбинацию.');
+                    return false;
+                }
+
+                errorElement.text('');
+                return true;
+            }
+
+                // Шаг 1: Отправка кода
+        $('#sendCodeBtn').click(function() {
+            $('#errorMessage').hide();
+            $('#successMessage').hide();
+
+            // Получаем нормализованный телефон
+            var phoneInput = document.getElementById('phoneInput');
+            var unmaskedPhone = phoneInput.value.replace(/\D/g, '');
+
+            const fullName = $('#FullName').val();
+            const email = $('#Email').val();
+
+            // Валидация
+            if (!fullName) {
+                showError('Введите ваше имя');
+                return;
+            }
+            if (!unmaskedPhone || unmaskedPhone.length < 11) {
+                showError('Введите корректный номер телефона');
+                return;
+            }
+            if (!email) {
+                showError('Введите email');
+                return;
+            }
+
+            $(this).prop('disabled', true).text('Отправка...');
+
+            $.ajax({
+                url: '/Auth/SendVerificationCode',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    phone: unmaskedPhone, // Отправляем нормализованный телефон
+                    fullName: fullName,
+                    email: email
+                }),
+                success: function(response) {
+                    console.log('Ответ сервера:', response);
+
+                    if (response.success) {
+                        userEmail = email;
+                        showSuccess(response.message);
+                        setTimeout(() => showStep(2), 1000);
+                    } else {
+                        showError(response.message);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('Ошибка AJAX:', status, error);
+                    showError('Ошибка сети. Проверьте консоль браузера (F12)');
+                },
+                complete: function() {
+                    $('#sendCodeBtn').prop('disabled', false).text('Отправить код подтверждения');
+                }
+            });
+        });
+
+            // Шаг 2: Подтверждение кода
+            $('#verifyCodeBtn').click(function() {
+                const code = $('#verificationCode').val();
+
+                if (!code) {
+                    $('#codeError').text('Введите код подтверждения');
+                    return;
+                }
+
+                $(this).prop('disabled', true).text('Проверка...');
+
+                $.ajax({
+                    url: '/Auth/VerifyCode',
+                    type: 'POST',
+                    data: {
+                        email: userEmail,
+                        code: code
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            showStep(3);
+                        } else {
+                            $('#codeError').text(response.message);
+                        }
+                    },
+                    error: function() {
+                        $('#codeError').text('Ошибка проверки кода');
+                    },
+                    complete: function() {
+                        $('#verifyCodeBtn').prop('disabled', false).text('Подтвердить код');
+                    }
+                });
+            });
+
+            // Навигация назад
+            $('#backToStep1').click(() => showStep(1));
+            $('#backToStep2').click(() => showStep(2));
+
+            function showStep(step) {
+                currentStep = step;
+                $('#step1, #step2, #step3').hide();
+                $(`#step${step}`).show();
+                $('#errorMessage').hide();
+                $('#successMessage').hide();
+                $('#codeError').text('');
+            }
+
+            function showError(message) {
+                $('#errorMessage').text(message).show();
+                $('#successMessage').hide();
+            }
+
+            function showSuccess(message) {
+                $('#successMessage').text(message).show();
+                $('#errorMessage').hide();
+            }
+        });
+    </script>
+} *@

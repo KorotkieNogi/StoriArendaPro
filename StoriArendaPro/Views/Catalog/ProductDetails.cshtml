@@ -14,9 +14,7 @@
                 {
                     var isFirst = true;
                     <div id="carousel-@Model.ProductId" class="carousel slide h-100" data-bs-ride="carousel">
-                        <!-- Добавлен h-100 -->
                         <div class="carousel-inner h-100">
-                            <!-- Добавлен h-100 -->
                             @foreach (var image in @Model.Product.ProductImages)
                             {
                                 <div class="carousel-item @(isFirst ? "active" : "") h-100">
@@ -40,12 +38,10 @@
                 }
                 else
                 {
-                    <!-- Заглушка, если нет изображений -->
                     <div class="no-image-placeholder h-100">
                         <img src="https://baids.ru/storage/lot-images/27/22/2722226/a036b6e9ad987f2eb92cf50944a70f50.jpeg" class="w-100 h-100 object-fit-cover" alt="Нет изображения">
                     </div>
                 }
-                @* <img src="/photoEquipment/@Model.Product.ImagePath" class="card-img-top product-detail-img" alt="@Model.Product.Name"> *@
             </div>
         </div>
 
@@ -64,34 +60,91 @@
                 <div class="row">
                     <div class="col-md-4">
                         <div class="price-option">
-                            <div class="price-label">За сутки</div>
-                            <div class="price-value">@Model.PricePerDay?.ToString("N2") ₽</div>
+                            <div class="price-label">12 часов(минимальный срок)</div>
+                            <div class="price-value">@((Model.PricePerDay * 0.5m)?.ToString("N2") ?? "0") ₽</div>
                         </div>
                     </div>
                     <div class="col-md-4">
                         <div class="price-option">
-                            <div class="price-label">За неделю</div>
-                            <div class="price-value">@Model.PricePerWeek?.ToString("N2") ₽</div>
+                            <div class="price-label">От 3 до 7 дней</div>
+                            <h5>скидка 10%</h5>
                         </div>
                     </div>
                     <div class="col-md-4">
                         <div class="price-option">
-                            <div class="price-label">За месяц</div>
-                            <div class="price-value">@Model.PricePerMonth?.ToString("N2") ₽</div>
+                            <div class="price-label">От 7 до 10 дней</div>
+                            <h5>скидка 15%</h5>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col-12">
+                        <div class="price-option">
+                            <div class="price-label">От 10 до 14 дней</div>
+                            <h5>скидка 20%</h5>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col-12">
+                        <div class="price-option">
+                            <div class="price-label">Более 14 дней</div>
+                            <h5>скидка 25%</h5>
                         </div>
                     </div>
                 </div>
 
                 <!-- Залог -->
                 <div class="deposit-info mt-3">
-                    <i class="fas fa-shield-alt me-2"></i> Залог: @Model.Deposit?.ToString("N2") ₽
+                    <i class="fas fa-shield-alt me-2"></i> Залог: @(Model.Deposit?.ToString("N2") ?? "0") ₽
                 </div>
             </div>
 
-            <!-- Кнопка для заявки -->
-            <button class="btn btn-primary btn-lg w-100" data-bs-toggle="modal" data-bs-target="#rentalRequestModal">
-                <i class="fas fa-edit me-2"></i> Оставить заявку
-            </button>
+            <!-- Кнопка добавления в корзину или админские кнопки -->
+            @if (User.Identity.IsAuthenticated)
+            {
+                @if (User.IsInRole("Admin"))
+                {
+                    <!-- Кнопки для администратора -->
+                    <div class="btn-group w-100 mb-3">
+                        <a href="@Url.Action("Edit", "Product", new { id = Model.ProductId })" class="btn btn-warning">
+                            <i class="fas fa-edit me-2"></i>Редактировать
+                        </a>
+                        <form method="post" action="@Url.Action("Delete", "Product")" class="d-inline">
+                            <input type="hidden" name="id" value="@Model.ProductId">
+                            <button type="submit" class="btn btn-danger"
+                                    onclick="return confirm('Вы уверены, что хотите удалить этот товар?')">
+                                <i class="fas fa-trash me-2"></i>Удалить
+                            </button>
+                        </form>
+                    </div>
+                }
+                @* else
+                {
+                    if (ViewBag.HasPassportData == false)
+                    {
+                        <!-- Кнопка для ввода паспортных данных -->
+                        <button type="button" class="btn btn-primary btn-lg w-100 mb-3" id="addPassportDataBtn"
+                                data-bs-toggle="modal" data-bs-target="#passportVerificationModal">
+                            <i class="fas fa-id-card me-2"></i> Заполнить паспортные данные
+                        </button>
+                    }
+                    else
+                    {
+                        <!-- Кнопка для добавления в корзину -->
+                        <button type="button" class="btn btn-primary btn-lg w-100 mb-3" id="addToCartBtn"
+                                data-product-id="@Model.RentalPriceId">
+                            <i class="fas fa-shopping-cart me-2"></i> Добавить в корзину
+                        </button>
+                    }
+                } *@
+            }
+            @* else
+            {
+                <a href="@Url.Action("Login", "Auth")" class="btn btn-primary btn-lg w-100 mb-3">
+                    <i class="fas fa-sign-in-alt me-2"></i> Войти для аренды
+                </a>
+            } *@
 
             <!-- Наличие на складе -->
             <div class="availability mt-3">
@@ -136,133 +189,506 @@
             </div>
         </div>
     </div>
+
+    <!-- Блок "Заинтересовало оборудование?" -->
+    <div class="row mt-5">
+        <div class="col-12">
+            <div class="card bg-light">
+                <div class="card-body text-center py-4">
+                    <h3 class="text-primary mb-3">
+                        <i class="fas fa-phone-alt me-2"></i>Заинтересовало оборудование?
+                    </h3>
+                    <p class="lead mb-4">Свяжитесь с нами для консультации и бронирования</p>
+
+                    <div class="d-flex justify-content-center flex-wrap gap-3 mb-4">
+                        <!-- Кнопка телефона -->
+                        <div class="dropdown">
+                            <button class="btn btn-primary btn-lg dropdown-toggle" type="button" id="productPhoneDropdown"
+                                    data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-phone-alt me-2"></i>8 (922) 175-40-98
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="productPhoneDropdown">
+                                <li><a class="dropdown-item" href="tel:+79221754098"><i class="fas fa-phone me-2"></i>Позвонить</a></li>
+                                <li>
+                                    <a class="dropdown-item" href="https://web.max.ru/6454213">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" class="me-2">
+                                            <path d="M12 2L2 7l10 5 10-5-10-5zm0 2.5L20 7l-8 4-8-4 8-4.5z" />
+                                            <path d="M2 17l10 5 10-5" />
+                                            <path d="M2 12l10 5 10-5" />
+                                        </svg>
+                                        MAX
+                                    </a>
+                                </li>
+                                <li><a class="dropdown-item" href="https://wa.me/79221754098"><i class="fab fa-whatsapp me-2"></i>WhatsApp</a></li>
+                                <li><a class="dropdown-item" href="https://t.me/+79221754098"><i class="fab fa-telegram me-2"></i>Telegram</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><button class="dropdown-item copy-phone" data-number="+79221754098"><i class="far fa-copy me-2"></i>Скопировать номер</button></li>
+                            </ul>
+                        </div>
+
+                        <!-- Кнопка "Условия аренды" -->
+                        <a href="@Url.Action("RentalTerms", "Home")" class="btn btn-outline-primary btn-lg">
+                            <i class="fas fa-file-contract me-2"></i>Условия аренды
+                        </a>
+                    </div>
+
+                    <div class="row mt-3">
+                        <div class="col-md-6 mx-auto">
+                            <div class="alert alert-info">
+                                <i class="fas fa-info-circle me-2"></i>
+                                <strong>Быстрое оформление!</strong> Доставка по Верхней Пышме
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </div>
 
-<!-- Модальное окно заявки на аренду -->
-<div class="modal fade" id="rentalRequestModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
+<!-- Модальное окно для ввода паспортных данных -->
+<div class="modal fade" id="passportVerificationModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Заявка на аренду</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <h5 class="modal-title">Верификация паспортных данных</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-                <form id="rentalRequestForm">
-                    @if (!User.Identity.IsAuthenticated)
-                    {
-                        <div class="mb-3">
-                            <label class="form-label">Ваше имя</label>
-                            <input type="text" class="form-control" name="fullName" required>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Номер телефона</label>
-                            <input type="tel" class="form-control phone-input" name="phone" required>
-                        </div>
-                    }
-                    <div class="mb-3">
-                        <label class="form-label">Когда вам перезвонить?</label>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <input type="date" class="form-control" name="callDate" required>
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle me-2"></i>
+                    Для аренды оборудования требуется верификация паспортных данных.
+                    Данные будут проверены администратором в течение 24 часов.
+                </div>
+
+                <form id="passportForm" enctype="multipart/form-data">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Серия паспорта *</label>
+                                <input type="text" class="form-control" name="PassportSeria"
+                                       pattern="\d{4}" maxlength="4" required>
                             </div>
-                            <div class="col-md-6">
-                                <input type="time" class="form-control" name="callTime" required>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Номер паспорта *</label>
+                                <input type="text" class="form-control" name="PassportNumber"
+                                       pattern="\d{6}" maxlength="6" required>
                             </div>
                         </div>
                     </div>
-                    <div class="mb-3">
-                        <label class="form-label">Комментарий (необязательно)</label>
-                        <textarea class="form-control" name="comment" rows="3"></textarea>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Кем выдан</label>
+                                <input type="text" class="form-control" name="IssuedBy">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Дата выдачи</label>
+                                <input type="date" class="form-control" name="IssueDate">
+                            </div>
+                        </div>
                     </div>
-                    <button type="submit" class="btn btn-primary w-100">Отправить заявку</button>
+
+                    <div class="mb-3">
+                        <label class="form-label">Прописка *</label>
+                        <input type="text" class="form-control" name="Propiska" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Место проживания *</label>
+                        <input type="text" class="form-control" name="PlaceLive" required>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Фото паспорта (лицевая сторона) *</label>
+                                <input type="file" class="form-control passport-photo" name="PassportPhotoFront"
+                                       accept="image/*" required>
+                                <div class="invalid-feedback">Пожалуйста, выберите файл</div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Фото паспорта (обратная сторона) *</label>
+                                <input type="file" class="form-control passport-photo" name="PassportPhotoBack"
+                                       accept="image/*" required>
+                                <div class="invalid-feedback">Пожалуйста, выберите файл</div>
+                            </div>
+                        </div>
+                    </div>
                 </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                <button type="button" class="btn btn-primary" id="submitPassport">Отправить на проверку</button>
             </div>
         </div>
     </div>
 </div>
 
-@section Styles {
-    <style>
-        .product-detail-img {
-            max-height: 500px;
-            object-fit: contain;
-            border-radius: 10px;
-        }
-        
-        .price-option {
-            background: #f8f9fa;
-            border-radius: 8px;
-            padding: 15px;
-            text-align: center;
-            height: 100%;
-        }
-        
-        .price-label {
-            font-size: 0.9rem;
-            color: #6c757d;
-        }
-        
-        .price-value {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: var(--primary-color);
-            margin: 5px 0;
-        }
-        
-        .deposit-info {
-            background: #fff8e1;
-            padding: 10px;
-            border-radius: 5px;
-            color: #ff6f00;
-        }
-        
-        .availability {
-            background: #e8f5e9;
-            padding: 10px;
-            border-radius: 5px;
-            color: #2e7d32;
-        }
-    </style>
-}
+<!-- Модальное окно для выбора параметров аренды -->
+<div class="modal fade" id="rentalModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Аренда @Model.Product.Name</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="rentalForm">
+                    <input type="hidden" id="productId" value="@Model.ProductId">
+                    <input type="hidden" id="rentalPriceId" value="@Model.RentalPriceId">
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Дата начала *</label>
+                                <input type="date" class="form-control" id="startDate"
+                                       min="@DateTime.Now.ToString("yyyy-MM-dd")" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Дата окончания *</label>
+                                <input type="date" class="form-control" id="endDate" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Количество *</label>
+                        <input type="number" class="form-control" id="quantity"
+                               min="1" max="@Model.Product.Inventories.FirstOrDefault()?.QuantityForRent"
+                               value="1" required>
+                        <div class="form-text">Доступно: @Model.Product.Inventories.FirstOrDefault()?.QuantityForRent шт.</div>
+                    </div>
+
+                    <div class="rental-calculator card p-3">
+                        <h6>Расчет стоимости</h6>
+                        <div class="d-flex justify-content-between">
+                            <span>Цена за сутки:</span>
+                            <span id="dailyPrice">@Model.PricePerDay?.ToString("N2") ₽</span>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <span>Количество дней:</span>
+                            <span id="daysCount">0</span>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <span>Количество единиц:</span>
+                            <span id="unitsCount">1</span>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <span>Скидка:</span>
+                            <span id="discount">0% (0 ₽)</span>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <span>Стоимость аренды:</span>
+                            <span id="rentalCost">0 ₽</span>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <span>Залог:</span>
+                            <span id="deposit">@Model.Deposit?.ToString("N2") ₽</span>
+                        </div>
+                        <hr>
+                        <div class="d-flex justify-content-between fw-bold fs-5">
+                            <span>Итого к оплате:</span>
+                            <span id="totalPrice">0 ₽</span>
+                        </div>
+                        <div class="d-flex justify-content-between text-muted small">
+                            <span>Цена за единицу:</span>
+                            <span id="unitPrice">0 ₽</span>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                <button type="button" class="btn btn-primary" id="confirmRental">Добавить в корзину</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 @section Scripts {
     <script>
-        $(document).ready(function() {
-            // Инициализация маски телефона
-            $('.phone-input').inputmask('+7 (999) 999-99-99');
-            
-            // Установка минимальной даты для вызова (текущий день)
-            $('[name="callDate"]').attr('min', new Date().toISOString().split('T')[0]);
-            
-            // Обработка формы заявки
-            $('#rentalRequestForm').submit(function(e) {
-                e.preventDefault();
-                
-                const formData = {
-                    productId: @Model.ProductId,
-                    @if (User.Identity.IsAuthenticated) {
-                        <text>
-                        userId: '@User.FindFirst(ClaimTypes.NameIdentifier)?.Value',
-                        </text>
+        // Глобальные функции для этой страницы
+        function updateCartCount(count) {
+            $('#cartCount').text(count);
+        }
+
+        function showToast(message) {
+            const toast = document.createElement('div');
+            toast.className = 'toast align-items-center text-white bg-success border-0 position-fixed top-0 end-0 m-3';
+            toast.style.zIndex = '9999';
+            toast.innerHTML = `
+                <div class="d-flex">
+                    <div class="toast-body">${message}</div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                </div>
+            `;
+            document.body.appendChild(toast);
+            const bsToast = new bootstrap.Toast(toast);
+            bsToast.show();
+            toast.addEventListener('hidden.bs.toast', function () {
+                document.body.removeChild(toast);
+            });
+        }
+
+        function calculateRentalCost() {
+            const startDate = new Date($('#startDate').val());
+            const endDate = new Date($('#endDate').val());
+            const quantity = parseInt($('#quantity').val()) || 1;
+            const dailyPrice = @Model.PricePerDay;
+            const deposit = @Model.Deposit;
+
+            if (isNaN(startDate) || isNaN(endDate)) return;
+
+            const days = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24));
+            if (days <= 0) return;
+
+            let discountPercent = 0;
+            if (days >= 14) discountPercent = 25;
+            else if (days >= 10) discountPercent = 20;
+            else if (days >= 7) discountPercent = 15;
+            else if (days >= 3) discountPercent = 10;
+
+            const discount = discountPercent / 100;
+            const rentalCost = dailyPrice * days * quantity;
+            const discountAmount = rentalCost * discount;
+            const totalRentalCost = rentalCost - discountAmount;
+            const totalWithDeposit = totalRentalCost + (deposit * quantity);
+            const unitPrice = totalRentalCost / quantity;
+
+            $('#daysCount').text(days + ' дней');
+            $('#discount').text(discountPercent + '% (' + discountAmount.toFixed(2) + ' ₽)');
+            $('#rentalCost').text(totalRentalCost.toFixed(2) + ' ₽');
+            $('#totalPrice').text(totalWithDeposit.toFixed(2) + ' ₽');
+            $('#unitPrice').text(unitPrice.toFixed(2) + ' ₽ за шт.');
+        }
+
+        function checkPassportVerification() {
+            console.log('checkPassportVerification function called');
+            $.get('@Url.Action("CheckPassportVerification", "Profile")')
+                .done(function(response) {
+                    console.log('Passport verification response:', response);
+                    if (response.isVerified) {
+                        $('#rentalModal').modal('show');
+                    } else if (response.isPending) {
+                        alert('Ваши паспортные данные находятся на проверке. Дождитесь подтверждения администратора.');
+                    } else if (response.hasPassportData && response.status === "отклонено") {
+                        alert('Ваши паспортные данные были отклонены. Пожалуйста, обновите данные в профиле.');
+                        window.location.href = '@Url.Action("Index", "Profile")';
                     } else {
-                        <text>
-                        fullName: $('[name="fullName"]').val(),
-                        phone: $('[name="phone"]').val(),
-                        </text>
+                        // Показываем модальное окно для заполнения паспортных данных
+                        $('#passportVerificationModal').modal('show');
                     }
-                    callDate: $('[name="callDate"]').val(),
-                    callTime: $('[name="callTime"]').val(),
-                    comment: $('[name="comment"]').val()
+                })
+                .fail(function(xhr, status, error) {
+                    console.error('Error checking passport verification:', error);
+                    $('#passportVerificationModal').modal('show');
+                });
+        }
+
+        // Функция для проверки файлов
+        function validatePassportFiles() {
+            const frontFileInput = $('input[name="PassportPhotoFront"]')[0];
+            const backFileInput = $('input[name="PassportPhotoBack"]')[0];
+
+            let isValid = true;
+
+            // Сбрасываем предыдущие ошибки
+            $('.passport-photo').removeClass('is-invalid');
+
+            // Проверяем лицевую сторону
+            if (!frontFileInput.files || frontFileInput.files.length === 0) {
+                $(frontFileInput).addClass('is-invalid');
+                isValid = false;
+            }
+
+            // Проверяем обратную сторону
+            if (!backFileInput.files || backFileInput.files.length === 0) {
+                $(backFileInput).addClass('is-invalid');
+                isValid = false;
+            }
+
+            return isValid;
+        }
+
+        // Новая функция для безопасной обработки файлового ввода
+        function setupFileInputHandlers() {
+            $('.passport-photo').each(function() {
+                let fileInput = this;
+                let originalValue = fileInput.value;
+
+                $(fileInput).off('change').on('change', function() {
+                    if (this.files && this.files.length > 0) {
+                        $(this).removeClass('is-invalid');
+                        console.log('File selected:', this.files[0].name);
+                    }
+                });
+
+                // Альтернативный подход: отслеживание изменения значения
+                let lastValue = '';
+                setInterval(function() {
+                    if (fileInput.value !== lastValue) {
+                        lastValue = fileInput.value;
+                        if (fileInput.value === '') {
+                            console.log('File input was cleared');
+                        }
+                    }
+                }, 100);
+            });
+        }
+
+        $(document).ready(function() {
+            setupFileInputHandlers();
+            console.log('Document ready, looking for #addToCartBtn');
+            console.log('Button exists:', $('#addToCartBtn').length > 0);
+            console.log('checkPassportVerification function available:', typeof checkPassportVerification === 'function');
+
+            // Обработчик кнопки "Заполнить паспортные данные"
+            $('#addPassportDataBtn').on('click', function() {
+                $('#passportVerificationModal').modal('show');
+            });
+
+            // Обработчик кнопки "Добавить в корзину"
+            $('#addToCartBtn').on('click', function() {
+                console.log('Add to cart button clicked');
+                checkPassportVerification();
+            });
+
+                    // Исправление проблемы с проводником файлов
+        $('.passport-photo').on('click', function(e) {
+            const fileInput = this;
+
+            // Обработчик изменения файла
+            $(fileInput).off('change.passport').on('change.passport', function() {
+                if (this.files && this.files.length > 0) {
+                    $(this).removeClass('is-invalid');
+                    // Удаляем обработчик фокуса после успешного выбора
+                    $(window).off('focus.passportCheck');
+                }
+            });
+
+            // Обработчик для определения отмены выбора файла
+            $(window).off('focus.passportCheck').on('focus.passportCheck', function() {
+                setTimeout(function() {
+                    // Проверяем, был ли выбран файл
+                    if (!fileInput.files || fileInput.files.length === 0) {
+                        console.log('File selection was cancelled');
+                        // Не добавляем класс is-invalid при отмене
+                    }
+                }, 100);
+            });
+        });
+
+            // Отправка паспортных данных
+            $('#submitPassport').on('click', function() {
+                // Сбрасываем кастомные сообщения валидации
+                $('input[type="file"]').each(function() {
+                    this.setCustomValidity('');
+                });
+
+                // Проверяем валидность формы
+                if (!$('#passportForm')[0].checkValidity()) {
+                    $('#passportForm')[0].reportValidity();
+                    return;
+                }
+
+                // Проверяем, что файлы действительно выбраны
+                if (!validatePassportFiles()) {
+                    alert('Пожалуйста, выберите оба изображения паспорта');
+                    return;
+                }
+
+                var formData = new FormData($('#passportForm')[0]);
+                $('#submitPassport').prop('disabled', true).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Отправка...');
+
+                $.ajax({
+                    url: '@Url.Action("UpdatePassportData", "Profile")',
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function(response) {
+                        $('#submitPassport').prop('disabled', false).text('Отправить на проверку');
+                        if (response.success) {
+                            alert('Паспортные данные успешно отправлены на проверку. Дождитесь подтверждения администратора.');
+                            $('#passportVerificationModal').modal('hide');
+                            $('#passportForm')[0].reset();
+
+                            // Обновляем страницу или состояние кнопок
+                            location.reload();
+                        } else {
+                            alert('Ошибка: ' + response.message);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        $('#submitPassport').prop('disabled', false).text('Отправить на проверку');
+                        console.error('Error submitting passport data:', error);
+                        alert('Ошибка при отправке данных: ' + (xhr.responseJSON?.message || error));
+                    }
+                });
+            });
+
+            // Добавление в корзину
+            $('#confirmRental').on('click', function() {
+                const formData = {
+                    productId: $('#productId').val(),
+                    rentalPriceId: $('#rentalPriceId').val(),
+                    startDate: $('#startDate').val(),
+                    endDate: $('#endDate').val(),
+                    quantity: parseInt($('#quantity').val()),
+                    rentalType: 'daily',
+                    unitPrice: parseFloat($('#unitPrice').text().replace(' ₽', '').replace(',', '')),
+                    subtotal: parseFloat($('#totalPrice').text().replace(' ₽', '').replace(',', ''))
                 };
-                
-                $.post('/Rental/CreateRequest', formData)
-                    .done(function() {
-                        $('#rentalRequestModal').modal('hide');
-                        alert('Ваша заявка принята! Мы свяжемся с вами в указанное время.');
-                    })
-                    .fail(function() {
-                        alert('Произошла ошибка при отправке заявки. Пожалуйста, попробуйте позже.');
-                    });
+
+                console.log('Adding to cart:', formData);
+
+                $.ajax({
+                    url: '@Url.Action("AddToCart", "Profile")',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(formData),
+                    success: function(response) {
+                        console.log('Add to cart response:', response);
+                        if (response.success) {
+                            $('#rentalModal').modal('hide');
+                            updateCartCount(response.cartCount);
+                            showToast('Товар успешно добавлен в корзину!');
+                        } else if (response.requiresVerification) {
+                            alert(response.message);
+                            $('#rentalModal').modal('hide');
+                            $('#passportVerificationModal').modal('show');
+                        } else {
+                            alert(response.message);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error adding to cart:', error);
+                        alert('Ошибка при добавлении в корзину: ' + error);
+                    }
+                });
+            });
+
+            // Слушатели для обновления расчета стоимости
+            $('#startDate, #endDate, #quantity').on('change', calculateRentalCost);
+
+            // Инициализация расчета при загрузке
+            calculateRentalCost();
+
+            // Обработчик для закрытия модального окна при нажатии на кнопку "Отмена"
+            $('.btn-close, .btn-secondary').on('click', function() {
+                // Просто закрываем модальное окно без дополнительных действий
+                $(this).closest('.modal').modal('hide');
             });
         });
     </script>

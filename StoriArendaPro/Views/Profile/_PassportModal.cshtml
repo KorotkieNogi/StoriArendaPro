@@ -1,0 +1,77 @@
+﻿@model StoriArendaPro.Models.ViewModels.PassportDataViewModel
+
+<div class="modal fade" id="passportModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Верификация паспортных данных</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle me-2"></i>
+                    Для аренды оборудования требуется верификация паспортных данных.
+                    Данные будут проверены администратором в течение 24 часов.
+                </div>
+
+                <form id="passportForm" enctype="multipart/form-data">
+                    <!-- Форма как в ProductDetails.cshtml -->
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Серия паспорта *</label>
+                                <input type="text" class="form-control" name="PassportSeria"
+                                       pattern="\d{4}" maxlength="4" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Номер паспорта *</label>
+                                <input type="text" class="form-control" name="PassportNumber"
+                                       pattern="\d{6}" maxlength="6" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- остальные поля формы -->
+
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                <button type="button" class="btn btn-primary" id="submitPassportProfile">Отправить на проверку</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function() {
+        $('#submitPassportProfile').on('click', function() {
+            // Код для отправки формы из профиля
+            submitPassportData('@Url.Action("UpdatePassportData", "Profile")');
+        });
+    });
+
+    function submitPassportData(url) {
+        // Общая функция для отправки данных
+        var formData = new FormData($('#passportForm')[0]);
+
+        $.ajax({
+            url: url,
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function(response) {
+                if (response.success) {
+                    alert('Данные отправлены на проверку');
+                    $('#passportModal').modal('hide');
+                    location.reload();
+                } else {
+                    alert('Ошибка: ' + response.message);
+                }
+            }
+        });
+    }
+</script>

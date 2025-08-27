@@ -1,0 +1,262 @@
+﻿@model List<StoriArendaPro.Models.Entities.PassportVerification>
+@{
+    ViewData["Title"] = "Проверка паспортных данных";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<div class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3 mb-0">Проверка паспортных данных</h1>
+
+        <div class="d-flex gap-2">
+            <div class="dropdown">
+                <button class="btn btn-outline-primary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                    Статус: @(ViewBag.StatusFilter ?? "все")
+                </button>
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="@Url.Action("PassportVerifications", new { status = "" })">все</a></li>
+                    <li><a class="dropdown-item" href="@Url.Action("PassportVerifications", new { status = "ожидает рассмотрения" })">ожидает рассмотрения</a></li>
+                    <li><a class="dropdown-item" href="@Url.Action("PassportVerifications", new { status = "одобрено" })">одобрено</a></li>
+                    <li><a class="dropdown-item" href="@Url.Action("PassportVerifications", new { status = "отклонено" })">отклонено</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    @if (Model.Any())
+    {
+        <div class="card">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>
+                                    <input type="checkbox" id="selectAll" />
+                                </th>
+                                <th>Пользователь</th>
+                                <th>Паспорт</th>
+                                <th>Прописка</th>
+                                <th>Статус</th>
+                                <th>Дата подачи</th>
+                                <th>Действия</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var verification in Model)
+                            {
+                                <tr>
+                                    <td>
+                                        <input type="checkbox" name="verificationIds" value="@verification.VerificationId" />
+                                    </td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div class="avatar-sm bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-2">
+                                                @verification.User.FullName[0]
+                                            </div>
+                                            <div>
+                                                <div class="fw-bold">@verification.User.FullName</div>
+                                                <small class="text-muted">@verification.User.Email</small>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        @verification.PassportSeria @verification.PassportNumber
+                                        @if (!string.IsNullOrEmpty(verification.IssuedBy))
+                                        {
+                                            <br>
+                                            <small class="text-muted">@verification.IssuedBy</small>
+                                        }
+                                    </td>
+                                    <td>
+                                        <div>@verification.Propiska</div>
+                                        <small class="text-muted">@verification.PlaceLive</small>
+                                    </td>
+                                    <td>
+                                        <span class="badge @GetStatusBadgeClass(verification.Status)">
+                                            @verification.Status
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <small>@verification.CreatedAt.ToString("dd.MM.yyyy HH:mm")</small>
+                                    </td>
+                                    <td>
+                                        <div class="btn-group">
+                                            <a href="@Url.Action("PassportVerificationDetail", new { id = verification.VerificationId })"
+                                               class="btn btn-sm btn-outline-primary">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            @if (verification.Status == "ожидает рассмотрения")
+                                            {
+                                                <button type="button" class="btn btn-sm btn-outline-success"
+                                                        data-bs-toggle="modal" data-bs-target="#verifyModal"
+                                                        data-id="@verification.VerificationId" data-action="одобрено">
+                                                    <i class="fas fa-check"></i>
+                                                </button>
+                                                <button type="button" class="btn btn-sm btn-outline-danger"
+                                                        data-bs-toggle="modal" data-bs-target="#verifyModal"
+                                                        data-id="@verification.VerificationId" data-action="отклонено">
+                                                    <i class="fas fa-times"></i>
+                                                </button>
+                                            }
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Пагинация -->
+        <nav aria-label="Page navigation">
+            <ul class="pagination justify-content-center mt-4">
+                <li class="page-item disabled">
+                    <a class="page-link" href="#">Previous</a>
+                </li>
+                <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                <li class="page-item"><a class="page-link" href="#">2</a></li>
+                <li class="page-item"><a class="page-link" href="#">3</a></li>
+                <li class="page-item">
+                    <a class="page-link" href="#">Next</a>
+                </li>
+            </ul>
+        </nav>
+    }
+    else
+    {
+        <div class="text-center py-5">
+            <i class="fas fa-passport fa-4x text-muted mb-3"></i>
+            <h4>Заявок на проверку нет</h4>
+            <p class="text-muted">Все паспортные данные проверены</p>
+        </div>
+    }
+</div>
+
+<!-- Модальное окно для проверки -->
+<div class="modal fade" id="verifyModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="verifyModalTitle">Проверка паспортных данных</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="verifyForm" method="post">
+                <div class="modal-body">
+                    <input type="hidden" id="verificationId" name="verificationId">
+                    <input type="hidden" id="verifyStatus" name="status">
+
+                    <div class="mb-3">
+                        <label class="form-label">Комментарий</label>
+                        <textarea class="form-control" name="adminNotes" rows="4"
+                                  placeholder="Укажите причину одобрения или отклонения..."></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                    <button type="submit" class="btn btn-primary">Подтвердить</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Модальное окно для массовой проверки -->
+<div class="modal fade" id="bulkVerifyModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Массовая проверка</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="post" action="@Url.Action("BulkVerifyPassports")">
+                <div class="modal-body">
+                    <input type="hidden" id="bulkVerificationIds" name="verificationIds">
+
+                    <div class="mb-3">
+                        <label class="form-label">Действие</label>
+                        <select class="form-select" name="status" required>
+                            <option value="одобрено">Одобрить</option>
+                            <option value="отклонено">Отклонить</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Комментарий</label>
+                        <textarea class="form-control" name="adminNotes" rows="4"
+                                  placeholder="Общий комментарий для всех выбранных заявок..."></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                    <button type="submit" class="btn btn-primary">Применить</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Выделение всех checkbox
+            $('#selectAll').change(function() {
+                $('input[name="verificationIds"]').prop('checked', this.checked);
+            });
+
+            // Модальное окно проверки
+            $('#verifyModal').on('show.bs.modal', function(event) {
+                var button = $(event.relatedTarget);
+                var verificationId = button.data('id');
+                var action = button.data('action');
+
+                var modal = $(this);
+                modal.find('#verificationId').val(verificationId);
+                modal.find('#verifyStatus').val(action);
+
+                var title = action === 'approved' ? 'Одобрение паспортных данных' : 'Отклонение паспортных данных';
+                modal.find('.modal-title').text(title);
+
+                modal.find('form').attr('action', '@Url.Action("VerifyPassport")');
+            });
+
+            // Массовая проверка
+            $('#bulkVerifyBtn').click(function() {
+                var selectedIds = [];
+                $('input[name="verificationIds"]:checked').each(function() {
+                    selectedIds.push($(this).val());
+                });
+
+                if (selectedIds.length === 0) {
+                    alert('Выберите хотя бы одну заявку для массовой проверки');
+                    return;
+                }
+
+                $('#bulkVerificationIds').val(selectedIds.join(','));
+                $('#bulkVerifyModal').modal('show');
+            });
+
+            // Поиск
+            $('#searchInput').on('keyup', function() {
+                var value = $(this).val().toLowerCase();
+                $('table tbody tr').filter(function() {
+                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                });
+            });
+        });
+    </script>
+}
+
+@functions {
+    public string GetStatusBadgeClass(string status)
+    {
+        return status switch
+        {
+            "одобрено" => "bg-success",
+            "отклонено" => "bg-danger",
+            "ожидает рассмотрения" => "bg-warning",
+            _ => "bg-secondary"
+        };
+    }
+}

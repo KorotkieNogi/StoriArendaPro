@@ -3,34 +3,32 @@ using System.Collections.Generic;
 
 namespace StoriArendaPro.Models.Entities;
 
-//Не используется
-//public partial class RentalOrder
-//{
-//    public int RentalOrderId { get; set; }
+public partial class RentalOrder
+{
+    public int RentalOrderId { get; set; }  //номер заказа
 
-//    public int? UserId { get; set; }
+    public int? UserId { get; set; }   //Кто арендует
 
-//    public string? OrderNumber { get; set; }
 
-//    public DateOnly StartDate { get; set; }
+    public DateTime StartDate { get; set; }  //Дата начала аренды
 
-//    public DateOnly EndDate { get; set; }
+    public DateTime EndDate { get; set; } //Дата окончания
 
-//    public decimal TotalAmount { get; set; }
+    public decimal TotalAmount { get; set; } //Общая сумма
 
-//    public string? Status { get; set; }
+    public string? Status { get; set; } //Статус заказа  'ожидает', 'подтверждено', 'активно', 'завершено', 'отменено'
 
-//    public string? PaymentStatus { get; set; }
+    public string? PaymentStatus { get; set; }
 
-//    public string? DeliveryAddress { get; set; }
+    public string? DeliveryAddress { get; set; }
 
-//    public string? Notes { get; set; }
+    public string? Notes { get; set; }
 
-//    public DateTime? CreatedAt { get; set; }
+    public DateTime? CreatedAt { get; set; }
 
-//    public DateTime? UpdatedAt { get; set; }
+    public DateTime? UpdatedAt { get; set; }
 
-//    public virtual ICollection<RentalOrderItem> RentalOrderItems { get; set; } = new List<RentalOrderItem>();
+    public virtual ICollection<RentalOrderItem> RentalOrderItems { get; set; } = new List<RentalOrderItem>();
 
-//    public virtual User? User { get; set; }
-//}
+    public virtual User? User { get; set; }
+}

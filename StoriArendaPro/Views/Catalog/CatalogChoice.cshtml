@@ -1,0 +1,48 @@
+﻿@{
+    ViewData["Title"] = "Выбор каталога";
+}
+
+<!-- Hero Section -->
+<section class="hero-section-catalog-choice">
+    <div class="container">
+        <div class="hero-content text-center">
+            <h1 class="mb-4">Наши каталоги</h1>
+            <p class="lead mb-5">Выберите нужный вам вариант</p>
+        </div>
+    </div>
+</section>
+
+<!-- Catalog Choice Section -->
+<section class="catalog-choice py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <!-- Rent Catalog Card -->
+            <div class="col-md-5 mb-4 mb-md-0">
+                <div class="card catalog-card h-100">
+                    <div class="card-body text-center p-5">
+                        <div class="catalog-icon mb-4">
+                            <i class="fas fa-calendar-alt fa-4x text-primary"></i>
+                        </div>
+                        <h2 class="card-title mb-3">Аренда оборудования</h2>
+                        <p class="card-text mb-4">Широкий выбор строительного оборудования для аренды на любой срок</p>
+                        <a href="@Url.Action("Rent", "Catalog", new { showCategories = true })" class="btn btn-primary btn-lg px-4">Перейти в каталог</a>
+                    </div>
+                </div>
+            </div>
+
+            @* <!-- Sale Catalog Card -->
+            <div class="col-md-5 mb-4 mb-md-0">
+                <div class="card catalog-card h-100">
+                    <div class="card-body text-center p-5">
+                        <div class="catalog-icon mb-4">
+                            <i class="fas fa-shopping-cart fa-4x text-primary"></i>
+                        </div>
+                        <h2 class="card-title mb-3">Продажа оборудования</h2>
+                        <p class="card-text mb-4">Качественное строительное оборудование по выгодным ценам</p>
+                        <a href="@Url.Action("Sale", "Catalog")" class="btn btn-primary btn-lg px-4">Перейти в каталог</a>
+                    </div>
+                </div>
+            </div> *@
+        </div>
+    </div>
+</section>

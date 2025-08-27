@@ -1,0 +1,199 @@
+﻿@model StoriArendaPro.Areas.Admin.Controllers.UserDetailViewModel
+@{
+    ViewData["Title"] = "Редактирование пользователя";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<div class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3 mb-0">Редактирование пользователя</h1>
+        <a href="@Url.Action("Users")" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left me-1"></i>Назад к списку
+        </a>
+    </div>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <div class="row">
+        <!-- Основная информация -->
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h6 class="mb-0">Основная информация</h6>
+                </div>
+                <div class="card-body">
+                    <form method="post" action="@Url.Action("UpdateUser")">
+                        <input type="hidden" name="UserId" value="@Model.UserId">
+
+                        <div class="mb-3">
+                            <label class="form-label">Полное имя *</label>
+                            <input type="text" class="form-control" name="FullName" value="@Model.FullName" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Email *</label>
+                            <input type="email" class="form-control" name="Email" value="@Model.Email" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Телефон *</label>
+                            <input type="tel" class="form-control" name="PhoneNumber" value="@Model.PhoneNumber" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Статус</label>
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" name="IsActive"
+                                @(Model.IsActive ? "checked" : "") value="true">
+                                <label class="form-check-label">Активный пользователь</label>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Роли</label>
+                            <select class="form-select" name="SelectedRoles" multiple>
+                                @foreach (var roleName in ViewBag.AllRoles)
+                                {
+                                    <option value="@roleName"
+                                            selected="@(Model.Roles.Contains(roleName) ? "selected" : null)">
+                                        @roleName
+                                    </option>
+                                }
+                            </select>
+                            <small class="text-muted">Удерживайте Ctrl для выбора нескольких ролей</small>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save me-1"></i>Сохранить изменения
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Дополнительная информация -->
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h6 class="mb-0">Дополнительная информация</h6>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Паспортные данные</label>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <input type="text" class="form-control mb-2" name="PassportSeria"
+                                       value="@Model.PassportSeria" placeholder="Серия">
+                            </div>
+                            <div class="col-md-6">
+                                <input type="text" class="form-control mb-2" name="PassportNumber"
+                                       value="@Model.PassportNumber" placeholder="Номер">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Прописка</label>
+                        <textarea class="form-control" name="Propiska" rows="2">@Model.Propiska</textarea>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Место проживания</label>
+                        <textarea class="form-control" name="PlaceLive" rows="2">@Model.PlaceLive</textarea>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Статистика</label>
+                        <div class="d-flex justify-content-between">
+                            <span>Всего заказов:</span>
+                            <strong>@Model.TotalOrders</strong>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <span>Активных заказов:</span>
+                            <strong>@Model.ActiveOrders</strong>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <span>Статус паспорта:</span>
+                            <span class="badge @GetPassportStatusBadge(Model.PassportStatus)">
+                                @Model.PassportStatus
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Дата регистрации</label>
+                        <p class="form-control-plaintext">@Model.CreatedAt?.ToString("dd.MM.yyyy HH:mm")</p>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Последнее обновление</label>
+                        <p class="form-control-plaintext">@Model.UpdatedAt?.ToString("dd.MM.yyyy HH:mm")</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Быстрые действия -->
+    <div class="card">
+        <div class="card-header">
+            <h6 class="mb-0">Быстрые действия</h6>
+        </div>
+        <div class="card-body">
+            <div class="d-flex gap-2">
+                <a href="@Url.Action("PassportVerifications", new { userId = Model.UserId })"
+                   class="btn btn-outline-warning">
+                    <i class="fas fa-passport me-1"></i>Проверить паспорт
+                </a>
+                <a href="@Url.Action("Support", new { userId = Model.UserId })"
+                   class="btn btn-outline-info">
+                    <i class="fas fa-headset me-1"></i>История поддержки
+                </a>
+                <a href="@Url.Action("Orders", new { userId = Model.UserId })"
+                   class="btn btn-outline-success">
+                    <i class="fas fa-shopping-cart me-1"></i>История заказов
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Валидация формы
+                $('form').validate({
+            rules: {
+                FullName: { required: true, minlength: 2 },
+                Email: { required: true, email: true },
+                PhoneNumber: { required: true }
+                // Убрали проверку для необязательных полей
+            },
+            messages: {
+                FullName: "Введите полное имя",
+                Email: "Введите корректный email",
+                PhoneNumber: "Введите номер телефона"
+            }
+        });
+        });
+    </script>
+}
+
+@functions {
+    public string GetPassportStatusBadge(string status)
+    {
+        return status switch
+        {
+            "одобрено" => "bg-success",
+            "отклонено" => "bg-danger",
+            "ожидает рассмотрения" => "bg-warning",
+            _ => "bg-secondary"
+        };
+    }
+}

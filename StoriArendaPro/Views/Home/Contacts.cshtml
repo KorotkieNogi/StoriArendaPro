@@ -1,0 +1,231 @@
+﻿@{
+    ViewData["Title"] = "Контакты - СтройАренда+";
+}
+
+<div class="container py-5">
+    <!-- Заголовок -->
+    <div class="text-center mb-5">
+        <h1 class="display-4 text-primary mb-3">
+            <i class="fas fa-map-marker-alt me-2"></i>Контакты
+        </h1>
+        <p class="lead text-muted">Мы всегда готовы помочь вам с выбором оборудования</p>
+    </div>
+
+    <div class="row g-4">
+        <!-- Контактная информация -->
+        <div class="col-lg-4">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-header bg-primary text-white py-3">
+                    <h4 class="mb-0"><i class="fas fa-info-circle me-2"></i>Контактная информация</h4>
+                </div>
+                <div class="card-body">
+                    <!-- Телефон -->
+                    <div class="contact-item mb-4">
+                        <div class="d-flex align-items-center mb-2">
+                            <div class="contact-icon bg-primary rounded-circle me-3">
+                                <i class="fas fa-phone text-white"></i>
+                            </div>
+                            <h5 class="mb-0 text-primary">Телефон</h5>
+                        </div>
+                        <a href="tel:+79221754098" class="h4 text-decoration-none text-dark d-block mb-1">
+                            8 (922) 175-40-98
+                        </a>
+                        <small class="text-muted">Номер директора</small>
+                    </div>
+
+                    <!-- Email -->
+                    <div class="contact-item mb-4">
+                        <div class="d-flex align-items-center mb-2">
+                            <div class="contact-icon bg-success rounded-circle me-3">
+                                <i class="fas fa-envelope text-white"></i>
+                            </div>
+                            <h5 class="mb-0 text-success">Email</h5>
+                        </div>
+                        <a href="mailto:info@storiarenda.ru" class="h5 text-decoration-none text-dark d-block">
+                            info@storiarenda.ru
+                        </a>
+                    </div>
+
+                    <!-- Адрес -->
+                    <div class="contact-item mb-4">
+                        <div class="d-flex align-items-center mb-2">
+                            <div class="contact-icon bg-warning rounded-circle me-3">
+                                <i class="fas fa-map-marker-alt text-white"></i>
+                            </div>
+                            <h5 class="mb-0 text-warning">Адрес</h5>
+                        </div>
+                        <p class="mb-1">г. Верхняя Пышма</p>
+                        <p class="mb-2">ул. Кривоусова, 20А</p>
+                        <a href="https://yandex.ru/maps/20720/verhnyaya-pyshma/house/ulitsa_krivousova_20a/YkkYcwBlTUEPQFtsfXV2dXhjYg==/?ll=60.575911%2C56.974434&z=20.2"
+                           target="_blank" class="btn btn-outline-primary btn-sm">
+                            <i class="fas fa-external-link-alt me-1"></i>Открыть в Яндекс Картах
+                        </a>
+                    </div>
+
+                    <!-- Режим работы -->
+                    <div class="contact-item">
+                        <div class="d-flex align-items-center mb-2">
+                            <div class="contact-icon bg-info rounded-circle me-3">
+                                <i class="fas fa-clock text-white"></i>
+                            </div>
+                            <h5 class="mb-0 text-info">Режим работы</h5>
+                        </div>
+                        <div class="ms-4">
+                            <p class="mb-1"><strong>Пн-Пт:</strong> 8:00 - 20:00</p>
+                            <p class="mb-1"><strong>Сб-Вс:</strong> 8:00 - 17:00</p>
+                            <p class="mb-0 text-success"><strong>✓ Без перерывов</strong></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Мессенджеры -->
+        <div class="col-lg-4">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-header bg-success text-white py-3">
+                    <h4 class="mb-0"><i class="fas fa-comments me-2"></i>Мессенджеры</h4>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-3">
+                        <!-- WhatsApp -->
+                        <a href="https://wa.me/79221754098" class="btn btn-success btn-lg">
+                            <i class="fab fa-whatsapp me-2 fa-lg"></i>
+                            WhatsApp
+                            <small class="ms-2">Быстрый ответ</small>
+                        </a>
+
+                        <!-- Telegram -->
+                        <a href="https://t.me/+79221754098" class="btn btn-info btn-lg text-white">
+                            <i class="fab fa-telegram me-2 fa-lg"></i>
+                            Telegram
+                            <small class="ms-2">Круглосуточно</small>
+                        </a>
+
+                        <!-- MAX -->
+                        <a href="https://web.max.ru/6454213" class="btn btn-dark btn-lg">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="#00C853" class="me-2">
+                                <path d="M12 2L2 7L12 12L22 7L12 2Z" />
+                                <path d="M2 17L12 22L22 17" stroke="#00C853" stroke-width="2" />
+                                <path d="M2 12L12 17L22 12" stroke="#00C853" stroke-width="2" />
+                            </svg>
+                            MAX Messenger
+                            <small class="ms-2">Местный оператор</small>
+                        </a>
+
+                        <!-- Позвонить -->
+                        <a href="tel:+79221754098" class="btn btn-primary btn-lg">
+                            <i class="fas fa-phone me-2 fa-lg"></i>
+                            Позвонить сейчас
+                        </a>
+                    </div>
+
+                    <hr class="my-4">
+
+                    <!-- Дополнительные действия -->
+                    <div class="text-center">
+                        <h6 class="text-muted mb-3">Быстрые действия</h6>
+                        <div class="d-flex flex-wrap justify-content-center gap-2">
+                            <button class="btn btn-outline-secondary copy-phone" data-number="+79221754098">
+                                <i class="far fa-copy me-1"></i>Скопировать номер
+                            </button>
+                            <button class="btn btn-outline-secondary" id="shareContacts">
+                                <i class="fas fa-share-alt me-1"></i>Поделиться
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Карта -->
+        <div class="col-lg-4">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-header bg-dark text-white py-3">
+                    <h4 class="mb-0"><i class="fas fa-map me-2"></i>Мы на карте</h4>
+                </div>
+                <div class="card-body p-0">
+                    <div class="ratio ratio-1x1">
+                        <iframe src="https://yandex.ru/map-widget/v1/?um=constructor%3A1f7d9d6e5d6a5d1d5a5d5a5d5a5d5a5d5a5d5a5d5a5d5a5d5a5d5a5d5a5d5a5d5a5d&amp;source=constructor"
+                                width="100%" height="100%" frameborder="0" allowfullscreen></iframe>
+                    </div>
+                    <div class="p-3">
+                        <h5 class="mb-2">Как добраться</h5>
+                        <p class="mb-2 small">Мы находимся в г. Верхняя Пышма, ул. Кривоусова, 20А. Удобный подъезд и парковка для клиентов.</p>
+                        <div class="d-grid gap-2">
+                            <a href="https://yandex.ru/maps/20720/verhnyaya-pyshma/house/ulitsa_krivousova_20a/YkkYcwBlTUEPQFtsfXV2dXhjYg==/?ll=60.575911%2C56.974434&z=17"
+                               target="_blank" class="btn btn-outline-primary">
+                                <i class="fas fa-road me-2"></i>Построить маршрут
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Дополнительная информация -->
+    <div class="row mt-5">
+        <div class="col-12">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-secondary text-white py-3">
+                    <h4 class="mb-0"><i class="fas fa-question-circle me-2"></i>Дополнительная информация</h4>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h5>Реквизиты компании</h5>
+                            <ul class="list-unstyled">
+                                <li><strong>ИП:</strong> Рамазанов Константин Бахтиёрович</li>
+                                <li><strong>ИНН:</strong> 123456789012</li>
+                                <li><strong>ОГРНИП:</strong> 123456789012345</li>
+                                <li><strong>Расчетный счет:</strong> 40702810123456789012</li>
+                                <li><strong>Банк:</strong> ПАО "Сбербанк"</li>
+                                <li><strong>БИК:</strong> 044525225</li>
+                                <li><strong>Корр. счет:</strong> 30101810400000000225</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <h5>Способы оплаты</h5>
+                            <div class="d-flex flex-wrap gap-3 mb-3">
+                                <span class="badge bg-primary p-2"><i class="fas fa-money-bill-wave me-1"></i>Наличные</span>
+                                <span class="badge bg-success p-2"><i class="fas fa-credit-card me-1"></i>Банковская карта</span>
+                                <span class="badge bg-info p-2"><i class="fas fa-mobile-alt me-1"></i>Онлайн-перевод</span>
+                                <span class="badge bg-warning p-2"><i class="fas fa-university me-1"></i>Безналичный расчет</span>
+                            </div>
+                            <h5>Доставка</h5>
+                            <p>Осуществляем доставку оборудования по Верхней Пышме и Свердловской области. Стоимость доставки уточняйте у менеджера.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Функция для копирования номера телефона
+        $(document).on('click', '.copy-phone', function() {
+            var number = $(this).data('number');
+            navigator.clipboard.writeText(number).then(function() {
+                toastr.success('Номер скопирован: ' + number);
+            }).catch(function() {
+                alert('Не удалось скопировать номер. Скопируйте вручную: ' + number);
+            });
+        });
+
+        // Функция для поделиться контактами
+        $('#shareContacts').click(function() {
+            if (navigator.share) {
+                navigator.share({
+                    title: 'СтройАренда+ - Контакты',
+                    text: 'Свяжитесь с нами для аренды строительного оборудования',
+                    url: window.location.href
+                }).catch(console.error);
+            } else {
+                alert('Функция "Поделиться" недоступна в вашем браузере');
+            }
+        });
+    </script>
+}

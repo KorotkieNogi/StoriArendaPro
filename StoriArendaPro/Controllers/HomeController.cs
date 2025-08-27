@@ -45,6 +45,16 @@ namespace StoriArendaPro.Controllers
             return View();
         }
 
+        public IActionResult RentalTerms()
+        {
+            return View();
+        }
+
+        public IActionResult Contacts()
+        {
+            return View();
+        }
+
         public IActionResult Privacy()
         {
             return View();

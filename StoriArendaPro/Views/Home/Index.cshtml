@@ -9,13 +9,11 @@
         <div class="hero-content">
             <h1>Аренда строительного оборудования</h1>
             <p class="lead">Более 200 наименований оборудования для любых задач</p>
-            <a href="@Url.Action("Rent", "Catalog", new { showCategories = true })" class="btn btn-primary btn-lg">Каталог оборудования</a>
+            <a href="@Url.Action("CatalogChoice", "Catalog", new { showCategories = true })" class="btn btn-primary btn-lg">Каталог оборудования</a>
         </div>
-    </div>
-
-    <!-- Видео-фон с оборудованием -->
+    </div><!-- Видео-фон с оборудованием -->
     <video autoplay muted loop playsinline class="hero-video">
-        <source src="/videos/equipments.mp4" type="video/mp4">
+        <source src="/videos/maintitl (2).mp4" type="video/mp4">
     </video>
 
     <!-- Затемнение для контраста -->
@@ -23,61 +21,105 @@
 </section>
 
 
+<!-- Advantages Section -->
+<section class="advantages-section" style="background: linear-gradient(rgba(156, 124, 6, 0.7), rgba(156, 124, 6, 0.7))">
+    <div class="container">
+        <h2 class="section-title text-dark" style="color: rgb(255 255 255) !important;">Почему выбирают нас?</h2>
+        <div class="row">
+            <div class="col-md-3">
+                <div class="advantage-item">
+                    <div class="advantage-icon" style="background: linear-gradient(135deg, var(--accent-color) 100%, #c01205 100%)">
+                        <i class="fas fa-tools"></i>
+                    </div>
+                    <h3>Широкий ассортимент</h3>
+                    <p>Более 200 единиц оборудования в наличии</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="advantage-item">
+                    <div class="advantage-icon" style="background: linear-gradient(135deg, var(--accent-color) 100%, #c01205 100%)">
+                        <i class="fas fa-ruble-sign"></i>
+                    </div>
+                    <h3>Гибкие цены</h3>
+                    <p>Скидки при долгосрочной аренде оборудования</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="advantage-item">
+                    <div class="advantage-icon" style="background: linear-gradient(135deg, var(--accent-color) 100%, #c01205 100%)">
+                        <i class="fas fa-truck"></i>
+                    </div>
+                    <h3>Доставка</h3>
+                    <p>Быстрая доставка по всему городу в Верхней Пышме</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="advantage-item">
+                    <div class="advantage-icon" style="background: linear-gradient(135deg, var(--accent-color) 100%, #c01205 100%)">
+                        <i class="fas fa-headset"></i>
+                    </div>
+                    <h3>Поддержка 24/7</h3>
+                    <p>Консультации по подбору строительного оборудования</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
 
 <!-- Popular Equipment Section -->
-<section class="popular-equipment">
+<section class="popular-equipment" style="padding: 4rem 0; background: linear-gradient(to bottom,  #fbf0be, #fcf5d6, #5c5c5c, #3d3d3d)">
     <div class="container">
-        <h2 class="section-title">Популярное оборудование</h2>
+        <h2 class="section-title" style="color: rgba(0,0,0); text-shadow: 2px 2px 4px rgba(255,255,255,0)">Популярное оборудование</h2>
         <div class="row">
             @foreach (var product in ViewBag.PopularRentals)
             {
                 <div class="col-md-3 mb-4">
-                    <div class="card product-card h-100">
+                    <div class="product-card h-100" style="background: white; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.2); overflow: hidden;">
                         <!-- Карусель изображений -->
                         @if (product.Product.ProductImages != null && product.Product.ProductImages.Count > 0)
                         {
                             var isFirst = true;
-                            <div id="carousel-@product.ProductId" class="carousel slide h-100" data-bs-ride="carousel">
-                                <!-- Добавлен h-100 -->
-                                <div class="carousel-inner h-100">
-                                    <!-- Добавлен h-100 -->
-                                    @foreach (var image in product.Product.ProductImages)
+                            <div class="image-container">
+                                <div id="carousel-@product.ProductId" class="carousel slide h-100" data-bs-ride="carousel">
+                                    <div class="carousel-inner h-100">
+                                        @foreach (var image in product.Product.ProductImages)
+                                        {
+                                            <div class="carousel-item @(isFirst ? "active" : "") h-100">
+                                                <img src="/photoEquipment/@image.Path" class="d-block w-100 h-100 object-fit-contain" alt="@product.Product.Name" style="padding: 15px;">
+                                            </div>
+                                            { isFirst = false; }
+                                        }
+                                    </div>
+                                    @if (product.Product.ProductImages.Count > 1)
                                     {
-                                        <div class="carousel-item @(isFirst ? "active" : "") h-100">
-                                            <!-- Добавлен h-100 -->
-                                            <img src="/photoEquipment/@image.Path" class="d-block w-100 h-100 object-fit-cover" alt="@product.Product.Name">
-                                        </div>
-                                        { isFirst = false; }
+                                        <button class="carousel-control-prev" type="button" data-bs-target="#carousel-@product.ProductId" data-bs-slide="prev">
+                                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                            <span class="visually-hidden">Previous</span>
+                                        </button>
+                                        <button class="carousel-control-next" type="button" data-bs-target="#carousel-@product.ProductId" data-bs-slide="next">
+                                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                            <span class="visually-hidden">Next</span>
+                                        </button>
                                     }
                                 </div>
-                                @if (product.Product.ProductImages.Count > 1)
-                                {
-                                    <button class="carousel-control-prev" type="button" data-bs-target="#carousel-@product.ProductId" data-bs-slide="prev">
-                                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                                        <span class="visually-hidden">Previous</span>
-                                    </button>
-                                    <button class="carousel-control-next" type="button" data-bs-target="#carousel-@product.ProductId" data-bs-slide="next">
-                                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                                        <span class="visually-hidden">Next</span>
-                                    </button>
-                                }
                             </div>
                         }
                         else
                         {
-                            <!-- Заглушка, если нет изображений -->
-                            <div class="no-image-placeholder h-100">
-                                <!-- Добавлен h-100 -->
-                                <img src="https://baids.ru/storage/lot-images/27/22/2722226/a036b6e9ad987f2eb92cf50944a70f50.jpeg" class="w-100 h-100 object-fit-cover" alt="Нет изображения">
+                            <div class="image-container">
+                                <img src="https://baids.ru/storage/lot-images/27/22/2722226/a036b6e9ad987f2eb92cf50944a70f50.jpeg" class="w-100 h-100 object-fit-contain" alt="Нет изображения" style="padding: 15px;">
                             </div>
                         }
-                        <div class="card-body">
-                            <h5 class="card-title">@product.Product.Name</h5>
-                            <p class="card-text">@product.Product.ShortDescription</p>
-                            <div class="price-info">
-                                <span class="price">от @product.PricePerDay.ToString("N2") ₽/сутки</span>
+                        <div class="card-body d-flex flex-column p-3">
+                            <h6 class="card-title mb-2 fw-bold" style="color: #2c3e50;">@product.Product.Name</h6>
+                            <small class="card-text text-muted mb-2">@product.Product.ShortDescription</small>
+                            <div class="price-info mt-auto pt-2">
+                                <span class="price fw-bold text-danger fs-5">@product.PricePerDay.ToString("N2") ₽/сутки</span>
                             </div>
-                            <a href="@Url.Action("ProductDetails", "Catalog", new { id = product.ProductId })" class="btn btn-outline-primary">Подробнее</a>
+                            <a href="@Url.Action("ProductDetails", "Catalog", new { id = product.ProductId })" class="btn btn-outline-primary">
+                                Подробнее
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -88,46 +130,39 @@
 
 
 
-@* <!-- Popular Equipment Section -->
-<section class="popular-equipment">
-    <div class="container">
-        <h2 class="section-title">Популярное оборудование</h2>
-        <div class="row">
-            @foreach (var product in ViewBag.PopularRentals)
-            {
-                <div class="col-md-3 mb-4">
-                    <div class="card product-card">
-                        <img src="/photoEquipment/@product.Product.ImagePath" class="card-img-top" alt="@product.Product.Name">
-                        <div class="card-body">
-                            <h5 class="card-title">@product.Product.Name</h5>
-                            <p class="card-text">@product.Product.ShortDescription</p>
-                            <div class="price-info">
-                                <span class="price">от @product.PricePerDay.ToString("N2") ₽/сутки</span>
-                            </div>
-                            <a href="@Url.Action("ProductDetails", "Catalog", new { id = product.ProductId })" class="btn btn-outline-primary">Подробнее</a>
-                        </div>
-                    </div>
-                </div>
-            }
-        </div>
-    </div>
-</section> *@
+
 
 
 <!-- Categories Section -->
-<section class="categories-section bg-light py-5">
+<section class="categories-section" style="
+    background:
+        linear-gradient(90deg,
+            rgba(30, 50, 70, 0.85) 0%,
+            rgba(60, 80, 100, 0.8) 25%,
+            rgba(90, 110, 130, 0.75) 50%,
+            rgba(120, 140, 160, 0.7) 75%,
+            rgba(150, 170, 190, 0.65) 100%),
+        url('/PhotoSite/male-worker-factory.jpg') center/cover no-repeat;
+    padding: 4rem 0;
+    position: relative;">
     <div class="container">
-        <h2 class="section-title text-center mb-5">Категории оборудования</h2>
+        <h2 class="section-title text-center mb-5" style="color: white; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7)">Категории оборудования</h2>
 
         <!-- Type Tabs Navigation -->
-        <ul class="nav nav-tabs justify-content-center mb-4" id="equipmentTypeTabs" role="tablist">
+        <ul class="nav nav-tabs justify-content-center mb-4" id="equipmentTypeTabs" role="tablist" style="
+            background: linear-gradient(45deg, transparent, white, transparent);
+            border-radius: 25px;
+            padding: 5px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        ">
             <li class="nav-item" role="presentation">
-                <button class="nav-link active" id="purpose-tab" data-bs-toggle="tab" data-bs-target="#purpose" type="button" role="tab">
+                <button class="nav-link active pulse-on-click" id="purpose-tab" data-bs-toggle="tab" data-bs-target="#purpose" type="button" role="tab">
                     <i class="fas fa-bullseye me-2"></i>По назначению
                 </button>
             </li>
             <li class="nav-item" role="presentation">
-                <button class="nav-link" id="type-tab" data-bs-toggle="tab" data-bs-target="#type" type="button" role="tab">
+                <button class="nav-link pulse-on-click" id="type-tab" data-bs-toggle="tab" data-bs-target="#type" type="button" role="tab">
                     <i class="fas fa-tools me-2"></i>По типу оборудования
                 </button>
             </li>
@@ -141,14 +176,24 @@
                     @foreach (var category in ViewBag.RentCategories)
                     {
                         <div class="col-md-4 mb-4">
-                            <div class="category-card h-100 p-4 border rounded-3 shadow-sm bg-white">
-                                <div class="category-icon mb-3 text-primary">
+                            <div class="category-card h-100 p-4 border-0 rounded-4 shadow-lg" style="
+                                background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+                                backdrop-filter: blur(5px);
+                                border: 1px solid rgba(255, 255, 255, 0.3) !important;
+                                ">
+                                <div class="category-icon mb-3" style="color: #3b5998;">
                                     <i class="fas @GetCategoryIcon(category.Name) fa-2x"></i>
                                 </div>
-                                <h3 class="h4">@category.Name</h3>
+                                <h3 class="h4" style="color: #2c3e50;">@category.Name</h3>
                                 <p class="text-muted">@category.Description</p>
                                 <a href="@Url.Action("Rent", "Catalog", new { categoryId = category.CategoryId })"
-                                   class="btn btn-outline-primary mt-auto">Смотреть оборудование</a>
+                                   class="btn btn-primary mt-auto" style="
+                                       background: linear-gradient(45deg, #3b5998, #2c3e50);
+                                       border: none;
+                                       border-radius: 25px;
+                                       ">
+                                    Смотреть оборудование
+                                </a>
                             </div>
                         </div>
                     }
@@ -161,21 +206,24 @@
                     @foreach (var type in ViewBag.RentType)
                     {
                         <div class="col-md-4 mb-4">
-                            <div class="category-card h-100 p-4 border rounded-3 shadow-sm bg-white">
-                                <div class="category-icon mb-3 text-primary">
+                            <div class="category-card h-100 p-4 border-0 rounded-4 shadow-lg" style="
+                                background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+                                backdrop-filter: blur(5px);
+                                border: 1px solid rgba(255, 255, 255, 0.3) !important;
+                                ">
+                                <div class="category-icon mb-3" style="color: #3b5998;">
                                     <i class="fas @GetTypeIcon(type.Name) fa-2x"></i>
                                 </div>
-                                <h3 class="h4">@type.Name</h3>
+                                <h3 class="h4" style="color: #2c3e50;">@type.Name</h3>
                                 <p class="text-muted">@type.Description</p>
-                                @* <div class="mt-2">
-                                    @foreach (var subType in type.SubTypes)//
-                                    {
-                                        <a href="@Url.Action("Rent", "Catalog", new { typeId = subType.TypeProductId })"
-                                           class="badge bg-light text-dark me-1 mb-1 text-decoration-none">@subType.Name</a>
-                                    }
-                                </div> *@
                                 <a href="@Url.Action("Rent", "Catalog", new { typeId = type.TypeProductId })"
-                                   class="btn btn-outline-primary mt-3">Все @type.Name</a>
+                                   class="btn btn-primary mt-3" style="
+                                       background: linear-gradient(45deg, #3b5998, #2c3e50);
+                                       border: none;
+                                       border-radius: 25px;
+                                       ">
+                                    Все @type.Name
+                                </a>
                             </div>
                         </div>
                     }
@@ -185,80 +233,69 @@
     </div>
 </section>
 
-<!-- Advantages Section -->
-<section class="advantages-section">
-    <div class="container">
-        <h2 class="section-title">Почему выбирают нас</h2>
-        <div class="row">
-            <div class="col-md-3">
-                <div class="advantage-item">
-                    <div class="advantage-icon">
-                        <i class="fas fa-tools"></i>
-                    </div>
-                    <h3>Широкий ассортимент</h3>
-                    <p>Более 200 единиц оборудования в наличии</p>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="advantage-item">
-                    <div class="advantage-icon">
-                        <i class="fas fa-ruble-sign"></i>
-                    </div>
-                    <h3>Гибкие цены</h3>
-                    <p>Скидки при долгосрочной аренде</p>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="advantage-item">
-                    <div class="advantage-icon">
-                        <i class="fas fa-truck"></i>
-                    </div>
-                    <h3>Доставка</h3>
-                    <p>Быстрая доставка по всему городу</p>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="advantage-item">
-                    <div class="advantage-icon">
-                        <i class="fas fa-headset"></i>
-                    </div>
-                    <h3>Поддержка 24/7</h3>
-                    <p>Консультации по подбору оборудования</p>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
+
 
 
 @functions {
-    // Helper function to get icons for categories
+    // Helper function to get icons for categories (по назначению)
     public string GetCategoryIcon(string categoryName)
     {
         return categoryName switch
         {
+            "Каркасные конструкции" => "fa-cubes",
+            "Бетонные работы" => "fa-cubes",
+            "Грунт и земляные работы" => "fa-mountain",
+            "Силовое оборудование" => "fa-bolt",
+            "Отделочные работы" => "fa-paint-roller",
+            "Резка и раскрой" => "fa-cut",
+            "Сварочные технологии" => "fa-fire",
+            "Насосные станции" => "fa-water",
+            "Климатическое оборудование" => "fa-fan",
+            "Измерительная техника" => "fa-ruler-combined",
+            "Такелаж и подъем" => "fa-chain",
+            "Садово-парковая техника" => "fa-leaf",
+            "Профессиональный инструмент" => "fa-tools",
+            "Безопасность и освещение" => "fa-shield-alt",
             "Строительство, бетон" => "fa-concrete",
-            "Для дома и дачи" => "fa-paint-roller",
+            "Для дома и дачи" => "fa-home",
             "Грузоподъемное" => "fa-crane",
             "Земляройная техника" => "fa-shovel",
-            "Электроинструмент" => "fa-bolt",
+            "Электроинструмент" => "fa-plug",
             "Временные сооружения" => "fa-layer-group",
-            _ => "fa-tools"
+            _ => "fa-toolbox"
         };
     }
 
-    // Helper function to get icons for equipment types
+    // Helper function to get icons for equipment types (по типу)
     public string GetTypeIcon(string typeName)
     {
         return typeName switch
         {
+            "Электроинструменты" => "fa-plug",
+            "Бензоинструменты" => "fa-gas-pump",
+            "Шнеки и удлинители" => "fa-screwdriver",
+            "Сварочные аппараты" => "fa-bolt",
+            "Насосы" => "fa-tint",
+            "Режущие диски" => "fa-cut",
+            "Компрессоры" => "fa-wind",
+            "Лестницы" => "fa-stairs",
+            "Мозаично-шлифовальные машины" => "fa-expand-arrows-alt",
+            "Тепловые пушки" => "fa-fire",
+            "Измерительные приборы" => "fa-ruler",
+            "Окрасочное оборудование" => "fa-paint-brush",
+            "Бетономешалки" => "fa-cubes",
+            "Плиткорезы" => "fa-cut",
+            "Гидравлическое оборудование" => "fa-oil-can",
+            "Алмазный инструмент" => "fa-gem",
+            "Генераторы" => "fa-bolt",
+            "Снегоуборочная техника" => "fa-snowflake",
             "Электроинструмент" => "fa-plug",
             "Бензоинструмент" => "fa-gas-pump",
             "Гидравлическое" => "fa-oil-can",
             "Пневматическое" => "fa-wind",
             "Ручной инструмент" => "fa-hammer",
             "Грузоподъемное" => "fa-crane",
-            _ => "fa-toolbox"
+            _ => "fa-tools"
         };
     }
 }

@@ -107,10 +107,10 @@
                 {
                     <!-- Кнопки для администратора -->
                     <div class="btn-group w-100 mb-3">
-                        <a href="@Url.Action("Edit", "Product", new { id = Model.ProductId })" class="btn btn-warning">
+                        <a href="@Url.Action("EditProduct", "Admin",  new { area = "Admin", id = Model.ProductId })" class="btn btn-warning">
                             <i class="fas fa-edit me-2"></i>Редактировать
                         </a>
-                        <form method="post" action="@Url.Action("Delete", "Product")" class="d-inline">
+                        <form method="post" action="@Url.Action("DeleteProduct", "Admin", new { area = "Admin" })" class="d-inline">
                             <input type="hidden" name="id" value="@Model.ProductId">
                             <button type="submit" class="btn btn-danger"
                                     onclick="return confirm('Вы уверены, что хотите удалить этот товар?')">
@@ -205,24 +205,22 @@
                         <div class="dropdown">
                             <button class="btn btn-primary btn-lg dropdown-toggle" type="button" id="productPhoneDropdown"
                                     data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="fas fa-phone-alt me-2"></i>8 (922) 175-40-98
+                                <i class="fas fa-phone-alt me-2"></i>8 (932) 707-40-98
                             </button>
                             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="productPhoneDropdown">
-                                <li><a class="dropdown-item" href="tel:+79221754098"><i class="fas fa-phone me-2"></i>Позвонить</a></li>
+                                <li><a class="dropdown-item" href="tel:+79327074098"><i class="fas fa-phone me-2"></i>Позвонить</a></li>
                                 <li>
-                                    <a class="dropdown-item" href="https://web.max.ru/6454213">
-                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" class="me-2">
-                                            <path d="M12 2L2 7l10 5 10-5-10-5zm0 2.5L20 7l-8 4-8-4 8-4.5z" />
-                                            <path d="M2 17l10 5 10-5" />
-                                            <path d="M2 12l10 5 10-5" />
-                                        </svg>
+                                    <a class="dropdown-item" href="https://web.max.ru/6454213" target="_blank" style="color: black !important;">
+                                        <img src="https://play-lh.googleusercontent.com/iXp_mU8RC7rYuWgQeE5y-VuO-UPMIB4glAClkiyrJUnfKraqdFZtzX-7tUwgwEh2AGE=w480-h960"
+                                             alt="MAX Messenger"
+                                             class="max-logo-img me-2">
                                         MAX
                                     </a>
                                 </li>
-                                <li><a class="dropdown-item" href="https://wa.me/79221754098"><i class="fab fa-whatsapp me-2"></i>WhatsApp</a></li>
-                                <li><a class="dropdown-item" href="https://t.me/+79221754098"><i class="fab fa-telegram me-2"></i>Telegram</a></li>
+                                <li><a class="dropdown-item" target="_blank" href="https://wa.me/79327074098"><i class="fab fa-whatsapp me-2"></i>WhatsApp</a></li>
+                                <li><a class="dropdown-item" target="_blank" href="https://t.me/+79327074098"><i class="fab fa-telegram me-2"></i>Telegram</a></li>
                                 <li><hr class="dropdown-divider"></li>
-                                <li><button class="dropdown-item copy-phone" data-number="+79221754098"><i class="far fa-copy me-2"></i>Скопировать номер</button></li>
+                                <li><button class="dropdown-item copy-phone" data-number="+79327074098"><i class="far fa-copy me-2"></i>Скопировать номер</button></li>
                             </ul>
                         </div>
 
@@ -247,7 +245,7 @@
 
 </div>
 
-<!-- Модальное окно для ввода паспортных данных -->
+@* <!-- Модальное окно для ввода паспортных данных -->
 <div class="modal fade" id="passportVerificationModal" tabindex="-1">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
@@ -331,9 +329,9 @@
             </div>
         </div>
     </div>
-</div>
+</div> *@
 
-<!-- Модальное окно для выбора параметров аренды -->
+@* <!-- Модальное окно для выбора параметров аренды -->
 <div class="modal fade" id="rentalModal" tabindex="-1">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
@@ -414,7 +412,7 @@
             </div>
         </div>
     </div>
-</div>
+</div> *@
 
 @section Scripts {
     <script>

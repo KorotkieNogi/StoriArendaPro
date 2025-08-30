@@ -189,7 +189,7 @@ body {
 /* ===== HERO SECTIONS ===== */
 .hero-section {
     position: relative;
-    height: 100vh;
+    height: 110vh;
     min-height: 600px;
     display: flex;
     align-items: center;
@@ -208,7 +208,7 @@ body {
     height: auto;
     z-index: 0;
     object-fit: cover;
-    filter: brightness(0.7);
+    filter: brightness(1);
 }
 
 .video-overlay {
@@ -634,12 +634,12 @@ body {
 }
 
 .advantage-item h3 {
-    color: darkslategray;
+    color: #d70026a8;
     margin-bottom: 1rem;
 }
 
 .advantage-item p {
-    color: rgba(255, 255, 255);
+    color: darkslategray;
 }
 
 /* ===== PRODUCT DETAILS ===== */
@@ -870,6 +870,8 @@ html {
     }
 }
 
+
+
 /* ===== ANIMATIONS ===== */
 @keyframes fadeInUp {
     from {
@@ -1029,4 +1031,66 @@ a:focus {
 }
 
 
+/*Добавим стили для Sortable (если используем перетаскивание)*/
+.sortable-ghost {
+    opacity: 0.5;
+}
 
+.sortable-chosen {
+    background-color: #f8f9fa;
+    border-radius: 8px;
+}
+
+
+/* Улучшения для мобильных устройств КОГДА ДОБАВЛЯЕМ ИЛИ РЕДАКТИРУЕМ ОБОРУДОВАНИЕ*/
+@media (max-width: 768px) {
+    .image-actions {
+        opacity: 1 !important; /* Всегда показываем кнопки на мобильных */
+        background-color: rgba(0, 0, 0, 0.7);
+        padding: 5px;
+        border-radius: 5px;
+    }
+
+        .image-actions button {
+            min-width: 44px !important;
+            min-height: 44px !important;
+            margin: 2px;
+            font-size: 16px;
+        }
+
+    .drop-zone {
+        min-height: 150px;
+        padding: 1rem;
+    }
+}
+
+
+/*Для логотипа*/
+/* ===== HEADER LOGO STYLES ===== */
+
+
+
+
+/* Улучшение видимости кнопок действий */
+.image-actions {
+    transition: all 0.3s ease;
+}
+
+.image-thumbnail:hover .image-actions,
+.image-thumbnail:focus-within .image-actions {
+    opacity: 1;
+}
+
+/* Увеличение области клика для кнопок */
+.image-actions button {
+    min-width: 36px;
+    min-height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Улучшение видимости для мобильных */
+.touch-device .image-actions {
+    opacity: 1 !important;
+}

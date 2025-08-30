@@ -9,12 +9,20 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="bin\**" />
+    <Compile Remove="obj\**" />
     <Compile Remove="videos\**" />
     <Compile Remove="Views\Новая папка1\**" />
+    <Content Remove="bin\**" />
+    <Content Remove="obj\**" />
     <Content Remove="videos\**" />
     <Content Remove="Views\Новая папка1\**" />
+    <EmbeddedResource Remove="bin\**" />
+    <EmbeddedResource Remove="obj\**" />
     <EmbeddedResource Remove="videos\**" />
     <EmbeddedResource Remove="Views\Новая папка1\**" />
+    <None Remove="bin\**" />
+    <None Remove="obj\**" />
     <None Remove="videos\**" />
     <None Remove="Views\Новая папка1\**" />
   </ItemGroup>
@@ -34,6 +42,10 @@
 
   <ItemGroup>
     <Folder Include="wwwroot\uploads\passports\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include=".certs\aspnetcore.pfx" />
   </ItemGroup>
 
 </Project>

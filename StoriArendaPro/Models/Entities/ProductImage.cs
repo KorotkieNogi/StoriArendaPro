@@ -8,6 +8,11 @@
 
         public int? ProductId { get; set; }
 
+        public int? Order { get; set; } // Порядок отображения
+
+        public bool? IsMain { get; set; } // Главное изображение
+
         public virtual Product? Product { get; set; }
     }
 }
+

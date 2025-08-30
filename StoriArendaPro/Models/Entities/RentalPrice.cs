@@ -13,7 +13,7 @@ public partial class RentalPrice
 
     public decimal? Deposit { get; set; }
 
-    public int? MinRentalDays { get; set; }
+    public decimal MinRentalDays { get; set; }
 
     public DateTime? CreatedAt { get; set; }
 

@@ -13,6 +13,8 @@ public partial class Category
 
     public string? Description { get; set; }
 
+    public string? Icon { get; set; } // Новое поле для иконки
+
     public bool? IsForRent { get; set; }
 
     public bool? IsForSale { get; set; }

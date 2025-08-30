@@ -1,0 +1,93 @@
+﻿@model StoriArendaPro.Models.ViewModels.TypeProductViewModel
+@{
+    ViewData["Title"] = "Добавить тип оборудования";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<div class="container-fluid px-4">
+    <div class="d-flex justify-content-between align-items-center py-3 mb-4">
+        <h1 class="h3 mb-0 text-gray-800">@ViewData["Title"]</h1>
+        <a href="@Url.Action("TypeProducts")" class="btn btn-secondary">
+            <i class="fas fa-arrow-left me-2"></i>Назад к списку
+        </a>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Информация о типе оборудования</h6>
+                </div>
+                <div class="card-body">
+                    <form asp-action="CreateTypeProduct" method="post">
+                        @Html.AntiForgeryToken()
+
+                        <div class="form-group mb-3">
+                            <label asp-for="Name" class="form-label"></label>
+                            <input asp-for="Name" class="form-control" placeholder="Введите название типа оборудования" />
+                            <span asp-validation-for="Name" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label asp-for="Description" class="form-label"></label>
+                            <textarea asp-for="Description" class="form-control" rows="3"
+                                      placeholder="Введите описание типа оборудования (необязательно)"></textarea>
+                            <span asp-validation-for="Description" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label asp-for="Icon" class="form-label"></label>
+                            <select asp-for="Icon" class="form-select" id="iconSelector">
+                                <option value="">-- Выберите иконку --</option>
+                                <option value="fa-plug">🔌 Вилка (fa-plug)</option>
+                                <option value="fa-gas-pump">⛽ Бензонасос (fa-gas-pump)</option>
+                                <option value="fa-screwdriver">🪛 Отвертка (fa-screwdriver)</option>
+                                <option value="fa-bolt">⚡ Молния (fa-bolt)</option>
+                                <option value="fa-tint">💧 Капля (fa-tint)</option>
+                                <option value="fa-cut">✂️ Ножницы (fa-cut)</option>
+                                <option value="fa-wind">💨 Ветер (fa-wind)</option>
+                                <option value="fa-stairs">📶 Лестница (fa-stairs)</option>
+                                <option value="fa-expand-arrows-alt">↔️ Стрелки (fa-expand-arrows-alt)</option>
+                                <option value="fa-fire">🔥 Огонь (fa-fire)</option>
+                                <option value="fa-ruler">📏 Линейка (fa-ruler)</option>
+                                <option value="fa-paint-brush">🖌️ Кисть (fa-paint-brush)</option>
+                                <option value="fa-cubes">🔲 Кубы (fa-cubes)</option>
+                                <option value="fa-oil-can">🛢️ Канистра (fa-oil-can)</option>
+                                <option value="fa-gem">💎 Алмаз (fa-gem)</option>
+                                <option value="fa-snowflake">❄️ Снежинка (fa-snowflake)</option>
+                                <option value="fa-hammer">🔨 Молоток (fa-hammer)</option>
+                                <option value="fa-crane">🏗️ Кран (fa-crane)</option>
+                                <option value="fa-tools">🛠️ Инструменты (fa-tools)</option>
+                                <option value="fa-tools">&#xf613; Гидравлика (fa-oil-can)</option>
+                            </select>
+                            <span asp-validation-for="Icon" class="text-danger"></span>
+                            <small class="form-text text-muted">Иконка будет отображаться в каталоге</small>
+                        </div>
+
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <div class="form-check form-switch">
+                                    <input asp-for="IsForRent" class="form-check-input" type="checkbox" />
+                                    <label asp-for="IsForRent" class="form-check-label"></label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-check form-switch">
+                                    <input asp-for="IsForSale" class="form-check-input" type="checkbox" />
+                                    <label asp-for="IsForSale" class="form-check-label"></label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save me-2"></i>Создать тип
+                            </button>
+                            <a href="@Url.Action("TypeProducts")" class="btn btn-secondary">Отмена</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

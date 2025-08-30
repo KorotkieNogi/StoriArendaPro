@@ -1,0 +1,148 @@
+﻿@model IEnumerable<StoriArendaPro.Models.Entities.Product>
+@{
+    ViewData["Title"] = "Управление товарами";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<div class="container-fluid px-4">
+    <div class="d-flex justify-content-between align-items-center py-3 mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Управление товарами</h1>
+        <a href="@Url.Action("CreateProduct")" class="btn btn-primary">
+            <i class="fas fa-plus me-2"></i>Добавить товар
+        </a>
+    </div>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @TempData["ErrorMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <!-- Фильтры -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Фильтры</h6>
+        </div>
+        <div class="card-body">
+            <form method="get" class="row">
+                <div class="col-md-3 mb-3">
+                    <input type="text" name="search" class="form-control" placeholder="Поиск..." value="@ViewBag.SearchTerm">
+                </div>
+                <div class="col-md-3 mb-3">
+                    <select name="categoryId" class="form-control">
+                        <option value="">Все категории</option>
+                        @foreach (var category in ViewBag.Categories)
+                        {
+                            <option value="@category.CategoryId" selected="@(ViewBag.CategoryId == category.CategoryId)">
+                                @category.Name
+                            </option>
+                        }
+                    </select>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <select name="typeId" class="form-control">
+                        <option value="">Все типы</option>
+                        @foreach (var type in ViewBag.TypeProducts)
+                        {
+                            <option value="@type.TypeProductId" selected="@(ViewBag.TypeId == type.TypeProductId)">
+                                @type.Name
+                            </option>
+                        }
+                    </select>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="fas fa-filter me-2"></i>Применить
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Таблица товаров -->
+    <div class="card shadow">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Изображение</th>
+                            <th>Наименование</th>
+                            <th>Артикул</th>
+                            <th>Категория</th>
+                            <th>Тип</th>
+                            <th>Цена/день</th>
+                            <th>В наличии</th>
+                            <th>Статус</th>
+                            <th>Действия</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var product in Model)
+                        {
+                            var rentalPrice = product.RentalPrices.FirstOrDefault();
+                            var inventory = product.Inventories.FirstOrDefault();
+                            var mainImage = product.ProductImages.FirstOrDefault();
+
+                            <tr>
+                                <td>
+                                    @if (mainImage != null)
+                                    {
+                                        <img src="~/photoEquipment/@mainImage.Path"
+                                             alt="@product.Name"
+                                             style="width: 60px; height: 60px; object-fit: cover;"
+                                             class="rounded">
+                                    }
+                                    else
+                                    {
+                                        <div class="bg-secondary rounded d-flex align-items-center justify-content-center"
+                                             style="width: 60px; height: 60px;">
+                                            <i class="fas fa-image text-white"></i>
+                                        </div>
+                                    }
+                                </td>
+                                <td>@product.Name</td>
+                                <td>@product.Sku</td>
+                                <td>@product.Category?.Name</td>
+                                <td>@product.TypeProduct?.Name</td>
+                                <td>@(rentalPrice?.PricePerDay?.ToString("N2")) ₽</td>
+                                <td>@(inventory?.QuantityForRent ?? 0) шт.</td>
+                                <td>
+                                    <span class="badge @(product.IsActive == true ? "bg-success" : "bg-danger")">
+                                        @(product.IsActive == true ? "Активен" : "Неактивен")
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="btn-group">
+                                        <a href="@Url.Action("EditProduct", new { id = product.ProductId })"
+                                           class="btn btn-sm btn-warning">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <form method="post" action="@Url.Action("DeleteProduct")"
+                                              onsubmit="return confirm('Вы уверены, что хотите удалить этот товар?')">
+                                            <input type="hidden" name="id" value="@product.ProductId">
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" class="btn btn-sm btn-danger">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

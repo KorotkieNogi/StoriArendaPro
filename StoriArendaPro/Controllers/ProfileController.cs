@@ -1,12 +1,17 @@
 ﻿// Controllers/ProfileController.cs
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using StoriArendaPro.Models.Entities;
 using StoriArendaPro.Models.ViewModels;
 using StoriArendaPro.Services;
+using System;
+using System.IO;
+using System.Linq;
 using System.Security.Claims;
+using System.Threading.Tasks;
 
 namespace StoriArendaPro.Controllers
 {

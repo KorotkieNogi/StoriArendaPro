@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using Microsoft.Extensions.Logging;
 using StoriArendaPro.Models.Entities;
 using Twilio.TwiML.Voice;
 
@@ -78,7 +80,15 @@ public partial class StoriArendaProContext : IdentityDbContext<User, IdentityRol
 
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        => optionsBuilder.UseNpgsql("Host=localhost;Port=5432;Database=stori_arenda_pro;Username=postgres;Password=12873465Tam");
+    {
+        if (!optionsBuilder.IsConfigured)
+        {
+            optionsBuilder.UseNpgsql("Host=localhost;Port=5432;Database=stori_arenda_pro;Username=postgres;Password=12873465Tam",
+                options => options.CommandTimeout(120)).EnableSensitiveDataLogging()
+                .EnableDetailedErrors()
+                .LogTo(Console.WriteLine, LogLevel.Information); ;
+        }
+    }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -175,6 +185,9 @@ public partial class StoriArendaProContext : IdentityDbContext<User, IdentityRol
                 .HasDefaultValueSql("CURRENT_TIMESTAMP")
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("updated_at");
+            entity.Property(e => e.Icon)
+                .HasMaxLength(50)
+                .HasColumnName("icon");
         });
 
         modelBuilder.Entity<TypeProduct>(entity =>
@@ -203,6 +216,10 @@ public partial class StoriArendaProContext : IdentityDbContext<User, IdentityRol
             entity.Property(e => e.Slug)
                 .HasMaxLength(100)
                 .HasColumnName("slug");
+
+            entity.Property(e => e.Icon)
+                .HasMaxLength(50)
+                .HasColumnName("icon");
             entity.Property(e => e.UpdatedAt)
                 .HasDefaultValueSql("CURRENT_TIMESTAMP")
                 .HasColumnType("timestamp without time zone")
@@ -312,17 +329,21 @@ public partial class StoriArendaProContext : IdentityDbContext<User, IdentityRol
             entity.ToTable("product_image");
 
             entity.HasIndex(e => e.Path, "idx_product_image_path");
-
-            entity.HasIndex(e => e.Path, "product_image_path_key").IsUnique();
+            entity.HasIndex(e => new { e.ProductId, e.IsMain }, "idx_product_image_main")
+                .HasFilter("(is_main = true)");
+            entity.HasIndex(e => new { e.ProductId, e.Order }, "idx_product_image_order");
 
             entity.Property(e => e.Id).HasColumnName("id");
-
             entity.Property(e => e.ProductId).HasColumnName("product_id");
-
             entity.Property(e => e.Path).HasColumnName("path");
+            entity.Property(e => e.Order).HasColumnName("order");
+            entity.Property(e => e.IsMain)
+                .HasDefaultValue(false)
+                .HasColumnName("is_main");
 
             entity.HasOne(d => d.Product).WithMany(p => p.ProductImages)
                 .HasForeignKey(d => d.ProductId)
+                .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("product_image_product_id_fkey");
         });
 
@@ -421,7 +442,7 @@ public partial class StoriArendaProContext : IdentityDbContext<User, IdentityRol
                 .HasPrecision(10, 2)
                 .HasColumnName("deposit");
             entity.Property(e => e.MinRentalDays)
-                .HasDefaultValue(1)
+                .HasDefaultValue(0.5)
                 .HasColumnName("min_rental_days");
             entity.Property(e => e.PricePerDay)
                 .HasPrecision(10, 2)
@@ -988,6 +1009,19 @@ public partial class StoriArendaProContext : IdentityDbContext<User, IdentityRol
 
 
         OnModelCreatingPartial(modelBuilder);
+    }
+
+    // Обработка закрытия контекста
+    public override void Dispose()
+    {
+        Console.WriteLine("DbContext disposing...");
+        base.Dispose();
+    }
+
+    public override async ValueTask DisposeAsync()
+    {
+        Console.WriteLine("DbContext disposing async...");
+        await base.DisposeAsync();
     }
 
     partial void OnModelCreatingPartial(ModelBuilder modelBuilder);

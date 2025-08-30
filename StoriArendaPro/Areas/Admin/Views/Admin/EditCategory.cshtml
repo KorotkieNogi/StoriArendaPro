@@ -1,0 +1,107 @@
+﻿@model StoriArendaPro.Models.ViewModels.CategoryViewModel
+@{
+    ViewData["Title"] = "Редактировать категорию";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<div class="container-fluid px-4">
+    <div class="d-flex justify-content-between align-items-center py-3 mb-4">
+        <h1 class="h3 mb-0 text-gray-800">@ViewData["Title"]</h1>
+        <a href="@Url.Action("Categories")" class="btn btn-secondary">
+            <i class="fas fa-arrow-left me-2"></i>Назад к списку
+        </a>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Редактирование категории</h6>
+                </div>
+                <div class="card-body">
+                    <form asp-action="EditCategory" method="post">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" asp-for="CategoryId" />
+
+                        <div class="form-group mb-3">
+                            <label asp-for="Name" class="form-label"></label>
+                            <input asp-for="Name" class="form-control" placeholder="Введите название категории" />
+                            <span asp-validation-for="Name" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label asp-for="Description" class="form-label"></label>
+                            <textarea asp-for="Description" class="form-control" rows="3"
+                                      placeholder="Введите описание категории (необязательно)"></textarea>
+                            <span asp-validation-for="Description" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label asp-for="Icon" class="form-label"></label>
+                            <select asp-for="Icon" class="form-select" id="iconSelector">
+                                <option value="">-- Выберите иконку --</option>
+                                <option value="fa-cubes">🔲 Кубы (fa-cubes)</option>
+                                <option value="fa-mountain">⛰️ Гора (fa-mountain)</option>
+                                <option value="fa-bolt">⚡ Молния (fa-bolt)</option>
+                                <option value="fa-paint-roller">🎨 Валик (fa-paint-roller)</option>
+                                <option value="fa-cut">✂️ Ножницы (fa-cut)</option>
+                                <option value="fa-fire">🔥 Огонь (fa-fire)</option>
+                                <option value="fa-water">💧 Вода (fa-water)</option>
+                                <option value="fa-fan">💨 Вентилятор (fa-fan)</option>
+                                <option value="fa-ruler-combined">📏 Линейка (fa-ruler-combined)</option>
+                                <option value="fa-chain">⛓️ Цепь (fa-chain)</option>
+                                <option value="fa-leaf">🍃 Лист (fa-leaf)</option>
+                                <option value="fa-tools">🛠️ Инструменты (fa-tools)</option>
+                                <option value="fa-shield-alt">🛡️ Щит (fa-shield-alt)</option>
+                                <option value="fa-concrete">🏗️ Бетон (fa-concrete)</option>
+                                <option value="fa-home">🏠 Дом (fa-home)</option>
+                                <option value="fa-crane">🏗️ Кран (fa-crane)</option>
+                                <option value="fa-shovel">⛏️ Лопата (fa-shovel)</option>
+                                <option value="fa-plug">🔌 Вилка (fa-plug)</option>
+                                <option value="fa-layer-group">📋 Слои (fa-layer-group)</option>
+                                <option value="fa-toolbox">🧰 Ящик для инструментов (fa-toolbox)</option>
+                                <option value="fa-tools">&#xf613; Гидравлика (fa-oil-can)</option>
+                            </select>
+                            <span asp-validation-for="Icon" class="text-danger"></span>
+                            <small class="form-text text-muted">Иконка будет отображаться в каталоге</small>
+                        </div>
+
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <div class="form-check form-switch">
+                                    <input asp-for="IsForRent" class="form-check-input" type="checkbox" />
+                                    <label asp-for="IsForRent" class="form-check-label"></label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-check form-switch">
+                                    <input asp-for="IsForSale" class="form-check-input" type="checkbox" />
+                                    <label asp-for="IsForSale" class="form-check-label"></label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save me-2"></i>Сохранить изменения
+                            </button>
+                            <a href="@Url.Action("Categories")" class="btn btn-secondary">Отмена</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Установка выбранной иконки при загрузке страницы
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentIcon = '@Model.Icon';
+            if (currentIcon) {
+                document.getElementById('iconSelector').value = currentIcon;
+            }
+        });
+    </script>
+}

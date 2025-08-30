@@ -12,6 +12,8 @@ using System.Linq;
 using System;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Http;
+using System.Threading.Tasks;
 
 namespace StoriArendaPro.Controllers
 {

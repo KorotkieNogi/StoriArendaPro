@@ -309,24 +309,65 @@
                 </div>
                 <div class="card-body">
                     <div class="row">
+                        <!-- Управление -->
+                        <div class="col-md-2 col-4 mb-3">
+                            <a href="@Url.Action("Products", "Admin")" class="btn btn-outline-primary w-100 quick-action-btn">
+                                <i class="fas fa-tools"></i>
+                                <span class="small mt-1">Товары</span>
+                            </a>
+                        </div>
+                        <div class="col-md-2 col-4 mb-3">
+                            <a href="@Url.Action("Categories", "Admin")" class="btn btn-outline-success w-100 quick-action-btn">
+                                <i class="fas fa-list"></i>
+                                <span class="small mt-1">Категории</span>
+                            </a>
+                        </div>
+                        <div class="col-md-2 col-4 mb-3">
+                            <a href="@Url.Action("TypeProducts", "Admin")" class="btn btn-outline-info w-100 quick-action-btn">
+                                <i class="fas fa-tags"></i>
+                                <span class="small mt-1">Типы</span>
+                            </a>
+                        </div>
+                        <div class="col-md-2 col-4 mb-3">
+                            <a href="@Url.Action("Users", "Admin")" class="btn btn-outline-secondary w-100 quick-action-btn">
+                                <i class="fas fa-users"></i>
+                                <span class="small mt-1">Пользователи</span>
+                            </a>
+                        </div>
+                        <div class="col-md-2 col-4 mb-3">
+                            <a href="@Url.Action("PassportVerifications", "Admin")" class="btn btn-outline-warning w-100 quick-action-btn">
+                                <i class="fas fa-passport"></i>
+                                <span class="small mt-1">Паспорта</span>
+                            </a>
+                        </div>
+                        <div class="col-md-2 col-4 mb-3">
+                            <a href="@Url.Action("Support", "Admin")" class="btn btn-outline-danger w-100 quick-action-btn">
+                                <i class="fas fa-headset"></i>
+                                <span class="small mt-1">Поддержка</span>
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="row mt-4">
+                        <!-- Создание -->
                         <div class="col-md-3 col-6 mb-3">
-                            <a href="@Url.Action("Create", "Product")" class="btn btn-outline-primary w-100">
-                                <i class="fas fa-plus me-2"></i>Добавить товар
+                            <a href="@Url.Action("CreateProduct", "Admin")" class="btn btn-primary w-100">
+                                <i class="fas fa-plus me-2"></i>Новый товар
                             </a>
                         </div>
                         <div class="col-md-3 col-6 mb-3">
-                            <a href="@Url.Action("Create", "Category")" class="btn btn-outline-success w-100">
-                                <i class="fas fa-folder-plus me-2"></i>Добавить категорию
+                            <a href="@Url.Action("CreateCategory", "Admin")" class="btn btn-success w-100">
+                                <i class="fas fa-plus me-2"></i>Новая категория
                             </a>
                         </div>
                         <div class="col-md-3 col-6 mb-3">
-                            <a href="@Url.Action("Reports", "Admin")" class="btn btn-outline-info w-100">
+                            <a href="@Url.Action("CreateTypeProduct", "Admin")" class="btn btn-info w-100">
+                                <i class="fas fa-plus me-2"></i>Новый тип
+                            </a>
+                        </div>
+                        <div class="col-md-3 col-6 mb-3">
+                            <a href="@Url.Action("Reports", "Admin")" class="btn btn-warning w-100">
                                 <i class="fas fa-chart-bar me-2"></i>Отчеты
-                            </a>
-                        </div>
-                        <div class="col-md-3 col-6 mb-3">
-                            <a href="@Url.Action("Settings", "Admin")" class="btn btn-outline-secondary w-100">
-                                <i class="fas fa-cog me-2"></i>Настройки
                             </a>
                         </div>
                     </div>

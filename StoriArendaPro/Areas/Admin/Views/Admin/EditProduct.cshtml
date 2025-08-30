@@ -1,0 +1,788 @@
+﻿@model StoriArendaPro.Models.ViewModels.ProductViewModel
+@{
+    ViewData["Title"] = Model.ProductId == 0 ? "Добавить товар" : "Редактировать товар";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="col-12">
+        <div class="alert alert-danger">
+            <h5>Ошибки:</h5>
+            <ul>
+                @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                {
+                    <li>@error.ErrorMessage</li>
+                }
+            </ul>
+        </div>
+    </div>
+}
+
+<div class="container-fluid px-4">
+    <div class="d-flex justify-content-between align-items-center py-3 mb-4">
+        <h1 class="h3 mb-0 text-gray-800">@ViewData["Title"]</h1>
+        <a href="@Url.Action("Products")" class="btn btn-secondary">
+            <i class="fas fa-arrow-left me-2"></i>Назад к списку
+        </a>
+    </div>
+
+    <form asp-action="@(Model.ProductId == 0 ? "CreateProduct" : "EditProduct")" method="post" enctype="multipart/form-data" id="productForm">
+        @Html.AntiForgeryToken()
+
+        @if (Model.ProductId > 0)
+        {
+            <input type="hidden" asp-for="ProductId" />
+        }
+
+        <div class="row">
+            <!-- Основная информация -->
+            <div class="col-md-8">
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">Основная информация</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label asp-for="Name" class="form-label"></label>
+                                    <input asp-for="Name" class="form-control" />
+                                    <span asp-validation-for="Name" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label asp-for="Sku" class="form-label"></label>
+                                    <input asp-for="Sku" class="form-control" />
+                                    <span asp-validation-for="Sku" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label asp-for="ShortDescription" class="form-label"></label>
+                            <textarea asp-for="ShortDescription" class="form-control" rows="2"></textarea>
+                            <span asp-validation-for="ShortDescription" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label asp-for="Description" class="form-label"></label>
+                            <textarea asp-for="Description" class="form-control" rows="4"></textarea>
+                            <span asp-validation-for="Description" class="text-danger"></span>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label asp-for="CategoryId" class="form-label"></label>
+                                    <select asp-for="CategoryId" asp-items="Model.Categories" class="form-control">
+                                        <option value="">-- Выберите категорию --</option>
+                                    </select>
+                                    <span asp-validation-for="CategoryId" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label asp-for="TypeProductId" class="form-label"></label>
+                                    <select asp-for="TypeProductId" asp-items="Model.TypeProducts" class="form-control">
+                                        <option value="">-- Выберите тип --</option>
+                                    </select>
+                                    <span asp-validation-for="TypeProductId" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Цены и инвентарь -->
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">Цены и инвентарь</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group mb-3">
+                                    <label asp-for="PricePerDay" class="form-label"></label>
+                                    <input asp-for="PricePerDay" class="form-control" />
+                                    <span asp-validation-for="PricePerDay" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group mb-3">
+                                    <label asp-for="Deposit" class="form-label"></label>
+                                    <input asp-for="Deposit" class="form-control" />
+                                    <span asp-validation-for="Deposit" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group mb-3">
+                                    <label asp-for="MinRentalDays" class="form-label"></label>
+                                    <input asp-for="MinRentalDays" class="form-control" />
+                                    <span asp-validation-for="MinRentalDays" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group mb-3">
+                                    <label asp-for="QuantityForRent" class="form-label"></label>
+                                    <input asp-for="QuantityForRent" class="form-control" />
+                                    <span asp-validation-for="QuantityForRent" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group mb-3">
+                                    <label asp-for="QuantityForSale" class="form-label"></label>
+                                    <input asp-for="QuantityForSale" class="form-control" />
+                                    <span asp-validation-for="QuantityForSale" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group mb-3">
+                                    <label asp-for="LowStockThreshold" class="form-label"></label>
+                                    <input asp-for="LowStockThreshold" class="form-control" />
+                                    <span asp-validation-for="LowStockThreshold" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Боковая панель -->
+            <div class="col-md-4">
+                <!-- Статус -->
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">Статус</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-check form-switch mb-3">
+                            <input asp-for="IsActive" class="form-check-input" type="checkbox" />
+                            <label asp-for="IsActive" class="form-check-label"></label>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="fas fa-save me-2"></i>Сохранить
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Изображения -->
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">Управление изображениями</h6>
+                    </div>
+                    <div class="card-body">
+                        <!-- Загрузка новых изображений -->
+                        <div class="form-group mb-4">
+                            <label class="form-label fw-bold">Добавить изображения</label>
+                            <div class="file-upload-area">
+                                <!-- Скрытый input для выбора файлов -->
+                                <input asp-for="Images" type="file" multiple class="form-control"
+                                       accept="image/*" id="imageUpload"
+                                       style="display: none;" />
+
+                                <!-- Кнопка для выбора файлов через проводник (видна только на мобильных) -->
+                                <div class="mb-3">
+                                    <button type="button" class="btn btn-outline-primary w-100" id="fileSelectButton">
+                                        <i class="fas fa-folder-open me-2"></i>Выбрать файлы из проводника
+                                    </button>
+                                </div>
+
+                                <!-- Зона перетаскивания -->
+                                <div class="drop-zone" id="dropZone">
+                                    <i class="fas fa-cloud-upload-alt fa-3x text-primary mb-3"></i>
+                                    <p class="mb-2">Перетащите изображения сюда</p>
+                                    @* <p class="text-muted small mb-0">или</p> *@
+
+                                    <!-- Кнопка внутри зоны перетаскивания (видна только на десктопе) -->
+                                    <button type="button" class="btn btn-outline-primary btn-sm mt-2 d-none d-md-inline-block"
+                                            onclick="document.getElementById('imageUpload').click()">
+                                        Выберите файлы
+                                    </button>
+                                </div>
+
+                                <div id="filePreview" class="mt-3" style="display: none;">
+                                    <h6 class="mb-2">Выбранные файлы:</h6>
+                                    <div id="selectedFilesList" class="small"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Существующие изображения -->
+                        @if (Model.ProductImages != null && Model.ProductImages.Any())
+                        {
+                            <div class="existing-images mt-4">
+                                <h6 class="mb-3">Текущие изображения:</h6>
+                                <div id="imageGallery" class="row g-2">
+                                    @foreach (var image in Model.ProductImages)
+                                    {
+                                        <div class="col-6 col-md-4" data-image-id="@image.Id">
+                                            <div class="image-thumbnail position-relative">
+                                                <img src="~/photoEquipment/@image.Path"
+                                                     class="img-fluid rounded"
+                                                     style="height: 100px; object-fit: cover; width: 100%;"
+                                                     alt="Изображение товара">
+                                                <div class="image-actions position-absolute top-0 end-0 p-1">
+                                                    <button type="button"
+                                                            class="btn btn-danger btn-sm"
+                                                            onclick="deleteImage(@image.Id)"
+                                                            title="Удалить">
+                                                        <i class="fas fa-times"></i>
+                                                    </button>
+                                                    <button type="button"
+                                                            class="btn btn-info btn-sm mt-1"
+                                                            onclick="setAsMain(@image.Id)"
+                                                            title="Сделать главным">
+                                                        <i class="fas fa-star"></i>
+                                                    </button>
+                                                </div>
+                                                @if (image.IsMain == true)
+                                                {
+                                                    <div class="position-absolute top-0 start-0 p-1 bg-success text-white small">
+                                                        Главное
+                                                    </div>
+                                                }
+                                                <div class="image-info position-absolute bottom-0 start-0 w-100 p-1 bg-dark bg-opacity-75 text-white small">
+                                                    <div class="d-flex justify-content-between">
+                                                        <span>@(System.IO.Path.GetFileName(image.Path))</span>
+                                                        <span>@image.Id</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                                <div class="mt-2 text-muted small">
+                                    Всего изображений: <span id="imageCount">@Model.ProductImages.Count</span>
+                                </div>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="alert alert-info">
+                                <i class="fas fa-info-circle me-2"></i>
+                                Изображения еще не добавлены
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+@section Styles {
+    <style>
+        .drop-zone {
+            border: 2px dashed #ccc;
+            border-radius: 8px;
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background-color: #f8f9fa;
+            position: relative;
+            min-height: 200px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+            .drop-zone:hover {
+                border-color: #007bff;
+                background-color: #e8f4ff;
+            }
+
+            .drop-zone.dragover {
+                border-color: #007bff;
+                background-color: #d4edff;
+                transform: scale(1.02);
+            }
+
+            .drop-zone::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                z-index: 1;
+            }
+
+        .image-thumbnail {
+            border: 2px solid #dee2e6;
+            border-radius: 8px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+            .image-thumbnail:hover {
+                border-color: #007bff;
+                transform: translateY(-2px);
+                box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            }
+
+        .image-actions {
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: 2;
+        }
+
+        .image-thumbnail:hover .image-actions {
+            opacity: 1;
+        }
+
+        .file-item {
+            display: flex;
+            align-items: center;
+            padding: 0.5rem;
+            margin-bottom: 0.5rem;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+            border: 1px solid #dee2e6;
+            transition: background-color 0.2s ease;
+        }
+
+            .file-item:hover {
+                background-color: #e9ecef;
+            }
+
+            .file-item i {
+                margin-right: 0.5rem;
+                color: #6c757d;
+            }
+
+        .file-size {
+            margin-left: auto;
+            color: #6c757d;
+            font-size: 0.875rem;
+        }
+
+        .sortable-ghost {
+            opacity: 0.5;
+        }
+
+        .sortable-chosen {
+            background-color: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        /* Стиль для главного изображения */
+        .main-image {
+            border: 3px solid #28a745 !important;
+        }
+
+        /* Предотвращение выделения текста при перетаскивании */
+        .drop-zone, .file-item {
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+        }
+
+        /* Стиль для кнопки выбора файлов */
+        .file-select-btn {
+            transition: all 0.3s ease;
+        }
+
+            .file-select-btn:hover {
+                transform: translateY(-1px);
+                box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            }
+    </style>
+}
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+    <script>
+        // Глобальные переменные
+        let currentProductId = @(Model.ProductId);
+
+        // ========== ОБЩИЕ ФУНКЦИИ ==========
+
+        // Форматирование размера файла
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        // Показать уведомление
+        function showToast(message, type = 'info') {
+            // Создаем или находим контейнер для уведомлений
+            let toastContainer = document.getElementById('toast-container');
+            if (!toastContainer) {
+                toastContainer = document.createElement('div');
+                toastContainer.id = 'toast-container';
+                toastContainer.className = 'toast-container position-fixed top-0 end-0 p-3';
+                toastContainer.style.zIndex = '9999';
+                document.body.appendChild(toastContainer);
+            }
+
+            const toastId = 'toast-' + Date.now();
+            const toast = document.createElement('div');
+            toast.id = toastId;
+
+            // Определяем цвет в зависимости от типа
+            let bgColor = 'bg-primary';
+            if (type === 'success') bgColor = 'bg-success';
+            else if (type === 'error') bgColor = 'bg-danger';
+            else if (type === 'warning') bgColor = 'bg-warning';
+            else if (type === 'info') bgColor = 'bg-info';
+
+            toast.className = `toast align-items-center text-white ${bgColor} border-0`;
+            toast.setAttribute('role', 'alert');
+            toast.setAttribute('aria-live', 'assertive');
+            toast.setAttribute('aria-atomic', 'true');
+
+            toast.innerHTML = `
+                <div class="d-flex">
+                    <div class="toast-body">
+                        <i class="fas ${type === 'success' ? 'fa-check-circle' :
+                                       type === 'error' ? 'fa-exclamation-circle' :
+                                       type === 'warning' ? 'fa-exclamation-triangle' :
+                                       'fa-info-circle'} me-2"></i>
+                        ${message}
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+            `;
+
+            toastContainer.appendChild(toast);
+
+            // Инициализируем toast с Bootstrap
+            const bsToast = new bootstrap.Toast(toast, {
+                delay: type === 'error' ? 5000 : 3000
+            });
+            bsToast.show();
+
+            // Удаляем toast после скрытия
+            toast.addEventListener('hidden.bs.toast', function () {
+                toast.remove();
+            });
+        }
+
+        // ========== ФУНКЦИОНАЛ ЗАГРУЗКИ ФАЙЛОВ ==========
+
+        function initializeFileUpload() {
+            const dropZone = document.getElementById('dropZone');
+            const fileInput = document.getElementById('imageUpload');
+            const filePreview = document.getElementById('filePreview');
+            const selectedFilesList = document.getElementById('selectedFilesList');
+            const fileSelectButton = document.getElementById('fileSelectButton');
+            const dropZoneButton = document.getElementById('dropZoneButton');
+
+            if (dropZoneButton) {
+                dropZoneButton.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    document.getElementById('imageUpload').click();
+                });
+            }
+
+            if (!dropZone || !fileInput) return;
+
+            // Обработчики для кнопок выбора файлов
+            fileSelectButton.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                fileInput.click();
+            });
+
+            dropZoneButton.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                fileInput.click();
+            });
+
+            // Предотвращаем поведение по умолчанию для всех событий drag and drop
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                dropZone.addEventListener(eventName, preventDefaults, false);
+                document.addEventListener(eventName, preventDefaults, false);
+            });
+
+            function preventDefaults(e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+
+            // Подсвечиваем зону при dragenter и dragover
+            ['dragenter', 'dragover'].forEach(eventName => {
+                dropZone.addEventListener(eventName, highlight, false);
+            });
+
+            ['dragleave', 'drop'].forEach(eventName => {
+                dropZone.addEventListener(eventName, unhighlight, false);
+            });
+
+            function highlight() {
+                dropZone.classList.add('dragover');
+            }
+
+            function unhighlight() {
+                dropZone.classList.remove('dragover');
+            }
+
+            // Обработка drop
+            dropZone.addEventListener('drop', handleDrop, false);
+
+            function handleDrop(e) {
+                const dt = e.dataTransfer;
+                const files = dt.files;
+                handleFiles(files);
+            }
+
+            fileInput.addEventListener('change', function() {
+                handleFiles(this.files);
+            });
+
+            function handleFiles(files) {
+                if (files.length > 0) {
+                    // Обновляем input файлов
+                    const dataTransfer = new DataTransfer();
+                    Array.from(files).forEach(file => dataTransfer.items.add(file));
+                    fileInput.files = dataTransfer.files;
+
+                    // Показываем превью
+                    filePreview.style.display = 'block';
+                    selectedFilesList.innerHTML = '';
+
+                    let hasImages = false;
+
+                    Array.from(files).forEach(file => {
+                        if (file.type.startsWith('image/')) {
+                            hasImages = true;
+
+                            const fileItem = document.createElement('div');
+                            fileItem.className = 'file-item';
+
+                            const fileInfo = document.createElement('div');
+                            fileInfo.className = 'd-flex align-items-center';
+
+                            const icon = document.createElement('i');
+                            icon.className = 'fas fa-file-image';
+
+                            const fileName = document.createElement('span');
+                            fileName.textContent = file.name;
+
+                            const fileSize = document.createElement('span');
+                            fileSize.className = 'file-size';
+                            fileSize.textContent = formatFileSize(file.size);
+
+                            fileInfo.appendChild(icon);
+                            fileInfo.appendChild(fileName);
+                            fileItem.appendChild(fileInfo);
+                            fileItem.appendChild(fileSize);
+
+                            selectedFilesList.appendChild(fileItem);
+                        }
+                    });
+
+                    if (!hasImages) {
+                        filePreview.style.display = 'none';
+                        showToast('Пожалуйста, выбирайте только файлы изображений', 'warning');
+                    } else {
+                        showToast(`Добавлено ${files.length} изображений`, 'success');
+                    }
+                }
+            }
+        }
+
+        // ========== ФУНКЦИОНАЛ УПРАВЛЕНИЯ ИЗОБРАЖЕНИЯМИ ==========
+
+        function initializeImageManagement() {
+            // Удаление изображения
+            window.deleteImage = function(imageId) {
+                if (confirm('Вы уверены, что хотите удалить это изображение?')) {
+                    // Создаем FormData для отправки
+                    const formData = new FormData();
+                    formData.append('id', imageId);
+
+                    fetch('@Url.Action("DeleteImage", "Admin", new { area = "Admin" })', {
+                        method: 'POST',
+                        headers: {
+                            'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+                        },
+                        body: formData
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.success) {
+                            // Удаляем элемент из DOM
+                            const imageElement = document.querySelector(`[data-image-id="${imageId}"]`);
+                            if (imageElement) {
+                                imageElement.remove();
+
+                                // Обновляем счетчик
+                                const imageCount = document.getElementById('imageCount');
+                                if (imageCount) {
+                                    const currentCount = parseInt(imageCount.textContent);
+                                    imageCount.textContent = currentCount - 1;
+
+                                    if (currentCount - 1 === 0) {
+                                        document.querySelector('.existing-images').innerHTML = `
+                                            <div class="alert alert-info">
+                                                <i class="fas fa-info-circle me-2"></i>
+                                                Изображения еще не добавлены
+                                            </div>
+                                        `;
+                                    }
+                                }
+                            }
+
+                            showToast(data.message || 'Изображение успешно удалено', 'success');
+                        } else {
+                            showToast(data.message || 'Ошибка при удалении изображения', 'error');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        showToast('Ошибка сети при удалении изображения', 'error');
+                    });
+                }
+            }
+
+            // Установка главного изображения
+            window.setAsMain = function(imageId) {
+                const productId = currentProductId;
+
+                fetch('@Url.Action("SetMainImage", "Admin", new { area = "Admin" })', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+                    },
+                    body: JSON.stringify({
+                        productId: productId,
+                        imageId: imageId
+                    })
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.success) {
+                        showToast('Главное изображение установлено', 'success');
+                        // Обновляем визуальное отображение
+                        updateMainImageVisual(imageId);
+                    } else {
+                        showToast(data.message || 'Ошибка при установке главного изображения', 'error');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showToast('Ошибка при установке главного изображения', 'error');
+                });
+            }
+
+            // Обновление визуального отображения главного изображения
+            function updateMainImageVisual(mainImageId) {
+                // Сбрасываем все рамки
+                document.querySelectorAll('.image-thumbnail').forEach(thumb => {
+                    thumb.classList.remove('main-image');
+                    thumb.style.borderColor = '#dee2e6';
+                    thumb.style.borderWidth = '2px';
+                });
+
+                // Выделяем главное изображение
+                const mainImageElement = document.querySelector(`[data-image-id="${mainImageId}"] .image-thumbnail`);
+                if (mainImageElement) {
+                    mainImageElement.classList.add('main-image');
+                    mainImageElement.style.borderColor = '#28a745';
+                    mainImageElement.style.borderWidth = '3px';
+                }
+            }
+
+            // Сортировка изображений
+            if (document.getElementById('imageGallery')) {
+                new Sortable(document.getElementById('imageGallery'), {
+                    animation: 150,
+                    ghostClass: 'sortable-ghost',
+                    onEnd: function(evt) {
+                        const imageIds = Array.from(document.querySelectorAll('[data-image-id]'))
+                            .map(el => parseInt(el.getAttribute('data-image-id')));
+
+                        // Сохраняем новый порядок
+                        saveImageOrder(imageIds);
+                    }
+                });
+            }
+
+            function saveImageOrder(imageIds) {
+                fetch('@Url.Action("ReorderImages", "Admin")', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+                    },
+                    body: JSON.stringify({
+                        productId: currentProductId,
+                        imageIds: imageIds
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        showToast('Порядок изображений сохранен', 'success');
+                    } else {
+                        showToast('Ошибка при сохранении порядка', 'error');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showToast('Ошибка при сохранении порядка изображений', 'error');
+                });
+            }
+        }
+
+        // ========== ИНИЦИАЛИЗАЦИЯ ПРИ ЗАГРУЗКЕ СТРАНИЦЫ ==========
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Инициализация загрузки файлов
+            initializeFileUpload();
+
+            // Инициализация управления изображениями (только для Edit)
+            if (document.querySelector('[data-image-id]')) {
+                initializeImageManagement();
+            }
+
+            // Улучшение UX для мобильных устройств
+            improveMobileUX();
+        });
+
+        // Улучшение UX для мобильных устройств
+        function improveMobileUX() {
+            // Увеличиваем область клика для кнопок на мобильных устройствах
+            if ('ontouchstart' in window) {
+                document.querySelectorAll('.image-actions button').forEach(button => {
+                    button.style.minWidth = '44px';
+                    button.style.minHeight = '44px';
+                    button.style.padding = '10px';
+                });
+
+                // Добавляем обработчики для предотвращения случайных кликов
+                document.querySelectorAll('.image-actions button').forEach(button => {
+                    button.addEventListener('touchstart', function(e) {
+                        e.stopPropagation();
+                    });
+                });
+            }
+        }
+    </script>
+}

@@ -4,78 +4,174 @@
 }
 
 <!-- Hero Section -->
-<section class="hero-section">
+<section class="hero-section" style="background: linear-gradient(135deg, rgba(255, 193, 7, 0.15) 0%, rgba(255, 152, 0, 0.25) 50%, rgba(255, 193, 7, 0.15) 100%); position: relative;">
     <div class="container">
-        <div class="hero-content">
-            <h1>Аренда строительного оборудования</h1>
-            <p class="lead">Более 200 наименований оборудования для любых задач</p>
-            <a href="@Url.Action("CatalogChoice", "Catalog", new { showCategories = true })" class="btn btn-primary btn-lg">Каталог оборудования</a>
+        <div class="hero-content" style="display: flex; justify-content: center; align-items: center;">
+            <!-- Логотип с бензопилой -->
+            <div class="logo-container-full" style="max-width: 800px; background: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.15) 100%); border: 2px solid rgba(255, 255, 255, 0.25); position: relative; padding: 30px 20px; text-align: center;">
+                <div class="tools-background">
+                    <div class="tool-icon">🔨</div>
+                    <div class="tool-icon">⚒️</div>
+                    <div class="tool-icon">🏗️</div>
+                    <div class="tool-icon">🔧</div>
+                    <div class="tool-icon">📐</div>
+                    <div class="tool-icon">🛠️</div>
+                    <div class="tool-icon">⚙️</div>
+                    <div class="tool-icon">🔩</div>
+                </div>
+
+                <div class="hard-hat">⛑️</div>
+
+                <!-- Контейнер для заголовка с бензопилой -->
+                <div class="logo-title-container">
+                    <div class="chainsaw-wrapper">
+                        <span class="chainsaw-icon"><img src="~/PhotoSite/benzopila.png" alt="Бензопила" /></span>
+                    </div>
+                    <div class="logo-title">
+                        СтройАренда<span class="logo-plus">+</span>
+                    </div>
+                </div>
+
+                <div class="construction-bar"></div>
+
+                <div class="tagline">
+                    Профессиональная строительная техника в аренду
+                </div>
+                <p class="lead">Более 200 наименований оборудования для любых задач</p>
+                <a href="@Url.Action("CatalogChoice", "Catalog", new { showCategories = true })" class="btn btn-primary btn-lg mt-4">
+                    Каталог оборудования
+                </a>
+            </div>
         </div>
-    </div><!-- Видео-фон с оборудованием -->
+    </div>
+
+    <!-- Видео-фон с оборудованием -->
     <video autoplay muted loop playsinline class="hero-video">
         <source src="/videos/maintitl (2).mp4" type="video/mp4">
     </video>
 
-    <!-- Затемнение для контраста -->
-    <div class="video-overlay"></div>
+    <!-- Затемнение в солнечных тонах -->
+    <div class="hero-overlay"></div>
 </section>
-
-
 <!-- Advantages Section -->
-<section class="advantages-section" style="background: linear-gradient(rgba(156, 124, 6, 0.7), rgba(156, 124, 6, 0.7))">
+<section class="advantages-section" style="background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%)">
     <div class="container">
-        <h2 class="section-title text-dark" style="color: rgb(255 255 255) !important;">Почему выбирают нас?</h2>
+        <h2 class="section-title text-center mb-5" style="color: #ecf0f1; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5)">Почему выбирают нас?</h2>
         <div class="row">
             <div class="col-md-3">
                 <div class="advantage-item">
-                    <div class="advantage-icon" style="background: linear-gradient(135deg, var(--accent-color) 100%, #c01205 100%)">
+                    <div class="advantage-icon" style="background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%)">
                         <i class="fas fa-tools"></i>
                     </div>
-                    <h3>Широкий ассортимент</h3>
-                    <p>Более 200 единиц оборудования в наличии</p>
+                    <h3 style="color: #ecf0f1">Широкий ассортимент</h3>
+                    <p style="color: #bdc3c7">Более 200 единиц оборудования в наличии</p>
                 </div>
             </div>
             <div class="col-md-3">
                 <div class="advantage-item">
-                    <div class="advantage-icon" style="background: linear-gradient(135deg, var(--accent-color) 100%, #c01205 100%)">
+                    <div class="advantage-icon" style="background: linear-gradient(135deg, #3498db 0%, #2980b9 100%)">
                         <i class="fas fa-ruble-sign"></i>
                     </div>
-                    <h3>Гибкие цены</h3>
-                    <p>Скидки при долгосрочной аренде оборудования</p>
+                    <h3 style="color: #ecf0f1">Гибкие цены</h3>
+                    <p style="color: #bdc3c7">Скидки при долгосрочной аренде оборудования</p>
                 </div>
             </div>
             <div class="col-md-3">
                 <div class="advantage-item">
-                    <div class="advantage-icon" style="background: linear-gradient(135deg, var(--accent-color) 100%, #c01205 100%)">
+                    <div class="advantage-icon" style="background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%)">
                         <i class="fas fa-truck"></i>
                     </div>
-                    <h3>Доставка</h3>
-                    <p>Быстрая доставка по всему городу в Верхней Пышме</p>
+                    <h3 style="color: #ecf0f1">Доставка</h3>
+                    <p style="color: #bdc3c7">Быстрая доставка по всему городу в Верхней Пышме</p>
                 </div>
             </div>
             <div class="col-md-3">
                 <div class="advantage-item">
-                    <div class="advantage-icon" style="background: linear-gradient(135deg, var(--accent-color) 100%, #c01205 100%)">
+                    <div class="advantage-icon" style="background: linear-gradient(135deg, #27ae60 0%, #229954 100%)">
                         <i class="fas fa-headset"></i>
                     </div>
-                    <h3>Поддержка 24/7</h3>
-                    <p>Консультации по подбору строительного оборудования</p>
+                    <h3 style="color: #ecf0f1">Поддержка 24/7</h3>
+                    <p style="color: #bdc3c7">Консультации по подбору строительного оборудования</p>
                 </div>
             </div>
         </div>
     </div>
 </section>
 
+<section class="popular-equipment" style="
+    padding: 4rem 0;
+    background: linear-gradient(135deg, rgba(255, 243, 205, 0.5) 0%, rgba(255, 234, 167, 0.9) 100%);
+    position: relative;
+    overflow: hidden;">
 
-<!-- Popular Equipment Section -->
-<section class="popular-equipment" style="padding: 4rem 0; background: linear-gradient(to bottom,  #fbf0be, #fcf5d6, #5c5c5c, #3d3d3d)">
-    <div class="container">
-        <h2 class="section-title" style="color: rgba(0,0,0); text-shadow: 2px 2px 4px rgba(255,255,255,0)">Популярное оборудование</h2>
+    <!-- Дополнительные декоративные элементы -->
+    <div class="construction-background-elements">
+        <!-- Левый верхний угол -->
+        <div class="bg-element" style="top: 8%; left: 5%; animation-delay: 0s;">🔧</div>
+        <div class="bg-element" style="top: 15%; left: 12%; animation-delay: 3s;">🔨</div>
+        <div class="bg-element" style="top: 25%; left: 8%; animation-delay: 6s;">📐</div>
+
+        <!-- Правый верхний угол -->
+        <div class="bg-element" style="top: 12%; right: 7%; animation-delay: 2s;">🛠️</div>
+        <div class="bg-element" style="top: 22%; right: 15%; animation-delay: 5s;">🔨</div>
+        <div class="bg-element" style="top: 18%; right: 5%; animation-delay: 7s;">🧱</div>
+
+        <!-- Левый нижний угол -->
+        <div class="bg-element" style="bottom: 15%; left: 10%; animation-delay: 4s;">🧱</div>
+        <div class="bg-element" style="bottom: 25%; left: 6%; animation-delay: 1s;">🏗️</div>
+        <div class="bg-element" style="bottom: 8%; left: 15%; animation-delay: 8s;">🔦</div>
+
+        <!-- Правый нижний угол -->
+        <div class="bg-element" style="bottom: 12%; right: 8%; animation-delay: 3s;">⛏️</div>
+        <div class="bg-element" style="bottom: 22%; right: 12%; animation-delay: 6s;">🛒</div>
+        <div class="bg-element" style="bottom: 18%; right: 4%; animation-delay: 9s;">📏</div>
+
+        <!-- Центральная область -->
+        <div class="bg-element" style="top: 40%; left: 20%; animation-delay: 2s;">✅</div>
+        <div class="bg-element" style="top: 60%; right: 25%; animation-delay: 5s;">⚙️</div>
+        <div class="bg-element" style="bottom: 40%; left: 30%; animation-delay: 7s;">🔩</div>
+        <div class="bg-element" style="top: 50%; right: 18%; animation-delay: 4s;">🔗</div>
+
+        <!-- Дополнительные строительные элементы -->
+        <div class="bg-element" style="top: 35%; left: 45%; animation-delay: 1s;">🚜</div>
+        <div class="bg-element" style="bottom: 35%; right: 35%; animation-delay: 8s;">🚚</div>
+        <div class="bg-element" style="top: 65%; left: 35%; animation-delay: 3s;">🏭</div>
+        <div class="bg-element" style="bottom: 65%; right: 25%; animation-delay: 6s;">⚡</div>
+        <div class="bg-element" style="top: 30%; right: 30%; animation-delay: 9s;">🔌</div>
+        <div class="bg-element" style="bottom: 30%; left: 25%; animation-delay: 2s;">💡</div>
+        <div class="bg-element" style="top: 45%; right: 8%; animation-delay: 4s;">🧰</div>
+        <div class="bg-element" style="bottom: 45%; left: 8%; animation-delay: 1s;">⛓️</div>
+
+        <!-- Для мобильных устройств - дополнительные элементы -->
+        <div class="bg-element mobile-only" style="top: 5%; left: 20%; animation-delay: 2s;">🔨</div>
+        <div class="bg-element mobile-only" style="top: 10%; right: 20%; animation-delay: 5s;">🔧</div>
+        <div class="bg-element mobile-only" style="bottom: 5%; left: 25%; animation-delay: 3s;">📐</div>
+        <div class="bg-element mobile-only" style="bottom: 10%; right: 25%; animation-delay: 6s;">🛠️</div>
+    </div>
+
+    <!-- Затемнение для лучшей читаемости -->
+    <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+                background: linear-gradient(135deg,
+                    rgba(255, 243, 205, 0.4) 0%,
+                    rgba(255, 234, 167, 0.4) 100%);
+                z-index: 0;">
+    </div>
+
+    <div class="container" style="position: relative; z-index: 2;">
+        <h2 class="section-title text-center mb-5" style="color: #d35400; text-shadow: 2px 2px 4px rgba(255, 255, 255, 0.8)">Популярное оборудование</h2>
         <div class="row">
             @foreach (var product in ViewBag.PopularRentals)
             {
                 <div class="col-md-3 mb-4">
-                    <div class="product-card h-100" style="background: white; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.2); overflow: hidden;">
+                    <div class="product-card h-100" style="
+                        background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(253, 253, 253, 0.95) 100%);
+                        border-radius: 15px;
+                        box-shadow: 0 8px 30px rgba(243, 156, 18, 0.25);
+                        overflow: hidden;
+                        transition: all 0.3s ease;
+                        border: 2px solid #f39c12;
+                        backdrop-filter: blur(10px);">
+
                         <!-- Карусель изображений -->
                         @if (product.Product.ProductImages != null && product.Product.ProductImages.Count > 0)
                         {
@@ -108,7 +204,7 @@
                         else
                         {
                             <div class="image-container">
-                                <img src="https://baids.ru/storage/lot-images/27/22/2722226/a036b6e9ad987f2eb92cf50944a70f50.jpeg" class="w-100 h-100 object-fit-contain" alt="Нет изображения" style="padding: 15px;">
+                                <img src="https://images.unsplash.com/photo-1581092580497-e0d23cbdf1dc?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80" class="w-100 h-100 object-fit-contain" alt="Строительное оборудование" style="padding: 15px;">
                             </div>
                         }
                         <div class="card-body d-flex flex-column p-3">
@@ -117,7 +213,11 @@
                             <div class="price-info mt-auto pt-2">
                                 <span class="price fw-bold text-danger fs-5">@product.PricePerDay.ToString("N2") ₽/сутки</span>
                             </div>
-                            <a href="@Url.Action("ProductDetails", "Catalog", new { id = product.ProductId })" class="btn btn-outline-primary">
+                            <a href="@Url.Action("ProductDetails", "Catalog", new { id = product.ProductId })" class="btn btn-primary mt-2" style="
+                                background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+                                border: none;
+                                border-radius: 8px;
+                                transition: all 0.3s ease;">
                                 Подробнее
                             </a>
                         </div>
@@ -128,20 +228,12 @@
     </div>
 </section>
 
-
-
-
-
-
 <!-- Categories Section -->
 <section class="categories-section" style="
     background:
-        linear-gradient(90deg,
-            rgba(30, 50, 70, 0.85) 0%,
-            rgba(60, 80, 100, 0.8) 25%,
-            rgba(90, 110, 130, 0.75) 50%,
-            rgba(120, 140, 160, 0.7) 75%,
-            rgba(150, 170, 190, 0.65) 100%),
+        linear-gradient(135deg,
+            rgba(44, 62, 80, 0.9) 0%,
+            rgba(52, 73, 94, 0.85) 100%),
         url('/PhotoSite/male-worker-factory.jpg') center/cover no-repeat;
     padding: 4rem 0;
     position: relative;">
@@ -150,19 +242,19 @@
 
         <!-- Type Tabs Navigation -->
         <ul class="nav nav-tabs justify-content-center mb-4" id="equipmentTypeTabs" role="tablist" style="
-            background: linear-gradient(45deg, transparent, white, transparent);
+            background: linear-gradient(45deg, transparent, rgba(236, 240, 241, 0.3), transparent);
             border-radius: 25px;
             padding: 5px;
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.2);
         ">
             <li class="nav-item" role="presentation">
-                <button class="nav-link active pulse-on-click" id="purpose-tab" data-bs-toggle="tab" data-bs-target="#purpose" type="button" role="tab">
+                <button class="nav-link active pulse-on-click" id="purpose-tab" data-bs-toggle="tab" data-bs-target="#purpose" type="button" role="tab" style="color: #ecf0f1">
                     <i class="fas fa-bullseye me-2"></i>По назначению
                 </button>
             </li>
             <li class="nav-item" role="presentation">
-                <button class="nav-link pulse-on-click" id="type-tab" data-bs-toggle="tab" data-bs-target="#type" type="button" role="tab">
+                <button class="nav-link pulse-on-click" id="type-tab" data-bs-toggle="tab" data-bs-target="#type" type="button" role="tab" style="color: #ecf0f1">
                     <i class="fas fa-tools me-2"></i>По типу оборудования
                 </button>
             </li>
@@ -170,7 +262,7 @@
 
         <!-- Tabs Content -->
         <div class="tab-content" id="equipmentTypeTabsContent">
-            <!-- By Purpose Tab (existing categories) -->
+            <!-- By Purpose Tab -->
             <div class="tab-pane fade show active" id="purpose" role="tabpanel" aria-labelledby="purpose-tab">
                 <div class="row">
                     @foreach (var category in ViewBag.RentCategories)
@@ -180,18 +272,25 @@
                                 background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
                                 backdrop-filter: blur(5px);
                                 border: 1px solid rgba(255, 255, 255, 0.3) !important;
-                                ">
-                                <div class="category-icon mb-3" style="color: #3b5998;">
-                                    <i class="fas @GetCategoryIcon(category.Name) fa-2x"></i>
+                                    ">
+                                <div class="category-icon mb-3" style="color: #3498db;">
+                                    @if (!string.IsNullOrEmpty(category.Icon))
+                                    {
+                                        <i class="fas @category.Icon fa-2x"></i>
+                                    }
+                                    else
+                                    {
+                                        <i class="fas fa-toolbox fa-2x"></i>
+                                    }
                                 </div>
                                 <h3 class="h4" style="color: #2c3e50;">@category.Name</h3>
                                 <p class="text-muted">@category.Description</p>
                                 <a href="@Url.Action("Rent", "Catalog", new { categoryId = category.CategoryId })"
                                    class="btn btn-primary mt-auto" style="
-                                       background: linear-gradient(45deg, #3b5998, #2c3e50);
+                                       background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
                                        border: none;
                                        border-radius: 25px;
-                                       ">
+                                           ">
                                     Смотреть оборудование
                                 </a>
                             </div>
@@ -210,18 +309,25 @@
                                 background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
                                 backdrop-filter: blur(5px);
                                 border: 1px solid rgba(255, 255, 255, 0.3) !important;
-                                ">
-                                <div class="category-icon mb-3" style="color: #3b5998;">
-                                    <i class="fas @GetTypeIcon(type.Name) fa-2x"></i>
+                                    ">
+                                <div class="category-icon mb-3" style="color: #3498db;">
+                                    @if (!string.IsNullOrEmpty(type.Icon))
+                                    {
+                                        <i class="fas @type.Icon fa-2x"></i>
+                                    }
+                                    else
+                                    {
+                                        <i class="fas fa-toolbox fa-2x"></i>
+                                    }
                                 </div>
                                 <h3 class="h4" style="color: #2c3e50;">@type.Name</h3>
                                 <p class="text-muted">@type.Description</p>
                                 <a href="@Url.Action("Rent", "Catalog", new { typeId = type.TypeProductId })"
                                    class="btn btn-primary mt-3" style="
-                                       background: linear-gradient(45deg, #3b5998, #2c3e50);
+                                       background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
                                        border: none;
                                        border-radius: 25px;
-                                       ">
+                                           ">
                                     Все @type.Name
                                 </a>
                             </div>
@@ -234,8 +340,333 @@
 </section>
 
 
+<style>
+    @* иконки популярное оборудование*@
+    .construction-background-elements {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: 1;
+    }
 
+    .bg-element {
+        position: absolute;
+        font-size: 1.8rem;
+        opacity: 0.12;
+        animation: floatElement 9s ease-in-out infinite;
+        filter: drop-shadow(2px 2px 3px rgba(0, 0, 0, 0.2));
+    }
 
+    .mobile-only {
+        display: none;
+    }
+
+    @@keyframes floatElement {
+        0%, 100% {
+            transform: translateY(0px) rotate(0deg) scale(1);
+        }
+
+        25% {
+            transform: translateY(-15px) rotate(5deg) scale(1.1);
+        }
+
+        50% {
+            transform: translateY(10px) rotate(-3deg) scale(0.95);
+        }
+
+        75% {
+            transform: translateY(-8px) rotate(2deg) scale(1.05);
+        }
+    }
+
+    /* Адаптивность для мобильных устройств */
+    @@media (max-width: 768px) {
+        .bg-element {
+            font-size: 1.5rem;
+            opacity: 0.15;
+        }
+
+        .mobile-only {
+            display: block;
+        }
+
+        .construction-background-elements .bg-element:nth-child(n+25) {
+            font-size: 1.2rem;
+            opacity: 0.1;
+        }
+    }
+
+    @@media (max-width: 576px) {
+        .bg-element {
+            font-size: 1.2rem;
+            opacity: 0.08;
+        }
+
+        .construction-background-elements .bg-element {
+            animation-duration: 12s;
+        }
+    }
+    @* иконки *@
+
+    .hero-section {
+        position: relative;
+        overflow: hidden;
+    }
+
+    .logo-container-full {
+        position: relative;
+        border-radius: 15px;
+        backdrop-filter: blur(5px);
+        z-index: 2;
+    }
+
+    .tools-background {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-around;
+        align-items: center;
+        opacity: 0.1;
+        z-index: 1;
+    }
+
+    .tool-icon {
+        font-size: 2em;
+        margin: 10px;
+    }
+
+    .hard-hat {
+        position: absolute;
+        top: 10px;
+        right: 20px;
+        font-size: 2.5em;
+        opacity: 0.2;
+        z-index: 1;
+    }
+
+    .logo-title-container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        z-index: 3;
+    }
+
+    .chainsaw-wrapper {
+        margin-right: -15px;
+        z-index: 10;
+    }
+
+    .chainsaw-icon img {
+        width: 80px;
+        height: 80px;
+        object-fit: contain;
+        filter: drop-shadow(2px 2px 3px rgba(0, 0, 0, 0.7));
+        animation: chainsawVibrate 0.5s ease-in-out infinite alternate;
+    }
+
+    .logo-title {
+        font-size: 3.5em;
+        color: #2c3e50;
+        text-shadow: 3px 3px 6px #ffffff;
+        font-weight: bold;
+    }
+
+    .logo-plus {
+        color: #e74c3c;
+    }
+
+    .construction-bar {
+        max-width: 400px;
+        height: 8px;
+        margin: 25px auto;
+        background: linear-gradient(90deg, transparent 0%, #f39c12 50%, transparent 100%);
+        border-radius: 4px;
+    }
+
+    .tagline {
+        color: #34495e;
+        font-size: 1.5em;
+        font-weight: 500;
+        text-shadow: 1px 1px 3px rgba(255, 255, 255, 0.8);
+        margin-bottom: 10px;
+    }
+
+    .lead {
+        color: #34495e;
+        font-size: 1.1em;
+        margin-bottom: 20px;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+        border: none;
+        border-radius: 8px;
+        box-shadow: 0 4px 15px rgba(52, 152, 219, 0.4);
+        padding: 12px 30px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(52, 152, 219, 0.5);
+        }
+
+    .hero-video {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        min-width: 100%;
+        min-height: 100%;
+        width: auto;
+        height: auto;
+        transform: translateX(-50%) translateY(-50%);
+        object-fit: cover;
+        opacity: 0.7;
+        z-index: 0;
+    }
+
+    .hero-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, rgba(255, 235, 59, 0.1) 0%, rgba(255, 193, 7, 0.2) 25%, rgba(255, 152, 0, 0.15) 50%, rgba(255, 193, 7, 0.2) 75%, rgba(255, 235, 59, 0.1) 100%);
+        z-index: 0;
+    }
+
+    @* Анимации *@
+    @@keyframes chainsawVibrate {
+        0%
+
+    {
+        transform: rotate(-2deg);
+    }
+
+    100% {
+        transform: rotate(2deg);
+    }
+
+    }
+
+    @* Адаптивность для мобильных устройств *@
+    @@media (max-width: 992px) {
+        .logo-title
+
+    {
+        font-size: 3em;
+    }
+
+    .chainsaw-icon img {
+        width: 70px;
+        height: 70px;
+    }
+
+    .tagline {
+        font-size: 1.3em;
+    }
+
+    }
+
+    @@media (max-width: 768px) {
+        .logo-title-container {
+            flex-direction: row;
+        }
+
+        .chainsaw-wrapper {
+            margin-right: -10px;
+            margin-bottom: 0;
+        }
+
+        .chainsaw-icon img {
+            width: 60px;
+            height: 60px;
+        }
+
+        .logo-title {
+            font-size: 2.5em;
+        }
+
+        .tagline {
+            font-size: 1.2em;
+        }
+
+        .construction-bar {
+            max-width: 300px;
+            margin: 20px auto;
+        }
+    }
+
+    @@media (max-width: 576px) {
+        .logo-container-full {
+            padding: 20px 15px;
+        }
+
+        .chainsaw-wrapper {
+            margin-right: -8px;
+        }
+
+        .chainsaw-icon img {
+            width: 50px;
+            height: 50px;
+        }
+
+        .logo-title {
+            font-size: 2em;
+        }
+
+        .tagline {
+            font-size: 1.1em;
+        }
+
+        .lead {
+            font-size: 1em;
+        }
+
+        .construction-bar {
+            max-width: 250px;
+            height: 6px;
+            margin: 15px auto;
+        }
+
+        .btn-primary {
+            padding: 10px 25px;
+            font-size: 0.9em;
+        }
+    }
+
+    @@media (max-width: 400px) {
+        .chainsaw-wrapper {
+            margin-right: -5px;
+        }
+
+        .chainsaw-icon img {
+            width: 40px;
+            height: 40px;
+        }
+
+        .logo-title {
+            font-size: 1.8em;
+        }
+
+        .tagline {
+            font-size: 1em;
+        }
+
+        .construction-bar {
+            max-width: 200px;
+        }
+    }
+</style>
 @functions {
     // Helper function to get icons for categories (по назначению)
     public string GetCategoryIcon(string categoryName)

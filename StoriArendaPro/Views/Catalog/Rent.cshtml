@@ -225,7 +225,14 @@
                                 <div class="col-md-4 mb-4">
                                     <div class="category-card h-100 p-4 border rounded-3 shadow-sm bg-white">
                                         <div class="category-icon mb-3 text-primary">
-                                            <i class="fas @GetCategoryIcon(category.Name) fa-2x"></i>
+                                            @if (!string.IsNullOrEmpty(category.Icon))
+                                            {
+                                                <i class="fas @category.Icon fa-2x"></i>
+                                            }
+                                            else
+                                            {
+                                                <i class="fas fa-toolbox fa-2x"></i>
+                                            }
                                         </div>
                                         <h3 class="h4">@category.Name</h3>
                                         <p class="text-muted">@category.Description</p>
@@ -249,7 +256,14 @@
                             <div class="col-md-4 mb-4">
                                 <div class="category-card h-100 p-4 border rounded-3 shadow-sm bg-white">
                                     <div class="category-icon mb-3 text-primary">
-                                        <i class="fas @GetTypeIcon(type.Name) fa-2x"></i>
+                                            @if (!string.IsNullOrEmpty(type.Icon))
+                                            {
+                                                <i class="fas @type.Icon fa-2x"></i>
+                                            }
+                                            else
+                                            {
+                                                <i class="fas fa-toolbox fa-2x"></i>
+                                            }
                                     </div>
                                     <h3 class="h4">@type.Name</h3>
                                     <p class="text-muted">@type.Description</p>

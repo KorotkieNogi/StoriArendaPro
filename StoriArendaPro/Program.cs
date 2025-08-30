@@ -1,10 +1,24 @@
-using Microsoft.AspNetCore.Identity;
+п»їusing Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using StoriArendaPro.Models;
 using StoriArendaPro.Models.Entities;
 using StoriArendaPro.Services;
-using CodePackage.YooKassa; // Добавьте эту директиву
+using CodePackage.YooKassa;
+using System.Runtime.InteropServices;
+using System;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Configuration;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Hosting;
+using System.IO;
+using Microsoft.Extensions.Hosting;
+using System.Linq;
+using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Http.Features;
+using Microsoft.AspNetCore.StaticFiles;
 
 namespace StoriArendaPro
 {
@@ -12,13 +26,35 @@ namespace StoriArendaPro
     {
         public static async Task Main(string[] args)
         {
+            bool isRunningInDocker = Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_CONTAINER") == "true";
+
+            if (isRunningInDocker)
+            {
+                Console.WriteLine("рџљЂ Р—Р°РїСѓСЃРє РІ Docker РєРѕРЅС‚РµР№РЅРµСЂРµ");
+                Console.WriteLine("рџ“¦ Р’РµСЂСЃРёСЏ .NET: " + Environment.Version);
+                Console.WriteLine("рџ–ҐпёЏ  РћРЎ: " + RuntimeInformation.OSDescription);
+            }
+            else
+            {
+                Console.WriteLine("рџ’» Р—Р°РїСѓСЃРє РІ РѕР±С‹С‡РЅРѕРј СЂРµР¶РёРјРµ");
+            }
+
             var builder = WebApplication.CreateBuilder(args);
 
-            // Добавляем сервисы в контейнер.
+
+            // Р”РѕР±Р°РІСЊС‚Рµ СЌС‚Рѕ РїРµСЂРµРґ build()
+            builder.Services.Configure<StaticFileOptions>(options =>
+            {
+                options.ContentTypeProvider = new FileExtensionContentTypeProvider
+                {
+                    Mappings = { [".webmanifest"] = "application/manifest+json" }
+                };
+            });
+
+            // Р”РѕР±Р°РІР»СЏРµРј СЃРµСЂРІРёСЃС‹ РІ РєРѕРЅС‚РµР№РЅРµСЂ.
             builder.Services.AddControllersWithViews();
 
-
-            // Конфигурация YooKassa
+            // РљРѕРЅС„РёРіСѓСЂР°С†РёСЏ YooKassa
             builder.Services.Configure<YooKassaSettings>(
                 builder.Configuration.GetSection("YooKassa"));
 
@@ -28,39 +64,43 @@ namespace StoriArendaPro
                 return new YooKassaClient(settings.ShopId, settings.SecretKey);
             });
 
-            // Настройка DbContext для PostgreSQL
+            // РќР°СЃС‚СЂРѕР№РєР° DbContext РґР»СЏ PostgreSQL
             builder.Services.AddDbContext<StoriArendaProContext>(options =>
-                options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+                options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"),
+                    options => options.EnableRetryOnFailure(
+                        maxRetryCount: 5,
+                        maxRetryDelay: TimeSpan.FromSeconds(30),
+                        errorCodesToAdd: null)));
 
-            // Добавляем конфигурацию SMTP
+            // Р”РѕР±Р°РІР»СЏРµРј РєРѕРЅС„РёРіСѓСЂР°С†РёСЋ SMTP
             builder.Services.Configure<SmtpSettings>(builder.Configuration.GetSection("SmtpSettings"));
 
-            // сервис email
+            // СЃРµСЂРІРёСЃ email
             builder.Services.AddScoped<IEmailService, EmailSmsService>();
 
-            // Добавляем HttpClient
+            // Р”РѕР±Р°РІР»СЏРµРј HttpClient
             builder.Services.AddHttpClient();
 
-            // Добавьте сервисы Identity ПРАВИЛЬНО
+            // Р”РѕР±Р°РІСЊС‚Рµ СЃРµСЂРІРёСЃС‹ Identity РџР РђР’РР›Р¬РќРћ
             var identityBuilder = builder.Services.AddIdentity<User, IdentityRole<int>>(options =>
             {
-                // Упростите требования к паролю для тестирования
+                // РЈРїСЂРѕСЃС‚РёС‚Рµ С‚СЂРµР±РѕРІР°РЅРёСЏ Рє РїР°СЂРѕР»СЋ РґР»СЏ С‚РµСЃС‚РёСЂРѕРІР°РЅРёСЏ
                 options.Password.RequireDigit = false;
                 options.Password.RequireLowercase = false;
                 options.Password.RequireUppercase = false;
                 options.Password.RequireNonAlphanumeric = false;
                 options.Password.RequiredLength = 1;
 
-                options.User.RequireUniqueEmail = false; // временно отключите
+                options.User.RequireUniqueEmail = false;
                 options.SignIn.RequireConfirmedEmail = false;
                 options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
             });
 
-            // ПОТОМ добавляем Entity Framework stores
+            // Р”РѕР±Р°РІР»СЏРµРј Entity Framework stores
             identityBuilder.AddEntityFrameworkStores<StoriArendaProContext>();
             identityBuilder.AddDefaultTokenProviders();
 
-            // Настройка Cookie для Identity
+            // РќР°СЃС‚СЂРѕР№РєР° Cookie РґР»СЏ Identity
             builder.Services.ConfigureApplicationCookie(options =>
             {
                 options.LoginPath = "/Auth/Login";
@@ -95,9 +135,87 @@ namespace StoriArendaPro
 
             builder.Services.AddLogging();
 
+            // РќР°СЃС‚СЂРѕР№РєР° IIS Рё Kestrel Р”Рћ builder.Build()
+            builder.Services.Configure<IISServerOptions>(options =>
+            {
+                options.MaxRequestBodySize = 100 * 1024 * 1024; // 100MB
+            });
+
+            builder.Services.Configure<FormOptions>(options =>
+            {
+                options.MultipartBodyLengthLimit = 100 * 1024 * 1024; // 100MB
+            });
+
+            builder.WebHost.ConfigureKestrel(serverOptions =>
+            {
+                serverOptions.Limits.MaxRequestBodySize = 100 * 1024 * 1024; // 100MB
+            });
+
             var app = builder.Build();
 
-            // Инициализация ролей и администратора
+            // РџСЂРѕРІРµСЂРєР° Рё СЃРѕР·РґР°РЅРёРµ РїР°РїРєРё РґР»СЏ РёР·РѕР±СЂР°Р¶РµРЅРёР№
+            var webRootPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
+            var photoEquipmentPath = Path.Combine(webRootPath, "photoEquipment");
+
+            if (!Directory.Exists(photoEquipmentPath))
+            {
+                Directory.CreateDirectory(photoEquipmentPath);
+                Console.WriteLine($"РЎРѕР·РґР°РЅР° РїР°РїРєР°: {photoEquipmentPath}");
+            }
+
+            // РџСЂРѕРІРµСЂРєР° РїСЂР°РІ РЅР° Р·Р°РїРёСЃСЊ
+            try
+            {
+                var testFile = Path.Combine(photoEquipmentPath, "test_write.txt");
+                await File.WriteAllTextAsync(testFile, "test");
+                File.Delete(testFile);
+                Console.WriteLine("РџСЂР°РІР° РЅР° Р·Р°РїРёСЃСЊ РІ РїР°РїРєСѓ РїРѕРґС‚РІРµСЂР¶РґРµРЅС‹");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"РћРЁРР‘РљРђ: РќРµС‚ РїСЂР°РІ РЅР° Р·Р°РїРёСЃСЊ РІ РїР°РїРєСѓ {photoEquipmentPath}");
+                Console.WriteLine($"РћС€РёР±РєР°: {ex.Message}");
+
+                // РЎРѕР·РґР°РµРј РїР°РїРєСѓ СЃ РїСЂР°РІР°РјРё РЅР° Р·Р°РїРёСЃСЊ
+                try
+                {
+                    Directory.CreateDirectory(photoEquipmentPath);
+                    // Р”Р°РµРј РїСЂР°РІР° РЅР° Р·Р°РїРёСЃСЊ
+                    var directoryInfo = new DirectoryInfo(photoEquipmentPath);
+                    directoryInfo.Attributes &= ~FileAttributes.ReadOnly;
+                    Console.WriteLine("РџР°РїРєР° СЃРѕР·РґР°РЅР° СЃ РїСЂР°РІР°РјРё РЅР° Р·Р°РїРёСЃСЊ");
+                }
+                catch (Exception createEx)
+                {
+                    Console.WriteLine($"РќРµ СѓРґР°Р»РѕСЃСЊ СЃРѕР·РґР°С‚СЊ РїР°РїРєСѓ: {createEx.Message}");
+                }
+            }
+
+            // Р”РѕР±Р°РІСЊС‚Рµ РіР»РѕР±Р°Р»СЊРЅСѓСЋ РѕР±СЂР°Р±РѕС‚РєСѓ РёСЃРєР»СЋС‡РµРЅРёР№
+            app.UseExceptionHandler("/Home/Error");
+            app.UseStatusCodePagesWithReExecute("/Home/Error/{0}");
+
+            // Р’ Development СЂРµР¶РёРјРµ РїРѕРєР°Р·С‹РІР°Р№С‚Рµ РґРµС‚Р°Р»Рё РѕС€РёР±РѕРє
+            if (app.Environment.IsDevelopment())
+            {
+                app.UseDeveloperExceptionPage();
+            }
+            else
+            {
+                app.UseExceptionHandler("/Home/Error");
+                app.UseHsts();
+            }
+
+
+
+            // РџСЂРёРјРµРЅСЏРµРј РјРёРіСЂР°С†РёРё
+            using (var scope = app.Services.CreateScope())
+            {
+                var db = scope.ServiceProvider.GetRequiredService<StoriArendaProContext>();
+                db.Database.Migrate();
+            }
+
+            // РРЅРёС†РёР°Р»РёР·Р°С†РёСЏ СЂРѕР»РµР№ Рё Р°РґРјРёРЅРёСЃС‚СЂР°С‚РѕСЂР°
             using (var scope = app.Services.CreateScope())
             {
                 var services = scope.ServiceProvider;
@@ -108,17 +226,14 @@ namespace StoriArendaPro
                     var roleManager = services.GetRequiredService<RoleManager<IdentityRole<int>>>();
                     var userManager = services.GetRequiredService<UserManager<User>>();
 
-                    // Проверка подключения к БД
+                    // РџСЂРѕРІРµСЂРєР° РїРѕРґРєР»СЋС‡РµРЅРёСЏ Рє Р‘Р”
                     if (!await context.Database.CanConnectAsync())
                     {
-                        Console.WriteLine("Нет подключения к БД");
+                        Console.WriteLine("РќРµС‚ РїРѕРґРєР»СЋС‡РµРЅРёСЏ Рє Р‘Р”");
                         return;
                     }
 
-                    // Применяем миграции
-                    await context.Database.MigrateAsync();
-
-                    // Создаем роли если их нет
+                    // РЎРѕР·РґР°РµРј СЂРѕР»Рё РµСЃР»Рё РёС… РЅРµС‚
                     string[] roleNames = { "Admin", "User" };
 
                     foreach (var roleName in roleNames)
@@ -126,11 +241,11 @@ namespace StoriArendaPro
                         if (!await roleManager.RoleExistsAsync(roleName))
                         {
                             await roleManager.CreateAsync(new IdentityRole<int>(roleName));
-                            Console.WriteLine($"Создана роль: {roleName}");
+                            Console.WriteLine($"РЎРѕР·РґР°РЅР° СЂРѕР»СЊ: {roleName}");
                         }
                     }
 
-                    // Создаем администратора по умолчанию
+                    // РЎРѕР·РґР°РµРј Р°РґРјРёРЅРёСЃС‚СЂР°С‚РѕСЂР° РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ
                     var adminEmail = "vatazhishen06@bk.ru";
                     var adminUser = await userManager.FindByEmailAsync(adminEmail);
 
@@ -141,7 +256,7 @@ namespace StoriArendaPro
                             UserName = adminEmail,
                             Email = adminEmail,
                             PhoneNumber = "79634447037",
-                            FullName = "Администратор",
+                            FullName = "РђРґРјРёРЅРёСЃС‚СЂР°С‚РѕСЂ",
                             IsAdmin = true,
                             IsActive = true,
                             CreatedAt = DateTime.UtcNow,
@@ -151,45 +266,42 @@ namespace StoriArendaPro
                             SecurityStamp = Guid.NewGuid().ToString()
                         };
 
-                        // Сначала создаем пользователя
                         var createResult = await userManager.CreateAsync(adminUser);
 
                         if (createResult.Succeeded)
                         {
-                            // Затем устанавливаем пароль
                             var passwordResult = await userManager.AddPasswordAsync(adminUser, "12873465Tam!");
 
                             if (passwordResult.Succeeded)
                             {
                                 await userManager.AddToRoleAsync(adminUser, "Admin");
-                                Console.WriteLine("Администратор создан успешно");
+                                Console.WriteLine("РђРґРјРёРЅРёСЃС‚СЂР°С‚РѕСЂ СЃРѕР·РґР°РЅ СѓСЃРїРµС€РЅРѕ");
                             }
                             else
                             {
-                                Console.WriteLine($"Ошибка пароля: {string.Join(", ", passwordResult.Errors.Select(e => e.Description))}");
+                                Console.WriteLine($"РћС€РёР±РєР° РїР°СЂРѕР»СЏ: {string.Join(", ", passwordResult.Errors.Select(e => e.Description))}");
                             }
                         }
                         else
                         {
-                            Console.WriteLine($"Ошибки создания: {string.Join(", ", createResult.Errors.Select(e => e.Description))}");
+                            Console.WriteLine($"РћС€РёР±РєРё СЃРѕР·РґР°РЅРёСЏ: {string.Join(", ", createResult.Errors.Select(e => e.Description))}");
                         }
                     }
                     else
                     {
-                        Console.WriteLine("Администратор уже существует");
+                        Console.WriteLine("РђРґРјРёРЅРёСЃС‚СЂР°С‚РѕСЂ СѓР¶Рµ СЃСѓС‰РµСЃС‚РІСѓРµС‚");
 
-                        // Убедимся что у пользователя есть роль Admin
                         var roles = await userManager.GetRolesAsync(adminUser);
                         if (!roles.Contains("Admin"))
                         {
                             await userManager.AddToRoleAsync(adminUser, "Admin");
-                            Console.WriteLine("Роль Admin добавлена существующему пользователю");
+                            Console.WriteLine("Р РѕР»СЊ Admin РґРѕР±Р°РІР»РµРЅР° СЃСѓС‰РµСЃС‚РІСѓСЋС‰РµРјСѓ РїРѕР»СЊР·РѕРІР°С‚РµР»СЋ");
                         }
                     }
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"Ошибка инициализации: {ex.Message}");
+                    Console.WriteLine($"РћС€РёР±РєР° РёРЅРёС†РёР°Р»РёР·Р°С†РёРё: {ex.Message}");
                     Console.WriteLine($"StackTrace: {ex.StackTrace}");
 
                     if (ex.InnerException != null)
@@ -197,18 +309,7 @@ namespace StoriArendaPro
                         Console.WriteLine($"Inner Exception: {ex.InnerException.Message}");
                         Console.WriteLine($"Inner StackTrace: {ex.InnerException.StackTrace}");
                     }
-
-                    // Добавьте паузу для чтения ошибок в консоли
-                    Console.WriteLine("Нажмите любую клавишу для продолжения...");
-                    Console.ReadKey();
                 }
-            }
-
-            // Configure the HTTP request pipeline.
-            if (!app.Environment.IsDevelopment())
-            {
-                app.UseExceptionHandler("/Home/Error");
-                app.UseHsts();
             }
 
             app.UseCookiePolicy(new CookiePolicyOptions
@@ -217,30 +318,44 @@ namespace StoriArendaPro
                 Secure = CookieSecurePolicy.Always
             });
 
+
+
             app.UseHttpsRedirection();
             app.UseStaticFiles();
+
+            app.Use(async (context, next) =>
+            {
+                try
+                {
+                    await next();
+                }
+                catch (Exception ex)
+                {
+                    var logger = context.RequestServices.GetRequiredService<ILogger<Program>>();
+                    logger.LogError(ex, "Unhandled exception");
+                    context.Response.StatusCode = 500;
+                    await context.Response.WriteAsync("Internal Server Error");
+                }
+            });
+
 
             app.UseRouting();
 
             app.UseCors("AllowAll");
             app.UseSession();
-            app.UseAuthentication(); // ДОЛЖНО БЫТЬ ПЕРЕД UseAuthorization
+            app.UseAuthentication();
             app.UseAuthorization();
 
-            // ПРАВИЛЬНЫЙ ПОРЯДОК МАРШРУТОВ:
-
-            // 1. Сначала маршрут для области Admin
+            // РњР°СЂС€СЂСѓС‚РёР·Р°С†РёСЏ
             app.MapAreaControllerRoute(
                 name: "admin",
                 areaName: "Admin",
                 pattern: "Admin/{controller=Admin}/{action=Index}/{id?}");
 
-            // 2. Общий маршрут для всех областей
             app.MapControllerRoute(
                 name: "areas",
                 pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
 
-            // 3. Маршрут по умолчанию (для основной области)
             app.MapControllerRoute(
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}");
@@ -249,7 +364,7 @@ namespace StoriArendaPro
                 name: "profile",
                 pattern: "Profile/{action=Index}/{id?}",
                 defaults: new { controller = "Profile" });
-
+            
             await app.RunAsync();
         }
     }

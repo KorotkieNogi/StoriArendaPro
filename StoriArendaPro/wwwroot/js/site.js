@@ -42,8 +42,12 @@ document.addEventListener('DOMContentLoaded', function () {
 
 // Для сохранения состояния запоминать открытые разделы в Rent.cshtml
 document.addEventListener('DOMContentLoaded', function () {
-    // Восстановление состояния аккордеона
     const accordion = document.getElementById('categoriesCollapse');
+
+    // Проверяем, существует ли элемент на текущей странице
+    if (!accordion) return;
+
+    // Остальной код только если элемент существует
     const storedState = localStorage.getItem('categoriesAccordionState');
 
     if (storedState === 'collapsed') {

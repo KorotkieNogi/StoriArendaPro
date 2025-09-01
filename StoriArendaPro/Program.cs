@@ -41,6 +41,13 @@ namespace StoriArendaPro
 
             var builder = WebApplication.CreateBuilder(args);
 
+            // Автоматический выбор строки подключения
+            var connectionString = isRunningInDocker
+                ? builder.Configuration.GetConnectionString("DockerConnection")
+                : builder.Configuration.GetConnectionString("DefaultConnection");
+
+            Console.WriteLine($"📡 Using connection string: {connectionString}");
+
 
             // Добавьте это перед build()
             builder.Services.Configure<StaticFileOptions>(options =>
@@ -66,7 +73,7 @@ namespace StoriArendaPro
 
             // Настройка DbContext для PostgreSQL
             builder.Services.AddDbContext<StoriArendaProContext>(options =>
-                options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"),
+                options.UseNpgsql(connectionString,  // ← ИСПОЛЬЗУЕМ ПЕРЕМЕННУЮ!
                     options => options.EnableRetryOnFailure(
                         maxRetryCount: 5,
                         maxRetryDelay: TimeSpan.FromSeconds(30),
@@ -208,11 +215,71 @@ namespace StoriArendaPro
 
 
 
-            // Применяем миграции
+            // Применяем миграции с улучшенной логикой подключения
             using (var scope = app.Services.CreateScope())
             {
                 var db = scope.ServiceProvider.GetRequiredService<StoriArendaProContext>();
-                db.Database.Migrate();
+                var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
+
+                if (isRunningInDocker)
+                {
+                    Console.WriteLine("⏳ Ожидание запуска PostgreSQL...");
+
+                    // Улучшенная логика ожидания PostgreSQL
+                    var maxRetries = 15;
+                    var retryCount = 0;
+                    var connected = false;
+
+                    while (retryCount < maxRetries && !connected)
+                    {
+                        try
+                        {
+                            Console.WriteLine($"🔧 Попытка подключения {retryCount + 1}/{maxRetries}...");
+
+                            if (await db.Database.CanConnectAsync())
+                            {
+                                connected = true;
+                                Console.WriteLine("✅ Подключение к БД успешно");
+                                break;
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            retryCount++;
+                            Console.WriteLine($"❌ Попытка {retryCount}/{maxRetries}: {ex.Message}");
+                            if (retryCount < maxRetries)
+                            {
+                                Console.WriteLine("⏳ Повторная попытка через 5 секунд...");
+                                await Task.Delay(5000);
+                            }
+                        }
+                    }
+
+                    if (!connected)
+                    {
+                        Console.WriteLine("❌ Не удалось подключиться к БД после всех попыток");
+                        logger.LogError("Не удалось подключиться к БД");
+                        // Продолжаем работу, приложение может работать без БД
+                    }
+                }
+
+                try
+                {
+                    // Проверяем подключение к БД
+                    if (await db.Database.CanConnectAsync())
+                    {
+                        Console.WriteLine("✅ Подключение к БД успешно");
+
+                        // Применяем миграции
+                        await db.Database.MigrateAsync();
+                        Console.WriteLine("✅ Миграции применены успешно");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"❌ Ошибка при применении миграций: {ex.Message}");
+                    logger.LogError(ex, "Ошибка при применении миграций");
+                }
             }
 
             // Инициализация ролей и администратора
@@ -364,7 +431,9 @@ namespace StoriArendaPro
                 name: "profile",
                 pattern: "Profile/{action=Index}/{id?}",
                 defaults: new { controller = "Profile" });
-            
+
+            app.Urls.Add("http://0.0.0.0:80");
+            Console.WriteLine("🚀 Запуск Kestrel на http://0.0.0.0:80");
             await app.RunAsync();
         }
     }

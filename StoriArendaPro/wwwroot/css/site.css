@@ -40,7 +40,7 @@ body {
 
 /* Header & Navigation */
 .navbar {
-    background: linear-gradient(135deg, var(--primary-color) 0%, var(--dark-color) 100%) !important;
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--dark-color) 100%);
     box-shadow: var(--shadow);
 }
 
@@ -97,19 +97,19 @@ body {
         transition: var(--transition);
     }
 
-        .filter-dropdown .dropdown-toggle:hover {
+        .filter-dropdown .dropdown-toggle:hover,
+        .filter-dropdown .dropdown-toggle:focus {
             border-color: var(--accent-color);
             background-color: #f8f9fa;
         }
 
         .filter-dropdown .dropdown-toggle:focus {
-            border-color: var(--accent-color);
             box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.25);
         }
 
     .filter-dropdown .dropdown-menu {
-        max-height: 500px; /* Увеличиваем высоту выпадающего списка */
-        min-width: 280px; /* Увеличиваем минимальную ширину */
+        max-height: 500px;
+        min-width: 280px;
         overflow-y: auto;
         padding: 0.5rem;
         border: 1px solid #dee2e6;
@@ -387,11 +387,9 @@ body {
     transform: scale(1.05);
 }
 
-.carousel {
-    height: 100%;
-}
-
-.carousel-inner, .carousel-item {
+.carousel,
+.carousel-inner,
+.carousel-item {
     height: 100%;
 }
 
@@ -401,10 +399,11 @@ body {
         object-fit: contain;
     }
 
-.carousel-control-prev, .carousel-control-next {
+.carousel-control-prev,
+.carousel-control-next {
     width: 40px;
     height: 40px;
-    background: rgba(52, 152, 219, 0.8) !important; /* Голубой цвет с прозрачностью */
+    background: rgba(52, 152, 219, 0.8);
     border-radius: 50%;
     top: 50%;
     transform: translateY(-50%);
@@ -420,19 +419,20 @@ body {
     right: 10px;
 }
 
-    .carousel-control-prev:hover, .carousel-control-next:hover {
-        background: rgba(52, 152, 219, 1) !important; /* Полностью непрозрачный при наведении */
+    .carousel-control-prev:hover,
+    .carousel-control-next:hover {
+        background: rgba(52, 152, 219, 1);
         opacity: 1;
     }
 
 .carousel-control-prev-icon,
 .carousel-control-next-icon {
-    filter: brightness(0) invert(1); /* Делает иконки белыми */
+    filter: brightness(0) invert(1);
     width: 20px;
     height: 20px;
 }
 
-/* ===== TABS WITH GLOW EFFECT===== */
+/* ===== TABS ===== */
 .nav-tabs {
     border-bottom: 2px solid #e9ecef;
 }
@@ -506,6 +506,7 @@ body {
         background: linear-gradient(45deg, rgba(59, 89, 152, 0.1), rgba(59, 89, 152, 0.2), rgba(59, 89, 152, 0.1));
         border-bottom: 3px solid rgba(59, 89, 152, 0.3);
     }
+
 .tab-content {
     padding: 2rem 0;
 }
@@ -626,7 +627,6 @@ body {
     margin: 0 auto 1.5rem;
     font-size: 2rem;
     transition: var(--transition);
-    
 }
 
 .advantage-item:hover .advantage-icon {
@@ -716,7 +716,6 @@ body {
         color: var(--accent-color);
         border-bottom: 3px solid rgba(52, 152, 219, 0.3);
     }
-
 
 /* Стили для страницы условий аренды */
 .rental-terms-section {
@@ -827,6 +826,56 @@ html {
         min-width: 100%;
         max-width: 100%;
     }
+
+    /* Адаптивность для мобильных устройств кнопки карусели*/
+    .carousel-control-prev,
+    .carousel-control-next {
+        width: 30px;
+        height: 30px;
+    }
+
+    .carousel-control-prev-icon,
+    .carousel-control-next-icon {
+        width: 15px;
+        height: 15px;
+    }
+
+    /*Условие аренды: MAX под мобильные устройства*/
+    .d-flex.flex-wrap {
+        flex-direction: column;
+        gap: 12px !important;
+    }
+
+    .btn-lg {
+        width: 100%;
+        max-width: 280px;
+        margin: 5px 0;
+    }
+
+    .max-logo-img {
+        width: 22px;
+        height: 22px;
+    }
+
+    /* Улучшения для мобильных устройств */
+    .image-actions {
+        opacity: 1 !important;
+        background-color: rgba(0, 0, 0, 0.7);
+        padding: 5px;
+        border-radius: 5px;
+    }
+
+        .image-actions button {
+            min-width: 44px !important;
+            min-height: 44px !important;
+            margin: 2px;
+            font-size: 16px;
+        }
+
+    .drop-zone {
+        min-height: 150px;
+        padding: 1rem;
+    }
 }
 
 @media (max-width: 576px) {
@@ -868,9 +917,12 @@ html {
         padding: 0.6rem 0.8rem;
         font-size: 0.9rem;
     }
+
+    .btn-lg {
+        font-size: 14px;
+        padding: 10px 16px;
+    }
 }
-
-
 
 /* ===== ANIMATIONS ===== */
 @keyframes fadeInUp {
@@ -902,12 +954,44 @@ html {
     }
 }
 
+@keyframes tabPulse {
+    0% {
+        box-shadow: 0 0 0 rgba(59, 89, 152, 0.4);
+    }
+
+    50% {
+        box-shadow: 0 0 20px rgba(59, 89, 152, 0.8);
+    }
+
+    100% {
+        box-shadow: 0 0 0 rgba(59, 89, 152, 0.4);
+    }
+}
+
+@keyframes buttonShine {
+    0% {
+        background-position: 100% 0;
+    }
+
+    100% {
+        background-position: -100% 0;
+    }
+}
+
 .fade-in-up {
     animation: fadeInUp 0.6s ease-out;
 }
 
 .pulse {
     animation: pulse 2s infinite;
+}
+
+#equipmentTypeTabs .nav-link.active {
+    animation: tabPulse 2s infinite;
+}
+
+.nav-tabs .nav-link:active {
+    animation: buttonShine 0.6s ease-out;
 }
 
 /* ===== ACCESSIBILITY ===== */
@@ -949,88 +1033,6 @@ a:focus {
     padding: 0.75rem;
 }
 
-
-
-/* Pulse animation for active tab */
-@keyframes tabPulse {
-    0% {
-        box-shadow: 0 0 0 rgba(59, 89, 152, 0.4);
-    }
-
-    50% {
-        box-shadow: 0 0 20px rgba(59, 89, 152, 0.8);
-    }
-
-    100% {
-        box-shadow: 0 0 0 rgba(59, 89, 152, 0.4);
-    }
-}
-
-#equipmentTypeTabs .nav-link.active {
-    animation: tabPulse 2s infinite;
-}
-
-/* Shine effect on click */
-@keyframes buttonShine {
-    0% {
-        background-position: 100% 0;
-    }
-
-    100% {
-        background-position: -100% 0;
-    }
-}
-
-/* Адаптивность для мобильных устройств кнопки карусели*/
-@media (max-width: 768px) {
-    .carousel-control-prev,
-    .carousel-control-next {
-        width: 30px;
-        height: 30px;
-    }
-
-    .carousel-control-prev-icon,
-    .carousel-control-next-icon {
-        width: 15px;
-        height: 15px;
-    }
-}
-
-
-
-
-.nav-tabs .nav-link:active {
-    animation: buttonShine 0.6s ease-out;
-}
-
-
-/*Условие аренды: MAX под мобильные устройства*/
-@media (max-width: 768px) {
-    .d-flex.flex-wrap {
-        flex-direction: column;
-        gap: 12px !important;
-    }
-
-    .btn-lg {
-        width: 100%;
-        max-width: 280px;
-        margin: 5px 0;
-    }
-
-    .max-logo-img {
-        width: 22px;
-        height: 22px;
-    }
-}
-
-@media (max-width: 576px) {
-    .btn-lg {
-        font-size: 14px;
-        padding: 10px 16px;
-    }
-}
-
-
 /*Добавим стили для Sortable (если используем перетаскивание)*/
 .sortable-ghost {
     opacity: 0.5;
@@ -1041,35 +1043,8 @@ a:focus {
     border-radius: 8px;
 }
 
-
-/* Улучшения для мобильных устройств КОГДА ДОБАВЛЯЕМ ИЛИ РЕДАКТИРУЕМ ОБОРУДОВАНИЕ*/
-@media (max-width: 768px) {
-    .image-actions {
-        opacity: 1 !important; /* Всегда показываем кнопки на мобильных */
-        background-color: rgba(0, 0, 0, 0.7);
-        padding: 5px;
-        border-radius: 5px;
-    }
-
-        .image-actions button {
-            min-width: 44px !important;
-            min-height: 44px !important;
-            margin: 2px;
-            font-size: 16px;
-        }
-
-    .drop-zone {
-        min-height: 150px;
-        padding: 1rem;
-    }
-}
-
-
 /*Для логотипа*/
 /* ===== HEADER LOGO STYLES ===== */
-
-
-
 
 /* Улучшение видимости кнопок действий */
 .image-actions {

@@ -1,20 +1,9 @@
 ﻿version: '3.8'
 
 services:
-  app:
-    build: .
-    ports:
-      - "5000:5000"  # Измените внешний порт
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-      - ConnectionStrings__DefaultConnection=Server=postgres;Database=stori_arenda_pro;Port=5432;User Id=postgres;Password=12873465Tam;Command Timeout=120
-      - ASPNETCORE_URLS=http://+:5000  # Измените внутренний порт
-    depends_on:
-      - postgres
-    restart: unless-stopped
-
   postgres:
     image: postgres:15
+    container_name: stori_postgres
     environment:
       POSTGRES_DB: stori_arenda_pro
       POSTGRES_USER: postgres
@@ -23,7 +12,33 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    networks:
+      - stori_network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d stori_arenda_pro"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  app:
+    build: .
+    container_name: stori_app
+    ports:
+      - "8080:80"  # Изменил на 8080 чтобы не конфликтовало с другими сервисами
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__DockerConnection=Host=postgres;Port=5432;Database=stori_arenda_pro;Username=postgres;Password=12873465Tam;Command Timeout=120
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - stori_network
     restart: unless-stopped
 
 volumes:
   postgres_data:
+
+networks:
+  stori_network:
+    driver: bridge

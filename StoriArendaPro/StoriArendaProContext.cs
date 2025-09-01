@@ -83,10 +83,16 @@ public partial class StoriArendaProContext : IdentityDbContext<User, IdentityRol
     {
         if (!optionsBuilder.IsConfigured)
         {
-            optionsBuilder.UseNpgsql("Host=localhost;Port=5432;Database=stori_arenda_pro;Username=postgres;Password=12873465Tam",
-                options => options.CommandTimeout(120)).EnableSensitiveDataLogging()
-                .EnableDetailedErrors()
-                .LogTo(Console.WriteLine, LogLevel.Information); ;
+            // использовать конфигурацию из appsettings.json
+            var configuration = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json")
+                .Build();
+
+            optionsBuilder.UseNpgsql(configuration.GetConnectionString("DefaultConnection"),
+                options => options.CommandTimeout(120))
+                .EnableSensitiveDataLogging()
+                .EnableDetailedErrors();
         }
     }
 

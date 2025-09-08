@@ -546,35 +546,32 @@
 
     @* Анимации *@
     @@keyframes chainsawVibrate {
-        0%
+         0%
+        {
+            transform: rotate(-2deg);
+        }
 
-    {
-        transform: rotate(-2deg);
-    }
-
-    100% {
-        transform: rotate(2deg);
-    }
+        100% {
+            transform: rotate(2deg);
+        }
 
     }
 
     @* Адаптивность для мобильных устройств *@
     @@media (max-width: 992px) {
         .logo-title
+        {
+            font-size: 3em;
+        }
 
-    {
-        font-size: 3em;
-    }
+        .chainsaw-icon img {
+            width: 70px;
+            height: 70px;
+        }
 
-    .chainsaw-icon img {
-        width: 70px;
-        height: 70px;
-    }
-
-    .tagline {
-        font-size: 1.3em;
-    }
-
+        .tagline {
+            font-size: 1.3em;
+        }
     }
 
     @@media (max-width: 768px) {

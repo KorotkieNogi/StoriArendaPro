@@ -124,7 +124,7 @@ public partial class StoriArendaProContext : IdentityDbContext<User, IdentityRol
                     property.SetValueConverter(
                         new ValueConverter<DateTime, DateTime>(
                             v => v.Kind == DateTimeKind.Utc ? v.ToLocalTime() : v,
-                            v => DateTime.SpecifyKind(v, DateTimeKind.Unspecified)));
+                            v => DateTime.SpecifyKind(v, DateTimeKind.Utc))); // Исправлено на Utc
                 }
             }
         }
@@ -755,8 +755,6 @@ public partial class StoriArendaProContext : IdentityDbContext<User, IdentityRol
                 .HasColumnName("normalizedusername");
             entity.Property(e => e.LockoutEnabled)
                 .HasColumnName("lockoutenabled");
-            entity.Property(e => e.PhoneNumberConfirmed)
-                .HasColumnName("phonenumberconfirmed");
             entity.Property(e => e.EmailConfirmed)
                 .HasColumnName("emailconfirmed");
             

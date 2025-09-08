@@ -42,17 +42,16 @@ namespace StoriArendaPro
 
             var builder = WebApplication.CreateBuilder(args);
 
-            // Автоматический выбор строки подключения
-            var connectionString = isRunningInDocker
-                ? "Host=localhost;Port=5432;Database=stori_arenda_pro;Username=postgres;Password=12873465Tam;Command Timeout=120"
-                : builder.Configuration.GetConnectionString("DefaultConnection");
 
-            Console.WriteLine($"📡 Using connection string: {connectionString}");
+
+
 
             // ✅ ПРАВИЛЬНАЯ регистрация DbContext
-            builder.Services.AddDbContext<StoriArendaProContext>(options =>
+            builder.Services.AddDbContext<StoriArendaProContext>((serviceProvider, options) =>
             {
-                var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+                var configuration = serviceProvider.GetRequiredService<IConfiguration>();
+                var connectionString = configuration.GetConnectionString("DefaultConnection");
+
                 Console.WriteLine($"🔌 Database connection: {connectionString}");
 
                 options.UseNpgsql(connectionString, npgsqlOptions =>

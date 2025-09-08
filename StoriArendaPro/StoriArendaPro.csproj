@@ -6,10 +6,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>db063e0e-e5c3-4d50-87ca-40ad34efea3a</UserSecretsId>
     
-    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
-    <RuntimeIdentifier>linux-x64</RuntimeIdentifier>
-    <PublishSingleFile>true</PublishSingleFile>
-    <PublishReadyToRun>true</PublishReadyToRun>
+    
     <AspNetCoreHostingModel>OutOfProcess</AspNetCoreHostingModel>
     
   </PropertyGroup>

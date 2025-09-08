@@ -19,6 +19,7 @@ using System.Linq;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.StaticFiles;
+using Npgsql;
 
 namespace StoriArendaPro
 {
@@ -43,11 +44,26 @@ namespace StoriArendaPro
 
             // Автоматический выбор строки подключения
             var connectionString = isRunningInDocker
-                ? builder.Configuration.GetConnectionString("DockerConnection")
+                ? "Host=localhost;Port=5432;Database=stori_arenda_pro;Username=postgres;Password=12873465Tam;Command Timeout=120"
                 : builder.Configuration.GetConnectionString("DefaultConnection");
 
             Console.WriteLine($"📡 Using connection string: {connectionString}");
 
+            // ✅ ПРАВИЛЬНАЯ регистрация DbContext
+            builder.Services.AddDbContext<StoriArendaProContext>(options =>
+            {
+                var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+                Console.WriteLine($"🔌 Database connection: {connectionString}");
+
+                options.UseNpgsql(connectionString, npgsqlOptions =>
+                {
+                    npgsqlOptions.EnableRetryOnFailure(
+                        maxRetryCount: 10,
+                        maxRetryDelay: TimeSpan.FromSeconds(30),
+                        errorCodesToAdd: null);
+                    npgsqlOptions.CommandTimeout(120);
+                });
+            });
 
             // Добавьте это перед build()
             builder.Services.Configure<StaticFileOptions>(options =>
@@ -71,14 +87,6 @@ namespace StoriArendaPro
                 return new YooKassaClient(settings.ShopId, settings.SecretKey);
             });
 
-            // Настройка DbContext для PostgreSQL
-            builder.Services.AddDbContext<StoriArendaProContext>(options =>
-                options.UseNpgsql(connectionString,  // ← ИСПОЛЬЗУЕМ ПЕРЕМЕННУЮ!
-                    options => options.EnableRetryOnFailure(
-                        maxRetryCount: 5,
-                        maxRetryDelay: TimeSpan.FromSeconds(30),
-                        errorCodesToAdd: null)));
-
             // Добавляем конфигурацию SMTP
             builder.Services.Configure<SmtpSettings>(builder.Configuration.GetSection("SmtpSettings"));
 
@@ -88,7 +96,7 @@ namespace StoriArendaPro
             // Добавляем HttpClient
             builder.Services.AddHttpClient();
 
-            // Добавьте сервисы Identity ПРАВИЛЬНО
+            // Добавьте сервисы Identity
             var identityBuilder = builder.Services.AddIdentity<User, IdentityRole<int>>(options =>
             {
                 // Упростите требования к паролю для тестирования
@@ -153,6 +161,9 @@ namespace StoriArendaPro
                 options.MultipartBodyLengthLimit = 100 * 1024 * 1024; // 100MB
             });
 
+            // В Docker используем порт из переменной окружения или 5000
+            builder.WebHost.UseUrls("http://0.0.0.0:80");
+
             builder.WebHost.ConfigureKestrel(serverOptions =>
             {
                 serverOptions.Limits.MaxRequestBodySize = 100 * 1024 * 1024; // 100MB
@@ -182,20 +193,6 @@ namespace StoriArendaPro
             {
                 Console.WriteLine($"ОШИБКА: Нет прав на запись в папку {photoEquipmentPath}");
                 Console.WriteLine($"Ошибка: {ex.Message}");
-
-                // Создаем папку с правами на запись
-                try
-                {
-                    Directory.CreateDirectory(photoEquipmentPath);
-                    // Даем права на запись
-                    var directoryInfo = new DirectoryInfo(photoEquipmentPath);
-                    directoryInfo.Attributes &= ~FileAttributes.ReadOnly;
-                    Console.WriteLine("Папка создана с правами на запись");
-                }
-                catch (Exception createEx)
-                {
-                    Console.WriteLine($"Не удалось создать папку: {createEx.Message}");
-                }
             }
 
             // Добавьте глобальную обработку исключений
@@ -213,76 +210,25 @@ namespace StoriArendaPro
                 app.UseHsts();
             }
 
-
-
-            // Применяем миграции с улучшенной логикой подключения
+            // Улучшенная логика ожидания PostgreSQL
             using (var scope = app.Services.CreateScope())
             {
                 var db = scope.ServiceProvider.GetRequiredService<StoriArendaProContext>();
-                var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
-
-                if (isRunningInDocker)
-                {
-                    Console.WriteLine("⏳ Ожидание запуска PostgreSQL...");
-
-                    // Улучшенная логика ожидания PostgreSQL
-                    var maxRetries = 15;
-                    var retryCount = 0;
-                    var connected = false;
-
-                    while (retryCount < maxRetries && !connected)
-                    {
-                        try
-                        {
-                            Console.WriteLine($"🔧 Попытка подключения {retryCount + 1}/{maxRetries}...");
-
-                            if (await db.Database.CanConnectAsync())
-                            {
-                                connected = true;
-                                Console.WriteLine("✅ Подключение к БД успешно");
-                                break;
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-                            retryCount++;
-                            Console.WriteLine($"❌ Попытка {retryCount}/{maxRetries}: {ex.Message}");
-                            if (retryCount < maxRetries)
-                            {
-                                Console.WriteLine("⏳ Повторная попытка через 5 секунд...");
-                                await Task.Delay(5000);
-                            }
-                        }
-                    }
-
-                    if (!connected)
-                    {
-                        Console.WriteLine("❌ Не удалось подключиться к БД после всех попыток");
-                        logger.LogError("Не удалось подключиться к БД");
-                        // Продолжаем работу, приложение может работать без БД
-                    }
-                }
-
                 try
                 {
-                    // Проверяем подключение к БД
                     if (await db.Database.CanConnectAsync())
                     {
-                        Console.WriteLine("✅ Подключение к БД успешно");
-
-                        // Применяем миграции
                         await db.Database.MigrateAsync();
                         Console.WriteLine("✅ Миграции применены успешно");
                     }
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"❌ Ошибка при применении миграций: {ex.Message}");
-                    logger.LogError(ex, "Ошибка при применении миграций");
+                    Console.WriteLine($"⚠️ Ошибка БД: {ex.Message}");
                 }
             }
 
-            // Инициализация ролей и администратора
+            // Инициализация ролей и администратора (только если БД доступна)
             using (var scope = app.Services.CreateScope())
             {
                 var services = scope.ServiceProvider;
@@ -293,89 +239,73 @@ namespace StoriArendaPro
                     var roleManager = services.GetRequiredService<RoleManager<IdentityRole<int>>>();
                     var userManager = services.GetRequiredService<UserManager<User>>();
 
-                    // Проверка подключения к БД
-                    if (!await context.Database.CanConnectAsync())
+                    // Проверяем доступность БД перед инициализацией
+                    if (await context.Database.CanConnectAsync())
                     {
-                        Console.WriteLine("Нет подключения к БД");
-                        return;
-                    }
-
-                    // Создаем роли если их нет
-                    string[] roleNames = { "Admin", "User" };
-
-                    foreach (var roleName in roleNames)
-                    {
-                        if (!await roleManager.RoleExistsAsync(roleName))
+                        // Создаем роли
+                        string[] roleNames = { "Admin", "User" };
+                        foreach (var roleName in roleNames)
                         {
-                            await roleManager.CreateAsync(new IdentityRole<int>(roleName));
-                            Console.WriteLine($"Создана роль: {roleName}");
+                            if (!await roleManager.RoleExistsAsync(roleName))
+                            {
+                                await roleManager.CreateAsync(new IdentityRole<int>(roleName));
+                                Console.WriteLine($"Создана роль: {roleName}");
+                            }
                         }
-                    }
 
-                    // Создаем администратора по умолчанию
-                    var adminEmail = "vatazhishen06@bk.ru";
-                    var adminUser = await userManager.FindByEmailAsync(adminEmail);
+                        // Создаем администратора
+                        var adminEmail = "vatazhishen06@bk.ru";
+                        var adminUser = await userManager.FindByEmailAsync(adminEmail);
 
-                    if (adminUser == null)
-                    {
-                        adminUser = new User
+                        if (adminUser == null)
                         {
-                            UserName = adminEmail,
-                            Email = adminEmail,
-                            PhoneNumber = "79634447037",
-                            FullName = "Администратор",
-                            IsAdmin = true,
-                            IsActive = true,
-                            CreatedAt = DateTime.UtcNow,
-                            UpdatedAt = DateTime.UtcNow,
-                            EmailConfirmed = true,
-                            PhoneNumberConfirmed = true,
-                            SecurityStamp = Guid.NewGuid().ToString()
-                        };
+                            adminUser = new User
+                            {
+                                UserName = adminEmail,
+                                Email = adminEmail,
+                                PhoneNumber = "79634447037",
+                                FullName = "Администратор",
+                                IsAdmin = true,
+                                IsActive = true,
+                                CreatedAt = DateTime.UtcNow,
+                                UpdatedAt = DateTime.UtcNow,
+                                EmailConfirmed = true,
+                                PhoneNumberConfirmed = true,
+                                SecurityStamp = Guid.NewGuid().ToString()
+                            };
 
-                        var createResult = await userManager.CreateAsync(adminUser);
+                            var createResult = await userManager.CreateAsync(adminUser, "12873465Tam!");
 
-                        if (createResult.Succeeded)
-                        {
-                            var passwordResult = await userManager.AddPasswordAsync(adminUser, "12873465Tam!");
-
-                            if (passwordResult.Succeeded)
+                            if (createResult.Succeeded)
                             {
                                 await userManager.AddToRoleAsync(adminUser, "Admin");
                                 Console.WriteLine("Администратор создан успешно");
                             }
                             else
                             {
-                                Console.WriteLine($"Ошибка пароля: {string.Join(", ", passwordResult.Errors.Select(e => e.Description))}");
+                                Console.WriteLine($"Ошибки создания: {string.Join(", ", createResult.Errors.Select(e => e.Description))}");
                             }
                         }
                         else
                         {
-                            Console.WriteLine($"Ошибки создания: {string.Join(", ", createResult.Errors.Select(e => e.Description))}");
+                            Console.WriteLine("Администратор уже существует");
+                            var roles = await userManager.GetRolesAsync(adminUser);
+                            if (!roles.Contains("Admin"))
+                            {
+                                await userManager.AddToRoleAsync(adminUser, "Admin");
+                                Console.WriteLine("Роль Admin добавлена существующему пользователю");
+                            }
                         }
                     }
                     else
                     {
-                        Console.WriteLine("Администратор уже существует");
-
-                        var roles = await userManager.GetRolesAsync(adminUser);
-                        if (!roles.Contains("Admin"))
-                        {
-                            await userManager.AddToRoleAsync(adminUser, "Admin");
-                            Console.WriteLine("Роль Admin добавлена существующему пользователю");
-                        }
+                        Console.WriteLine("⚠️ БД недоступна, пропускаем инициализацию данных");
                     }
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"Ошибка инициализации: {ex.Message}");
-                    Console.WriteLine($"StackTrace: {ex.StackTrace}");
-
-                    if (ex.InnerException != null)
-                    {
-                        Console.WriteLine($"Inner Exception: {ex.InnerException.Message}");
-                        Console.WriteLine($"Inner StackTrace: {ex.InnerException.StackTrace}");
-                    }
+                    Console.WriteLine($"⚠️ Ошибка инициализации: {ex.Message}");
+                    Console.WriteLine("Продолжаем работу без инициализации данных");
                 }
             }
 
@@ -384,8 +314,6 @@ namespace StoriArendaPro
                 MinimumSameSitePolicy = SameSiteMode.Lax,
                 Secure = CookieSecurePolicy.Always
             });
-
-
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
@@ -405,9 +333,7 @@ namespace StoriArendaPro
                 }
             });
 
-
             app.UseRouting();
-
             app.UseCors("AllowAll");
             app.UseSession();
             app.UseAuthentication();
@@ -432,8 +358,12 @@ namespace StoriArendaPro
                 pattern: "Profile/{action=Index}/{id?}",
                 defaults: new { controller = "Profile" });
 
-            app.Urls.Add("http://0.0.0.0:80");
-            Console.WriteLine("🚀 Запуск Kestrel на http://0.0.0.0:80");
+            // Health check endpoint
+            app.MapGet("/health", () => Results.Ok("Healthy"));
+
+            Console.WriteLine($"🚀 Запуск Kestrel на http://0.0.0.0:80");
+            Console.WriteLine($"🌐 Внешний доступ: http://localhost:8080");
+
             await app.RunAsync();
         }
     }

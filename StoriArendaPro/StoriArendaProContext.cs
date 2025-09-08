@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using StoriArendaPro.Models.Entities;
 using Twilio.TwiML.Voice;
@@ -13,13 +14,16 @@ namespace StoriArendaPro;
 
 public partial class StoriArendaProContext : IdentityDbContext<User, IdentityRole<int>, int>
 {
+    private readonly IConfiguration _configuration;
+
     public StoriArendaProContext()
     {
     }
 
-    public StoriArendaProContext(DbContextOptions<StoriArendaProContext> options)
+    public StoriArendaProContext(DbContextOptions<StoriArendaProContext> options, IConfiguration configuration)
         : base(options)
     {
+        _configuration = configuration;
     }
 
     public virtual DbSet<AvailableForRent> AvailableForRents { get; set; }
@@ -83,14 +87,24 @@ public partial class StoriArendaProContext : IdentityDbContext<User, IdentityRol
     {
         if (!optionsBuilder.IsConfigured)
         {
-            // использовать конфигурацию из appsettings.json
+            // Упрощаем логику - убираем Docker проверки
             var configuration = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("appsettings.json")
+                .AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Production"}.json", optional: true)
                 .Build();
 
-            optionsBuilder.UseNpgsql(configuration.GetConnectionString("DefaultConnection"),
-                options => options.CommandTimeout(120))
+            var connectionString = configuration.GetConnectionString("DefaultConnection");
+
+            Console.WriteLine($"📡 Using connection string: {connectionString}");
+
+            optionsBuilder.UseNpgsql(connectionString,
+                options => options
+                    .CommandTimeout(120)
+                    .EnableRetryOnFailure(
+                        maxRetryCount: 15,
+                        maxRetryDelay: TimeSpan.FromSeconds(10),
+                        errorCodesToAdd: null))
                 .EnableSensitiveDataLogging()
                 .EnableDetailedErrors();
         }

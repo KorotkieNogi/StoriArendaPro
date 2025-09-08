@@ -1,44 +1,43 @@
-﻿version: '3.8'
+﻿# version: '3.8'
 
-services:
-  postgres:
-    image: postgres:15
-    container_name: stori_postgres
-    environment:
-      POSTGRES_DB: stori_arenda_pro
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: 12873465Tam
-    ports:
-      - "5432:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    networks:
-      - stori_network
-    restart: unless-stopped
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d stori_arenda_pro"]
-      interval: 5s
-      timeout: 5s
-      retries: 10
+# services:
+#   postgres:
+#     image: postgres:15-alpine
+#     container_name: stori_postgres
+#     network_mode: host  # ← ВАЖНО!
+#     environment:
+#       POSTGRES_DB: stori_arenda_pro
+#       POSTGRES_USER: postgres
+#       POSTGRES_PASSWORD: 12873465Tam
+#     # УБРАТЬ ports: так как в host mode порты и так открыты
+#     volumes:
+#       - postgres_data:/var/lib/postgresql/data
+#     restart: unless-stopped
+#     healthcheck:
+#       test: ["CMD-SHELL", "pg_isready -U postgres -d stori_arenda_pro"]
+#       interval: 10s
+#       timeout: 5s
+#       retries: 15
 
-  app:
-    build: .
-    container_name: stori_app
-    ports:
-      - "8080:80"  # Изменил на 8080 чтобы не конфликтовало с другими сервисами
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-      - ConnectionStrings__DockerConnection=Host=postgres;Port=5432;Database=stori_arenda_pro;Username=postgres;Password=12873465Tam;Command Timeout=120
-    depends_on:
-      postgres:
-        condition: service_healthy
-    networks:
-      - stori_network
-    restart: unless-stopped
+#   app:
+#     build: 
+#       context: .
+#       dockerfile: Dockerfile
+#     container_name: stori_app
+#     network_mode: host  # ← ВАЖНО!
+#     environment:
+#       - ASPNETCORE_ENVIRONMENT=Development
+#       - DOTNET_RUNNING_IN_CONTAINER=true
+#     # УБРАТЬ ports: так как в host mode порты и так открыты  
+#     depends_on:
+#       postgres:
+#         condition: service_healthy
+#     restart: unless-stopped
+#     volumes:
+#       - app_data:/app/wwwroot/photoEquipment
 
-volumes:
-  postgres_data:
+# volumes:
+#   postgres_data:
+#   app_data:
 
-networks:
-  stori_network:
-    driver: bridge
+# # УБРАТЬ СЕКЦИЮ networks полностью
